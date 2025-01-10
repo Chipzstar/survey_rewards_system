@@ -1,49 +1,42 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { SurveyCreator, SurveyCreatorComponent } from 'survey-creator-react';
+import 'survey-core/defaultV2.min.css';
+import 'survey-creator-core/survey-creator-core.min.css';
 
 export default function CreateSurveyPage() {
-	return (
-			<main
-					className="flex min-h-screen flex-col items-center justify-center p-4 md:p-24 bg-gradient-to-br from-primary to-secondary text-white">
-				<h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-8">
-					Create Survey Rewards Form
-				</h1>
-				<div className="flex flex-col items-center">
-					<p className="mb-2 md:mb-4 text-lg">
-						Fill out the form to create a new survey.
-					</p>
-					<div className="mb-2 md:mb-4">
-						<label htmlFor="eventName" className="block text-sm font-medium text-white">
-							Write out event name...
-						</label>
-						<input
-								type="text"
-								id="eventName"
-								className="mt-1 p-2 border rounded-md w-64 text-black"
-								placeholder="Event Name"
-						/>
-					</div>
-					<p className="mb-2 md:mb-4 text-lg">
-						Fill out our survey & win £[Amount] Gift Cards!
-					</p>
-					<p className="mb-2 md:mb-4 text-lg">
-						Complete form & nudge your event connections to get DOUBLE points for each completed survey
-					</p>
-					<div className="mb-2 md:mb-4">
-						<label htmlFor="organizerName" className="block text-sm font-medium text-white">
-							Write name(s) here
-						</label>
-						<input
-								type="text"
-								id="organizerName"
-								className="mt-1 p-2 border rounded-md w-64 text-black"
-								placeholder="Organizer Name(s)"
-						/>
-					</div>
-					<Button asChild>
-						<Link href="/dashboard">You ready? Click to begin</Link>
-					</Button>
-				</div>
-			</main>
-	);
+  const [surveyJson, setSurveyJson] = useState(null);
+
+  const creatorOptions = {
+    showLogicTab: true,
+    isAutoSave: true
+  };
+
+  const creator = new SurveyCreator(creatorOptions);
+
+  return (
+    <main className='flex min-h-screen flex-col items-center bg-[#F3F3F3] pb-4 text-white sm:h-screen'>
+      <div className='flex h-full w-full flex-col items-center'>
+        <div className='h-full w-full text-black'>
+          <SurveyCreatorComponent style={{}} creator={creator} />
+        </div>
+        {surveyJson && (
+          <div className='mt-4'>
+            <h2 className='mb-2 text-2xl font-bold'>Survey JSON:</h2>
+            <pre className='overflow-x-auto rounded-md bg-gray-800 p-4'>
+              <code>{JSON.stringify(surveyJson, null, 2)}</code>
+            </pre>
+          </div>
+        )}
+        <div className='mt-4'>
+          <Button asChild>
+            <Link href='/dashboard'>Done</Link>
+          </Button>
+        </div>
+      </div>
+    </main>
+  );
 }
