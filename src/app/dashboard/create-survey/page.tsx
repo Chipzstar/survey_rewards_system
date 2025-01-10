@@ -15,14 +15,16 @@ export default function CreateSurveyPage() {
     isAutoSave: true
   };
 
-  const creator = new SurveyCreator(creatorOptions);
+  const SSR = typeof window === 'undefined';
+  let creator: SurveyCreator;
+  if (!SSR) {
+    creator = new SurveyCreator(creatorOptions);
+  }
 
   return (
     <main className='flex min-h-screen flex-col items-center bg-[#F3F3F3] pb-4 text-white sm:h-screen'>
       <div className='flex h-full w-full flex-col items-center'>
-        <div className='h-full w-full text-black'>
-          <SurveyCreatorComponent style={{}} creator={creator} />
-        </div>
+        <div className='h-full w-full text-black'>{!SSR && <SurveyCreatorComponent creator={creator} />}</div>
         {surveyJson && (
           <div className='mt-4'>
             <h2 className='mb-2 text-2xl font-bold'>Survey JSON:</h2>
