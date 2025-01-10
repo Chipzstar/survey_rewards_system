@@ -13,8 +13,8 @@ export default function EventDashboard({ params }: { params: { id: string } }) {
         </div>
         <div className="flex flex-col items-center">
           <div className="mb-4 md:mb-8">
-            <Button>
-              QR code & link
+            <Button asChild>
+              <Link href={`/dashboard/event/${id}/share`}>QR code & link</Link>
             </Button>
           </div>
           <div className="flex flex-col items-start">
