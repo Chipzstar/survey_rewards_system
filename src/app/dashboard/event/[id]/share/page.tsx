@@ -2,9 +2,10 @@ import Link from "next/link";
 import QRCode from 'react-qr-code';
 import { env } from "@/env";
 
+const { NEXT_PUBLIC_BASE_URL } = env;
+
 export default function EventSharePage({ params }: { params: { id: string } }) {
 	const { id } = params;
-	const { NEXT_PUBLIC_BASE_URL } = env;
 	const surveyLink = `${NEXT_PUBLIC_BASE_URL}/survey/${id}`;
 
 	return (
