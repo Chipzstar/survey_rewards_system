@@ -32,12 +32,12 @@ export default async function Dashboard() {
           <h2>Survey Dashboard</h2>
           <ul className='mt-2'>
             <li>
-              <Link href='/src/app/(app)/event/1' className='text-primary'>
+              <Link href='/event/1' className='text-primary'>
                 1. The Tech Conference 2024
               </Link>
             </li>
             <li>
-              <Link href='/src/app/(app)/event/2' className='text-primary'>
+              <Link href='/event/2' className='text-primary'>
                 2. The Tech Conference 2025
               </Link>
             </li>
