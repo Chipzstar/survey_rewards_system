@@ -2,12 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 // const isProtectedRoute = createRouteMatcher(['/', '/profile(.*)', '/events(.*)', '/surveys(.*)']);
 
-const isPublicRoute = createRouteMatcher([
-  '/login(.*)',
-  '/signup(.*)',
-  // "/signup(.*)",
-  '/forgot-password(.*)'
-]);
+const isPublicRoute = createRouteMatcher(['/login(.*)', '/signup(.*)', '/forgot-password(.*)']);
 
 export default clerkMiddleware(
   async (auth, req) => {
@@ -15,7 +10,7 @@ export default clerkMiddleware(
       await auth.protect();
     }
   },
-  { debug: true }
+  { debug: false }
 );
 
 export const config = {
