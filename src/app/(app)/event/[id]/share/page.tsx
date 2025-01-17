@@ -12,10 +12,10 @@ export default function EventSharePage({ params }: { params: { id: string } }) {
     <main className='flex min-h-screen flex-col items-center bg-gradient-to-br from-primary to-secondary p-4 text-white md:p-24'>
       <div className='mb-4 flex w-full items-center justify-between md:mb-8'>
         <h1 className='text-3xl font-bold md:text-4xl'>Event Analytics Dashboard: Fintech Conference Survey</h1>
-        <Link href={`/src/app/(app)/event/${id}`} className='text-white underline'>
+        <Link href={`/event/${id}`} className='text-white underline'>
           Back to Analytics
         </Link>
-        <Link href='/dashboard' className='text-white underline'>
+        <Link href='/' className='text-white underline'>
           Home
         </Link>
       </div>
