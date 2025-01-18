@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import QRCode from 'react-qr-code';
-import { env } from '@/env';
+import { env } from '~/env';
 
 const { NEXT_PUBLIC_BASE_URL } = env;
 

@@ -1,9 +1,9 @@
 import type { DeletedObjectJSON, UserJSON, UserWebhookEvent } from '@clerk/nextjs/server';
 
-import { posthog } from '@/lib/posthog';
+import { posthog } from '~/lib/posthog';
 import { eq } from 'drizzle-orm';
-import { db } from '@/db';
-import { usersTable } from '@/db/schema';
+import { db } from '~/db';
+import { usersTable } from '~/db/schema';
 
 // const utapi = new UTApi();
 

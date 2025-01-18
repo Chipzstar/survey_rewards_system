@@ -1,4 +1,4 @@
-import { env } from '@/env';
+import { env } from '~/env';
 import { PostHog } from 'posthog-node';
 
 const { POSTHOG_API_TOKEN } = env;

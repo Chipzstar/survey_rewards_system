@@ -2,7 +2,7 @@ import type { WebhookEvent } from '@clerk/nextjs/server';
 import { headers } from 'next/headers';
 import { Webhook } from 'svix';
 
-import { env } from '@/env';
+import { env } from '~/env';
 import { createNewUser, deleteUser, updateUser } from './_handlers';
 import { NextResponse } from 'next/server';
 
