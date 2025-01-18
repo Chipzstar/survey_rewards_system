@@ -4,6 +4,7 @@ import { Webhook } from 'svix';
 
 import { env } from '@/env';
 import { createNewUser, deleteUser, updateUser } from './_handlers';
+import { NextResponse } from 'next/server';
 
 const { CLERK_WEBHOOK_SECRET: webhookSecret } = env;
 
@@ -71,7 +72,7 @@ export async function POST(req: Request) {
       console.log(`Unhandled event type ${eventType}`);
   }
 
-  return Response.json({
+  return NextResponse.json({
     received: true,
     message: `Webhook received!`,
     data: data ?? undefined

@@ -22,15 +22,14 @@ export const createNewUser = async (event: UserWebhookEvent) => {
     // log.info("Feature flag", { waitingListEnabled });
     // create the user
     await db.insert(usersTable).values({
-      clerkId: String(payload.id),
+      clerk_id: String(payload.id),
       email: String(payload.email_addresses[0]?.email_address),
+      username: payload.username,
       firstname: payload.first_name,
-      lastname: payload.last_name,
-      tempPassword: payload.unsafe_metadata.tempPassword as string,
-      isActive: true
+      lastname: payload.last_name
     });
 
-    const dbUser = (await db.select().from(usersTable).where(eq(usersTable.clerkId, payload.id)))[0];
+    const dbUser = (await db.select().from(usersTable).where(eq(usersTable.clerk_id, payload.id)))[0];
 
     if (!dbUser) throw new Error('Could not create user');
 
@@ -51,7 +50,7 @@ export const updateUser = async (event: UserWebhookEvent) => {
     let uploadedFile;
     const payload = event.data as UserJSON;
     // check if the user already exists in the db
-    let dbUser = (await db.select().from(usersTable).where(eq(usersTable.clerkId, payload.id)))[0];
+    let dbUser = (await db.select().from(usersTable).where(eq(usersTable.clerk_id, payload.id)))[0];
 
     if (!dbUser) throw new Error('Could not find user');
 
@@ -63,7 +62,7 @@ export const updateUser = async (event: UserWebhookEvent) => {
           firstname: String(payload.first_name),
           lastname: String(payload.last_name)
         })
-        .where(eq(usersTable.clerkId, payload.id))
+        .where(eq(usersTable.clerk_id, payload.id))
         .returning()
     )[0];
 
