@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://genus-workspace-7b5134.eu-central-1.xata.sh/db/genus",
+  "codegen": {
+    "output": "xata.ts"
+  }
+}
