@@ -19,7 +19,9 @@ export const eventTable = pgTable('event', {
   description: varchar({ length: 255 }),
   location: varchar({ length: 255 }),
   date: timestamp(),
-  created_by: integer().references(() => usersTable.id).notNull(),
+  created_by: integer()
+    .references(() => usersTable.id)
+    .notNull(),
   ...timestamps
 });
 
@@ -34,7 +36,9 @@ export const surveyTable = pgTable('survey', {
   end_date: timestamp().notNull(),
   points: integer().notNull(),
   referral_bonus_points: integer().notNull(),
-  created_by: integer().references(() => usersTable.id).notNull(),
+  created_by: integer()
+    .references(() => usersTable.id)
+    .notNull(),
   number_of_winners: integer().default(1).notNull(),
   ...timestamps
 });
@@ -52,6 +56,8 @@ export const surveyResponseTable = pgTable('survey_response', {
   completed_at: timestamp().defaultNow().notNull(),
   is_completed: boolean().default(false),
   points_earned: integer().default(0).notNull(),
+  survey_code: varchar({ length: 255 }).default('10021'),
+  passcode: varchar({ length: 255 }),
   ...timestamps
 });
 
@@ -85,9 +91,15 @@ export const giftCardTable = pgTable('gift_card', {
 
 export const surveyWinnerTable = pgTable('survey_winner', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  survey_id: integer().references(() => surveyTable.id).notNull(),
-  user_id: integer().references(() => usersTable.id).notNull(),
-  gift_card_id: integer().references(() => giftCardTable.id).notNull(),
+  survey_id: integer()
+    .references(() => surveyTable.id)
+    .notNull(),
+  user_id: integer()
+    .references(() => usersTable.id)
+    .notNull(),
+  gift_card_id: integer()
+    .references(() => giftCardTable.id)
+    .notNull(),
   rank: integer().notNull(),
   total_points: integer().notNull(),
   ...timestamps
