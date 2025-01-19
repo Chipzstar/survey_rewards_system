@@ -4,13 +4,11 @@ import { env } from '~/env';
 import { auth } from '@clerk/nextjs/server';
 import { trpc } from '~/trpc/server';
 
-const { NEXT_PUBLIC_BASE_URL } = env;
-
 export default async function EventSharePage({ params }: { params: { id: string } }) {
   const { id } = params;
   const user = await auth();
 
-  const survey = await trpc.survey.byIdWithResponses({ id: Number(id) });
+  const survey = await trpc.survey.byIdWithAnalytics({ id: Number(id) });
 
   return (
     <main className='flex min-h-screen flex-col items-center bg-gradient-to-br from-primary to-secondary p-4 text-white md:p-24'>

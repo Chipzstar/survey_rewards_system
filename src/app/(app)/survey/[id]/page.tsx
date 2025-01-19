@@ -77,11 +77,8 @@ export default async function SurveyDashboard({ params }: { params: { id: string
             <p>
               Total no. of referrals: <span className='font-bold'>{survey.referrals.length}</span>
             </p>
-            <p>
-              Av. number of referrals: <span className='font-bold'>5</span>
-            </p>
           </div>
-          <h2 className='mb-2 text-2xl font-bold md:mb-4'>Giftcard Leaderboard</h2>
+          <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
           <div className='overflow-x-auto'>
             <table className='w-full table-auto'>
               <thead>
