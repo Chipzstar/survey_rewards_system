@@ -22,7 +22,11 @@ export const surveyRouter = createTRPCRouter({
     // Fetch a specific survey by ID with associated responses from the database or API
     const survey = await ctx.db.query.surveyTable.findMany({
       with: {
-        responses: true,
+        responses: {
+          with: {
+            user: true
+          }
+        },
         referrals: {
           where: (referrals, { eq }) => eq(referrals.is_completed, true)
         }
