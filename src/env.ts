@@ -3,9 +3,12 @@ import { z } from 'zod';
 
 export const env = createEnv({
   server: {
+    NODE_ENV: z.enum(['development', 'test', 'production']),
     CLERK_SECRET_KEY: z.string().min(1),
     CLERK_WEBHOOK_SECRET: z.string().min(1),
-    POSTHOG_API_TOKEN: z.string().min(1)
+    POSTHOG_API_TOKEN: z.string().min(1),
+    FILLOUT_FORM_ID: z.string().min(1),
+    FILLOUT_WEBHOOK_SECRET: z.string().min(1)
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
