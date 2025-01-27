@@ -5,7 +5,7 @@ export default async function Login() {
   const user = await currentUser();
 
   if (!user) {
-    return <SignIn afterSignOutUrl='/' />;
+    return <SignIn />;
   }
 
   return <div>Welcome!</div>;
