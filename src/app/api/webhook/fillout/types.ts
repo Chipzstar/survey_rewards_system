@@ -63,11 +63,39 @@ export type Question = QuestionTypes & {
   name: string;
 };
 
+interface Calculation {
+  id: string;
+  name: string;
+  type: string;
+  value: number;
+}
+
+interface UrlParameter {
+  id: string;
+  name: string;
+  value: string;
+}
+
 export interface Submission {
   submissionId: string;
   submissionTime: string;
   lastUpdatedAt: string;
   questions: Question[];
+  calculations: Calculation[];
+  urlParameters: UrlParameter[];
+  quiz: Record<string, never>; // or just: quiz: {};
+  documents: never[];
+  scheduling: never[];
+  payments: never[];
+}
+
+export interface Submission {
+  submissionId: string;
+  submissionTime: string;
+  lastUpdatedAt: string;
+  questions: Question[];
+  calculations: Calculation[];
+  urlParameters: UrlParameter[];
 }
 
 export interface FormEvent {
