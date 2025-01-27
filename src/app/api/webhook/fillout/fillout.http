@@ -1,0 +1,118 @@
+### POST request to example server
+POST http://localhost:3000/api/webhook/fillout
+Content-Type: application/json
+
+{
+  "formId": "ooJvyZP7Zous",
+  "formName": "Igbo Gala Survey [TEST]",
+  "submission": {
+    "submissionId": "5b715efe-c9e6-4d4e-9a5c-232060c675c6",
+    "submissionTime": "2025-01-26T19:17:05.338Z",
+    "lastUpdatedAt": "2025-01-26T19:17:05.338Z",
+    "questions": [
+      {
+        "id": "tSoH",
+        "name": "Start Time",
+        "type": "TimePicker",
+        "value": null
+      },
+      {
+        "id": "f1PiiDm1rjBk4uV11ai2Mk",
+        "name": "Event date attended",
+        "type": "DatePicker",
+        "value": "2024-09-06"
+      },
+      {
+        "id": "g7bt5Q8qFNzTFLddoNrvqK",
+        "name": "How did you hear about the Igbo Gala?",
+        "type": "ShortAnswer",
+        "value": "Friends"
+      },
+      {
+        "id": "i98Kg5bRjxLWbuV44Mc97u",
+        "name": "Rate your overall experience (1-5)",
+        "type": "StarRating",
+        "value": 4
+      },
+      {
+        "id": "deTkAf7NjuL2eYanEJMxXk",
+        "name": "Favorite part of the event",
+        "type": "LongAnswer",
+        "value": "Nothing"
+      },
+      {
+        "id": "bpBgja7W5qqGW1kL7PKTL7",
+        "name": "Rate the musical performance (1-5)",
+        "type": "StarRating",
+        "value": 5
+      },
+      {
+        "id": "upzzJjB9mCr1myqGKdjUZS",
+        "name": "How was the traditional Igbo attire experience for you?",
+        "type": "LongAnswer",
+        "value": "I dont know"
+      },
+      {
+        "id": "7Jhh3Tk5pA3r65t6T6kZyY",
+        "name": "Suggestions for future events",
+        "type": "LongAnswer",
+        "value": "I dont know"
+      },
+      {
+        "id": "eLFp9CtqbcaCkQqzEoAhYi",
+        "name": "Did you enjoy the food and drinks?",
+        "type": "MultipleChoice",
+        "value": "Yes"
+      },
+      {
+        "id": "xrznoHSkfeAk6Ugz2Qag9q",
+        "name": "How was the venue location?",
+        "type": "LongAnswer",
+        "value": "Great"
+      },
+      {
+        "id": "tzqKqePJ6TPuzHHV4XGBsC",
+        "name": "Would you attend the Igbo Gala again?",
+        "type": "MultipleChoice",
+        "value": "Yes"
+      },
+      {
+        "id": "fNqQrCMz9KZSTdJxMd53Dx",
+        "name": "Rate the fashion showcase (1-5)",
+        "type": "StarRating",
+        "value": 5
+      },
+      {
+        "id": "fWQDFFaS8fy7NZQzgB6KVJ",
+        "name": "Any additional comments or feedback",
+        "type": "LongAnswer",
+        "value": "No"
+      },
+      {
+        "id": "dpQC",
+        "name": "Full Name",
+        "type": "ShortAnswer",
+        "value": "Ben Franklin"
+      },
+      {
+        "id": "75vZ",
+        "name": "Email Address",
+        "type": "EmailInput",
+        "value": "chisom-oguibe@wireconnected.com"
+      }
+    ],
+    "calculations": [
+      {
+        "id": "h9uM",
+        "name": "time_taken",
+        "type": "duration",
+        "value": 0
+      }
+    ],
+    "urlParameters": [],
+    "quiz": {},
+    "documents": [],
+    "scheduling": [],
+    "payments": []
+  }
+}
