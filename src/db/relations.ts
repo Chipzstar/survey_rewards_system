@@ -35,7 +35,8 @@ export const surveyRelations = relations(surveyTable, ({ one, many }) => ({
   }),
   responses: many(surveyResponseTable),
   referrals: many(referralTable),
-  winners: many(surveyWinnerTable)
+  winners: many(surveyWinnerTable),
+  giftCards: many(giftCardTable)
 }));
 
 export const surveyResponseRelations = relations(surveyResponseTable, ({ one }) => ({
@@ -76,5 +77,12 @@ export const surveyWinnerRelations = relations(surveyWinnerTable, ({ one }) => (
   giftCard: one(giftCardTable, {
     fields: [surveyWinnerTable.gift_card_id],
     references: [giftCardTable.id]
+  })
+}));
+
+export const giftCardRelations = relations(giftCardTable, ({ one }) => ({
+  survey: one(surveyTable, {
+    fields: [giftCardTable.survey_id],
+    references: [surveyTable.id]
   })
 }));

@@ -29,7 +29,8 @@ export const surveyRouter = createTRPCRouter({
         },
         referrals: {
           where: (referrals, { eq }) => eq(referrals.is_completed, true)
-        }
+        },
+        giftCards: true
       }
     });
     if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND' });
