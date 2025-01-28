@@ -80,6 +80,10 @@ export const referralTable = pgTable('referral', {
 
 export const giftCardTable = pgTable('gift_card', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  survey_id: integer()
+    .references(() => surveyTable.id)
+    .notNull(),
+  priority: integer().notNull(),
   brand: varchar({ length: 255 }).notNull(),
   name: varchar({ length: 255 }).notNull(),
   code: varchar({ length: 255 }).notNull().unique(),

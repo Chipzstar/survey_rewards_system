@@ -11,19 +11,25 @@ export default async function SurveyDashboard({ params }: { params: { id: string
   const user = await auth();
 
   const survey = await trpc.survey.byIdWithAnalytics({ id: Number(id) });
+
+  // Statistics
   const surveys_completed = survey.responses.filter(response => response.is_completed);
   const completion_rate = ((surveys_completed.length / survey.responses.length) * 100).toFixed(1);
-
   const total_completion_time = surveys_completed.reduce((acc, response) => {
     const diff = differenceInMinutes(new Date(response.completed_at), new Date(response.started_at));
     // console.log(format(response.started_at, 'hh:mm:ss'));
     // console.log(format(response.completed_at, 'hh:mm:ss'));
     return acc + diff;
   }, 0);
-
   const avg_completion_time = total_completion_time / surveys_completed.length;
 
-  const data = survey.responses.map((response, index) => {
+  // Data
+  const sortedResponses = survey.responses.sort((a, b) => {
+    const timeA = differenceInSeconds(new Date(a.completed_at), new Date(a.started_at));
+    const timeB = differenceInSeconds(new Date(b.completed_at), new Date(b.started_at));
+    return timeA - timeB; // Sort ascending (lowest to highest)
+  });
+  const data = sortedResponses.map((response, index) => {
     const completion_time = differenceInSeconds(new Date(response.completed_at), new Date(response.started_at));
     return {
       rank: index + 1,
@@ -33,6 +39,8 @@ export default async function SurveyDashboard({ params }: { params: { id: string
       total: response.points_earned
     };
   });
+
+  const isSurveyClosed = survey.end_date < new Date();
 
   if (!survey) {
     return (
@@ -57,10 +65,15 @@ export default async function SurveyDashboard({ params }: { params: { id: string
         </Link>
       </div>
       <div className='mx-auto flex w-full max-w-3xl flex-col'>
-        <section className='mx-auto mb-4 md:mb-8'>
+        <section className='mx-auto mb-4 space-x-6 md:mb-8'>
           <Button asChild size='lg'>
             <Link href={`/survey/${id}/share`}>QR code & link</Link>
           </Button>
+          {isSurveyClosed && (
+            <Button variant='secondary' asChild size='lg'>
+              <Link href={`/survey/${id}/winner`}>Results</Link>
+            </Button>
+          )}
         </section>
 
         <section className='flex flex-col'>

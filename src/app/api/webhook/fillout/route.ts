@@ -17,6 +17,10 @@ async function handleFormResponse(event: FormEvent) {
   const start_timestamp = event.submission.urlParameters.find(param => param.name === 'start_time')?.value;
   const survey_id = Number(event.submission.urlParameters.find(param => param.name === 'id')?.value);
 
+  // fetch the survey using the survey_id
+  const survey = await db.select().from(surveyTable).where(eq(surveyTable.id, survey_id));
+  if (!survey[0]) return null;
+
   const { email, name } = getUserDetails(event.submission);
   if (!email || !name) return null;
   // split name into first and last name
@@ -29,13 +33,12 @@ async function handleFormResponse(event: FormEvent) {
       firstname: firstname,
       lastname: lastname,
       email,
-      username: name
+      username: name,
+      points: survey[0].points
     })
     .returning();
 
-  // fetch the survey using the survey_id
-  const survey = await db.select().from(surveyTable).where(eq(surveyTable.id, survey_id));
-  if (!survey[0] || !user[0]) return null;
+  if (!user[0]) return null;
   const completed_at = new Date(event.submission.submissionTime).toISOString();
   const started_at = new Date(Number(start_timestamp)).toISOString();
 
