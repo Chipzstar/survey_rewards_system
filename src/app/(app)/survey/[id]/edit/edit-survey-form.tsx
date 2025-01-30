@@ -76,7 +76,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <div className='space-y-4'>
-          <h3 className='text-lg font-medium'>Survey Details</h3>
+          <h3 className='text-lg font-medium text-white'>Survey Details</h3>
           <FormField
             control={form.control}
             name='eventName'
@@ -179,7 +179,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
         </div>
 
         <div className='space-y-4'>
-          <h3 className='text-lg font-medium'>Gift Card Details</h3>
+          <h3 className='text-lg font-medium text-white'>Gift Card Details</h3>
           <FormField
             control={form.control}
             name='giftCardName'

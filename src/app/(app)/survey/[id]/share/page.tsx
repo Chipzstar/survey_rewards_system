@@ -13,7 +13,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
   const surveyLink = `${survey.link}?id=${id}&start_time=${new Date().getTime()}`;
 
   return (
-    <div className='m-auto'>
+    <div className='m-auto text-white'>
       <div className='flex flex-col items-center'>
         <div className='mb-4 md:mb-8'>
           <QRCode

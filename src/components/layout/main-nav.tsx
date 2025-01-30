@@ -17,6 +17,7 @@ export const MainNav: FC<Props> = ({ className, surveyId }) => {
     <nav className={cn('flex items-center gap-1 rounded-full bg-white/50 p-1 shadow-sm backdrop-blur-sm', className)}>
       {[
         { href: '/', label: 'Home' },
+        { href: `/survey/${surveyId}`, label: 'Analytics' },
         { href: `/survey/${surveyId}/edit`, label: 'Edit' },
         { href: `/survey/${surveyId}/share`, label: 'QR Code & Link' },
         { href: `/survey/${surveyId}/winner`, label: 'Results' }
