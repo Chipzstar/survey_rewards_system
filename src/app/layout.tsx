@@ -4,7 +4,7 @@ import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '~/components/theme-provider';
 import { ThemeToggle } from '~/components/ui/theme';
-import { TRPCProvider } from '~/trpc/clients';
+import { TRPCProvider } from '~/trpc/client';
 
 const inter = Inter({ subsets: ['latin'] });
 

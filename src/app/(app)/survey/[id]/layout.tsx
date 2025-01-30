@@ -23,7 +23,7 @@ export default async function SurveyLayout({ children, params }: Props) {
         <h1 className='text-3xl font-bold tracking-tight md:text-4xl'>{survey.name}</h1>
         <MainNav surveyId={surveyId} />
       </div>
-      <main className='flex h-full'>{children}</main>
+      <main className='flex h-full w-full overflow-y-auto'>{children}</main>
     </main>
   );
 }
