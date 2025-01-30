@@ -13,18 +13,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
   const surveyLink = `${survey.link}?id=${id}&start_time=${new Date().getTime()}`;
 
   return (
-    <main className='flex min-h-screen flex-col items-center bg-gradient-to-br from-primary to-secondary p-4 text-white md:p-24'>
-      <nav className='mb-4 flex w-full items-center justify-between md:mb-8'>
-        <h1 className='text-3xl font-bold md:text-4xl'>{survey.name}</h1>
-        <div className='flex items-center space-x-6'>
-          <Link href={`/survey/${id}`} className='text-white underline'>
-            Back to Analytics
-          </Link>
-          <Link href='/' className='text-white underline'>
-            Home
-          </Link>
-        </div>
-      </nav>
+    <div className='m-auto'>
       <div className='flex flex-col items-center'>
         <div className='mb-4 md:mb-8'>
           <QRCode
@@ -41,6 +30,6 @@ export default async function EventSharePage({ params }: { params: { id: string 
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

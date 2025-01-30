@@ -5,6 +5,7 @@ import { trpc } from '~/trpc/server';
 import { differenceInMinutes, differenceInSeconds, format } from 'date-fns';
 import { DataTable } from '~/components/leaderboard/data-table';
 import { columns } from '~/components/leaderboard/columns';
+import { MainNav } from '~/components/layout/main-nav';
 
 export default async function SurveyDashboard({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -35,7 +36,7 @@ export default async function SurveyDashboard({ params }: { params: { id: string
       rank: index + 1,
       name: response.user.firstname,
       time: completion_time,
-      ref: survey.referrals.find(r => r.referrer_id === response.user_id) || '#',
+      ref: survey.referrals.filter(r => r.referrer_id === response.user_id).length ?? 0,
       total: response.points_earned
     };
   });
@@ -57,62 +58,43 @@ export default async function SurveyDashboard({ params }: { params: { id: string
   }
 
   return (
-    <main className='flex min-h-screen flex-col items-center bg-gradient-to-br from-primary to-secondary p-4 text-white md:p-24'>
-      <div className='mb-4 flex w-full items-center justify-between md:mb-8'>
-        <h1 className='text-3xl font-bold md:text-4xl'>The Igbo Gala 2025</h1>
-        <Link href='/' className='text-white underline'>
-          Home
-        </Link>
-      </div>
-      <div className='mx-auto flex w-full max-w-3xl flex-col'>
-        <section className='mx-auto mb-4 space-x-6 md:mb-8'>
-          <Button asChild size='lg'>
-            <Link href={`/survey/${id}/share`}>QR code & link</Link>
-          </Button>
-          {isSurveyClosed && (
-            <Button variant='secondary' asChild size='lg'>
-              <Link href={`/survey/${id}/winner`}>Results</Link>
-            </Button>
-          )}
-        </section>
-
-        <section className='flex flex-col'>
-          <h2 className='mb-2 text-2xl font-bold md:mb-4'>The Big Picture</h2>
-          <div className='mb-2 flex gap-4 md:mb-4 md:gap-8'>
-            <div className='flex flex-col items-center'>
-              <h3 className='text-xl font-semibold'>Completed surveys</h3>
-              <p className='text-2xl font-bold md:text-3xl'>{surveys_completed.length}</p>
-            </div>
-            <div className='flex flex-col items-center'>
-              <h3 className='text-xl font-semibold'># of referrals</h3>
-              <p className='text-2xl font-bold md:text-3xl'>{survey.referrals.length}</p>
-            </div>
+    <div className='mx-auto flex w-full max-w-3xl flex-col'>
+      <section className='flex flex-col'>
+        <h2 className='mb-2 text-2xl font-bold md:mb-4'>The Big Picture</h2>
+        <div className='mb-2 flex gap-4 md:mb-4 md:gap-8'>
+          <div className='flex flex-col items-center'>
+            <h3 className='text-xl font-semibold'>Completed surveys</h3>
+            <p className='text-2xl font-bold md:text-3xl'>{surveys_completed.length}</p>
           </div>
-          <div className='mb-2 flex flex-col gap-1 md:mb-4 md:gap-2'>
-            <p>
-              No. of surveys started: <span className='font-bold'>{survey.responses.length}</span>
-            </p>
-            <p>
-              No. of surveys completed: <span className='font-bold'>{surveys_completed.length}</span>
-            </p>
-            <p>
-              Survey completion rate: <span className='font-bold'>{completion_rate}%</span>
-            </p>
-            <p>
-              Average time taken: <span className='font-bold'>{avg_completion_time}mins</span>
-            </p>
-            <p>
-              Total no. of referrals: <span className='font-bold'>{survey.referrals.length}</span>
-            </p>
+          <div className='flex flex-col items-center'>
+            <h3 className='text-xl font-semibold'># of referrals</h3>
+            <p className='text-2xl font-bold md:text-3xl'>{survey.referrals.length}</p>
           </div>
-        </section>
-        <section className='mt-5 flex flex-col'>
-          <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
-          <div className='w-full overflow-x-auto'>
-            <DataTable columns={columns} data={data} />
-          </div>
-        </section>
-      </div>
-    </main>
+        </div>
+        <div className='mb-2 flex flex-col gap-1 md:mb-4 md:gap-2'>
+          <p>
+            No. of surveys started: <span className='font-bold'>{survey.responses.length}</span>
+          </p>
+          <p>
+            No. of surveys completed: <span className='font-bold'>{surveys_completed.length}</span>
+          </p>
+          <p>
+            Survey completion rate: <span className='font-bold'>{completion_rate}%</span>
+          </p>
+          <p>
+            Average time taken: <span className='font-bold'>{avg_completion_time}mins</span>
+          </p>
+          <p>
+            Total no. of referrals: <span className='font-bold'>{survey.referrals.length}</span>
+          </p>
+        </div>
+      </section>
+      <section className='mt-5 flex flex-col'>
+        <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
+        <div className='w-full overflow-x-auto'>
+          <DataTable columns={columns} data={data} />
+        </div>
+      </section>
+    </div>
   );
 }
