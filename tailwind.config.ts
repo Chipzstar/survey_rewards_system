@@ -12,6 +12,12 @@ module.exports = {
       }
     },
     extend: {
+      height: {
+        '18': '4.5rem'
+      },
+      width: {
+        '18': '4.5rem'
+      },
       colors: {
         primary: {
           DEFAULT: '#2AA6B7',

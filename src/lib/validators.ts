@@ -1,7 +1,6 @@
 import * as z from 'zod';
 
 export const editSurveyFormSchema = z.object({
-  eventName: z.string().min(2, 'Event name must be at least 2 characters'),
   surveyName: z.string().min(2, 'Survey name must be at least 2 characters'),
   surveyDescription: z.string().min(10, 'Description must be at least 10 characters').nullable(),
   completionPoints: z.number().min(1, 'Must be at least 1 point'),

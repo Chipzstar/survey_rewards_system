@@ -15,10 +15,12 @@ import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { RouterOutput } from '~/lib/trpc';
 import { editSurveyFormSchema } from '~/lib/validators';
+import { useLoading } from '~/components/providers/loading-provider';
 
 export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalytics'] }> = ({ survey }) => {
   const router = useRouter();
-  const { mutate: updateSurvey } = trpc.survey.update.useMutation({
+  const { loading, setLoading } = useLoading();
+  const { mutateAsync: updateSurvey } = trpc.survey.update.useMutation({
     onSuccess: () => {
       toast.success('Survey updated successfully');
       router.refresh();
@@ -31,7 +33,6 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
   const form = useForm<z.infer<typeof editSurveyFormSchema>>({
     resolver: zodResolver(editSurveyFormSchema),
     defaultValues: {
-      eventName: survey.event.name,
       surveyName: survey.name,
       surveyDescription: survey.description,
       completionPoints: survey.points,
@@ -45,73 +46,42 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
       giftCardExpiry: survey.giftCards?.[0]?.expiry_date
         ? new Date(survey.giftCards[0].expiry_date)
         : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default to 30 days from now
-      giftCardAmount: survey.giftCards?.[0]?.value ?? 0
-    }
+      giftCardAmount: survey.giftCards?.[0]?.value
+    },
+    reValidateMode: 'onSubmit'
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    updateSurvey({
-      id: survey.id,
-      ...values
-    });
+  async function onSubmit(values: z.infer<typeof editSurveyFormSchema>) {
+    try {
+      setLoading(true);
+      await updateSurvey({
+        id: survey.id,
+        ...values
+      });
+      toast.success('Survey updated successfully');
+      router.refresh();
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-        <div className='space-y-4'>
-          <h3 className='text-lg font-medium text-white'>Survey Details</h3>
-          <FormField
-            control={form.control}
-            name='eventName'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Event Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form onSubmit={form.handleSubmit(onSubmit)} className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
+        <section className='space-y-8'>
+          <div className='space-y-4'>
+            <h3 className='text-lg font-medium text-white'>Survey Details</h3>
 
-          <FormField
-            control={form.control}
-            name='surveyName'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Survey Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='surveyDescription'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className='grid grid-cols-2 gap-4'>
             <FormField
               control={form.control}
-              name='completionPoints'
+              name='surveyName'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Completion Points</FormLabel>
+                  <FormLabel>Survey Name</FormLabel>
                   <FormControl>
-                    <Input type='number' {...field} onChange={e => field.onChange(+e.target.value)} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -120,10 +90,128 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
 
             <FormField
               control={form.control}
-              name='referralPoints'
+              name='surveyDescription'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Referral Points</FormLabel>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className='grid grid-cols-2 gap-4'>
+              <FormField
+                control={form.control}
+                name='completionPoints'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Completion Points</FormLabel>
+                    <FormControl>
+                      <Input type='number' {...field} onChange={e => field.onChange(e.target.value)} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='referralPoints'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Referral Points</FormLabel>
+                    <FormControl>
+                      <Input type='number' {...field} onChange={e => field.onChange(e.target.value)} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name='surveyLink'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Survey Link</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='deadline'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Survey Deadline</FormLabel>
+                  <FormControl>
+                    <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </section>
+        <section className='space-y-8'>
+          <div className='space-y-4'>
+            <h3 className='text-lg font-medium text-white'>Gift Card Details</h3>
+            <FormField
+              control={form.control}
+              name='giftCardName'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gift Card Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='voucherCode'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Voucher Code</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='giftCardExpiry'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gift Card Expiry</FormLabel>
+                  <FormControl>
+                    <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='giftCardAmount'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gift Card Amount</FormLabel>
                   <FormControl>
                     <Input type='number' {...field} onChange={e => field.onChange(+e.target.value)} />
                   </FormControl>
@@ -132,98 +220,12 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
               )}
             />
           </div>
-
-          <FormField
-            control={form.control}
-            name='surveyLink'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Survey Link</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='deadline'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Survey Deadline</FormLabel>
-                <FormControl>
-                  <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className='space-y-4'>
-          <h3 className='text-lg font-medium text-white'>Gift Card Details</h3>
-          <FormField
-            control={form.control}
-            name='giftCardName'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gift Card Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='voucherCode'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Voucher Code</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='giftCardExpiry'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gift Card Expiry</FormLabel>
-                <FormControl>
-                  <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='giftCardAmount'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gift Card Amount</FormLabel>
-                <FormControl>
-                  <Input type='number' {...field} onChange={e => field.onChange(+e.target.value)} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <Button type='submit' className='w-full'>
-          Update Survey
-        </Button>
+        </section>
+        <section className='lg:col-span-2'>
+          <Button size='xl' type='submit' className='w-full lg:mt-8'>
+            Update Survey
+          </Button>
+        </section>
       </form>
     </Form>
   );
