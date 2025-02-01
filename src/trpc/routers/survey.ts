@@ -3,6 +3,7 @@ import { giftCardTable, surveyResponseTable, surveyTable, usersTable } from '~/d
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { eq } from 'drizzle-orm';
+import { editSurveyFormSchema } from '~/lib/validators';
 
 export const surveyRouter = createTRPCRouter({
   all: protectedProcedure.query(async ({ ctx }) => {
@@ -22,6 +23,7 @@ export const surveyRouter = createTRPCRouter({
     // Fetch a specific survey by ID with associated responses from the database or API
     const survey = await ctx.db.query.surveyTable.findMany({
       with: {
+        event: true,
         responses: {
           with: {
             user: true
@@ -38,35 +40,38 @@ export const surveyRouter = createTRPCRouter({
     console.log(survey);
     return survey[0];
   }),
-  update: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
-    const { id } = input;
+  update: protectedProcedure.input(editSurveyFormSchema.extend({ id: z.number() })).mutation(async ({ ctx, input }) => {
     try {
-      const user = await ctx.db.select().from(usersTable).where(eq(usersTable.id, id));
+      const user = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
       if (!user[0]) throw new TRPCError({ code: 'NOT_FOUND' });
-      const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, id));
+      const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, input.id));
       if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND' });
-      const { points, referral_bonus_points, number_of_winners, end_date, giftCards } = input;
+      const {
+        completionPoints,
+        deadline,
+        eventName,
+        surveyName,
+        surveyLink,
+        referralPoints,
+        potentialWinners,
+        surveyDescription,
+        giftCardAmount,
+        giftCardExpiry,
+        giftCardName,
+        voucherCode
+      } = input;
       await ctx.db
         .update(surveyTable)
         .set({
-          points,
-          referral_bonus_points,
-          number_of_winners,
-          end_date
+          name: surveyName,
+          points: completionPoints,
+          link: surveyLink,
+          end_date: deadline,
+          referral_bonus_points: referralPoints,
+          number_of_winners: potentialWinners,
+          description: surveyDescription
         })
-        .where(eq(surveyTable.id, id));
-      if (giftCards) {
-        // await ctx.db.delete().from(giftCardTable).where(eq(giftCardTable.survey_id, id));
-        for (const giftCard of giftCards) {
-          await ctx.db.insert(giftCardTable).values({
-            survey_id: id,
-            name: giftCard.name,
-            code: giftCard.code,
-            expiry_date: giftCard.expiry_date,
-            value: giftCard.value
-          });
-        }
-      }
+        .where(eq(surveyTable.id, input.id));
       return survey[0];
     } catch (error) {
       console.error(error);

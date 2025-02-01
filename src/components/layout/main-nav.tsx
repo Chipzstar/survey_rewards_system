@@ -19,7 +19,7 @@ export const MainNav: FC<Props> = ({ className, surveyId }) => {
         { href: '/', label: 'Home' },
         { href: `/survey/${surveyId}`, label: 'Analytics' },
         { href: `/survey/${surveyId}/edit`, label: 'Edit' },
-        { href: `/survey/${surveyId}/share`, label: 'QR Code & Link' },
+        { href: `/survey/${surveyId}/share`, label: 'Share' },
         { href: `/survey/${surveyId}/winner`, label: 'Results' }
       ].map(({ href, label }) => (
         <Link
@@ -27,7 +27,7 @@ export const MainNav: FC<Props> = ({ className, surveyId }) => {
           href={href}
           className={cn(
             'rounded-full px-4 py-2 text-sm font-medium transition-all duration-200',
-            'hover:bg-gray-100 hover:shadow-sm',
+            'truncate text-ellipsis hover:bg-gray-100 hover:shadow-sm',
             pathname === href ? 'bg-white text-primary shadow-sm' : 'text-gray-600'
           )}
         >

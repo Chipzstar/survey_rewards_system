@@ -14,23 +14,7 @@ import { trpc } from '~/trpc/client';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { RouterOutput } from '~/lib/trpc';
-
-const formSchema = z.object({
-  eventName: z.string().min(2, 'Event name must be at least 2 characters'),
-  surveyName: z.string().min(2, 'Survey name must be at least 2 characters'),
-  surveyDescription: z.string().min(10, 'Description must be at least 10 characters').nullable(),
-  completionPoints: z.number().min(1, 'Must be at least 1 point'),
-  referralPoints: z.number().min(1, 'Must be at least 1 point'),
-  surveyLink: z.string().url('Must be a valid URL').nullable(),
-  potentialWinners: z.number().min(1, 'Must have at least 1 winner'),
-  deadline: z.date().min(new Date(), 'Deadline must be in the future'),
-
-  // Gift card details
-  giftCardName: z.string().min(2, 'Gift card name must be at least 2 characters'),
-  voucherCode: z.string().min(1, 'Voucher code is required'),
-  giftCardExpiry: z.date().min(new Date(), 'Expiry date must be in the future'),
-  giftCardAmount: z.number().min(1, 'Amount must be greater than 0')
-});
+import { editSurveyFormSchema } from '~/lib/validators';
 
 export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalytics'] }> = ({ survey }) => {
   const router = useRouter();
@@ -44,10 +28,10 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
     }
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof editSurveyFormSchema>>({
+    resolver: zodResolver(editSurveyFormSchema),
     defaultValues: {
-      eventName: '',
+      eventName: survey.event.name,
       surveyName: survey.name,
       surveyDescription: survey.description,
       completionPoints: survey.points,
@@ -170,7 +154,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
               <FormItem>
                 <FormLabel>Survey Deadline</FormLabel>
                 <FormControl>
-                  <DateTimePicker {...field} />
+                  <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -215,7 +199,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
               <FormItem>
                 <FormLabel>Gift Card Expiry</FormLabel>
                 <FormControl>
-                  <DateTimePicker {...field} />
+                  <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
