@@ -43,13 +43,12 @@ export const surveyRouter = createTRPCRouter({
   update: protectedProcedure.input(editSurveyFormSchema.extend({ id: z.number() })).mutation(async ({ ctx, input }) => {
     try {
       const user = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
-      if (!user[0]) throw new TRPCError({ code: 'NOT_FOUND' });
+      if (!user[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
       const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, input.id));
-      if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND' });
+      if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'Survey not found' });
       const {
         completionPoints,
         deadline,
-        eventName,
         surveyName,
         surveyLink,
         referralPoints,
@@ -57,6 +56,7 @@ export const surveyRouter = createTRPCRouter({
         surveyDescription,
         giftCardAmount,
         giftCardExpiry,
+        giftCardBrand,
         giftCardName,
         voucherCode
       } = input;
@@ -72,10 +72,38 @@ export const surveyRouter = createTRPCRouter({
           description: surveyDescription
         })
         .where(eq(surveyTable.id, input.id));
+      // upsert the gift card details
+      if (giftCardName && giftCardExpiry && giftCardAmount) {
+        const [giftCard] = await ctx.db
+          .insert(giftCardTable)
+          .values({
+            survey_id: input.id,
+            priority: 1,
+            name: giftCardName,
+            brand: giftCardBrand,
+            code: voucherCode,
+            expiry_date: new Date(giftCardExpiry).toDateString(),
+            value: giftCardAmount,
+            is_redeemed: false
+          })
+          .onConflictDoUpdate({
+            target: giftCardTable.code,
+            set: {
+              name: giftCardName,
+              brand: giftCardBrand,
+              code: voucherCode,
+              expiry_date: new Date(giftCardExpiry).toDateString(),
+              value: giftCardAmount,
+              is_redeemed: false
+            }
+          })
+          .returning();
+        console.log(giftCard);
+      }
       return survey[0];
     } catch (error) {
       console.error(error);
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
     }
   })
 });

@@ -32,8 +32,8 @@ export const surveyTable = pgTable('survey', {
   description: varchar({ length: 255 }),
   location: varchar({ length: 255 }),
   link: varchar({ length: 255 }),
-  start_date: timestamp().notNull(),
-  end_date: timestamp().notNull(),
+  start_date: timestamp({ mode: 'string' }).notNull(),
+  end_date: timestamp({ mode: 'string' }).notNull(),
   points: integer().notNull(),
   referral_bonus_points: integer().notNull(),
   created_by: integer()
@@ -87,7 +87,7 @@ export const giftCardTable = pgTable('gift_card', {
   brand: varchar({ length: 255 }).notNull(),
   name: varchar({ length: 255 }).notNull(),
   code: varchar({ length: 255 }).notNull().unique(),
-  expiry_date: timestamp().notNull(),
+  expiry_date: timestamp({ mode: 'string' }).notNull(),
   value: integer().notNull(), // Store value in cents
   is_redeemed: boolean().default(false),
   ...timestamps

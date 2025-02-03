@@ -42,6 +42,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
       deadline: new Date(survey.end_date),
       // Handle empty giftCards array with default values
       giftCardName: survey.giftCards?.[0]?.name ?? '',
+      giftCardBrand: survey.giftCards?.[0]?.brand ?? '',
       voucherCode: survey.giftCards?.[0]?.code ?? '',
       giftCardExpiry: survey.giftCards?.[0]?.expiry_date
         ? new Date(survey.giftCards[0].expiry_date)
@@ -69,11 +70,13 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
-        <section className='space-y-8'>
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium text-white'>Survey Details</h3>
-
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='grid grid-cols-1 place-content-evenly gap-8 lg:grid-cols-2'
+      >
+        <section className='flex grow flex-col space-y-6'>
+          <h3 className='text-lg font-medium text-white'>Survey Details</h3>
+          <div className='flex h-full flex-col justify-between space-y-4'>
             <FormField
               control={form.control}
               name='surveyName'
@@ -161,15 +164,28 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
             />
           </div>
         </section>
-        <section className='space-y-8'>
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium text-white'>Gift Card Details</h3>
+        <section className='flex grow flex-col space-y-6'>
+          <h3 className='text-lg font-medium text-white'>Gift Card Details</h3>
+          <div className='flex h-full flex-col justify-between space-y-4'>
             <FormField
               control={form.control}
               name='giftCardName'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Gift Card Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='giftCardBrand'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gift Card Brand</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -213,7 +229,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                 <FormItem>
                   <FormLabel>Gift Card Amount</FormLabel>
                   <FormControl>
-                    <Input type='number' {...field} onChange={e => field.onChange(+e.target.value)} />
+                    <Input type='number' {...field} onChange={e => field.onChange(e.target.value)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -222,7 +238,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
           </div>
         </section>
         <section className='lg:col-span-2'>
-          <Button size='xl' type='submit' className='w-full lg:mt-8'>
+          <Button size='xl' type='submit' className='w-full'>
             Update Survey
           </Button>
         </section>

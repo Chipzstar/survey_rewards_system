@@ -10,6 +10,7 @@ import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Input } from './input';
+import { useEffect } from 'react';
 
 interface DateTimePickerProps {
   date?: Date;
@@ -45,6 +46,10 @@ export function DateTimePicker({ date, setDate, className }: DateTimePickerProps
       setDate(newDate);
     }
   };
+
+  useEffect(() => {
+    console.log(date);
+  }, [date]);
 
   return (
     <div className={cn('grid gap-2', className)}>
