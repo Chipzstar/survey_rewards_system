@@ -41,7 +41,7 @@ export default async function SurveyDashboard({ params }: { params: { id: string
     };
   });
 
-  const isSurveyClosed = survey.end_date < new Date();
+  const isSurveyClosed = new Date(survey.end_date) < new Date();
 
   if (!survey) {
     return (

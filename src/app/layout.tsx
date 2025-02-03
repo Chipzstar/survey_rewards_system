@@ -6,6 +6,7 @@ import { ThemeProvider } from '~/components/providers/theme-provider';
 import { ThemeToggle } from '~/components/ui/theme';
 import { TRPCProvider } from '~/trpc/client';
 import { LoadingProvider } from '~/components/providers/loading-provider';
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className='fixed bottom-4 left-4 z-50 hidden md:block'>
                   <ThemeToggle />
                 </div>
+                <Toaster richColors />
               </ThemeProvider>
             </LoadingProvider>
           </body>
