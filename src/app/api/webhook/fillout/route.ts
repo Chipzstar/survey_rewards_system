@@ -21,6 +21,7 @@ async function handleFormResponse(event: FormEvent) {
     event: 'Survey Completed',
     properties: { survey_id, user_id, passcode, start_timestamp }
   });
+  console.log({ start_timestamp, survey_id, user_id, passcode });
 
   // fetch the survey using the survey_id
   const survey = await db.select().from(surveyTable).where(eq(surveyTable.id, survey_id));
