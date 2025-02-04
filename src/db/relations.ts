@@ -43,10 +43,6 @@ export const surveyResponseRelations = relations(surveyResponseTable, ({ one }) 
   survey: one(surveyTable, {
     fields: [surveyResponseTable.survey_id],
     references: [surveyTable.id]
-  }),
-  user: one(usersTable, {
-    fields: [surveyResponseTable.user_id],
-    references: [usersTable.id]
   })
 }));
 

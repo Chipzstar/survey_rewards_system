@@ -14,7 +14,12 @@ export const MainNav: FC<Props> = ({ className, surveyId }) => {
   const pathname = usePathname(); // Get current path
 
   return (
-    <nav className={cn('flex items-center gap-1 rounded-full bg-white/50 p-1 shadow-sm backdrop-blur-sm', className)}>
+    <nav
+      className={cn(
+        'flex items-center gap-1 rounded-lg bg-white/50 p-1 shadow-sm backdrop-blur-sm md:rounded-full',
+        className
+      )}
+    >
       {[
         { href: '/', label: 'Home' },
         { href: `/survey/${surveyId}`, label: 'Analytics' },
@@ -26,7 +31,7 @@ export const MainNav: FC<Props> = ({ className, surveyId }) => {
           key={href}
           href={href}
           className={cn(
-            'rounded-full px-4 py-2 text-sm font-medium transition-all duration-200',
+            'rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 sm:px-4 md:rounded-full',
             'truncate text-ellipsis hover:bg-gray-100 hover:shadow-sm',
             pathname === href ? 'bg-white text-primary shadow-sm' : 'text-gray-600'
           )}

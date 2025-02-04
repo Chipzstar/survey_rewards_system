@@ -1,11 +1,10 @@
-// src/app/(app)/survey/[id]/edit/edit-survey-form.tsx
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '~/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { DateTimePicker } from '~/components/ui/date-time-picker';
@@ -20,10 +19,11 @@ import { useLoading } from '~/components/providers/loading-provider';
 export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalytics'] }> = ({ survey }) => {
   const router = useRouter();
   const { loading, setLoading } = useLoading();
+  const utils = trpc.useUtils();
   const { mutateAsync: updateSurvey } = trpc.survey.update.useMutation({
     onSuccess: () => {
       toast.success('Survey updated successfully');
-      router.refresh();
+      void utils.survey.byIdWithAnalytics.invalidate({ id: Number(survey.id) });
     },
     onError: error => {
       toast.error(error.message);

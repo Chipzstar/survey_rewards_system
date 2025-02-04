@@ -19,11 +19,11 @@ export default async function SurveyLayout({ children, params }: Props) {
 
   return (
     <main className='flex min-h-screen flex-col items-center bg-gradient-to-br from-primary to-secondary p-4 sm:h-screen xl:p-12 2xl:p-24'>
-      <div className='mb-4 flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between md:mb-8'>
+      <div className='mb-4 flex w-full flex-col items-center gap-4 sm:flex-row sm:justify-between md:mb-8'>
         <h1 className='text-3xl font-bold tracking-tight text-white md:text-4xl'>{survey.name}</h1>
         <MainNav surveyId={surveyId} />
       </div>
-      <main className='flex h-full w-full overflow-y-auto'>{children}</main>
+      <main className='flex h-full w-full grow flex-col overflow-y-auto'>{children}</main>
     </main>
   );
 }

@@ -1,14 +1,11 @@
 import { env } from '~/env';
 import { FormEvent } from './types';
 import { NextResponse } from 'next/server';
-import { getUserDetails, verifySignature, writeToFile } from '~/lib/fillout';
+import { verifySignature, writeToFile } from '~/lib/fillout';
 import { db } from '~/db';
-import { surveyResponseTable, surveyTable, usersTable } from '~/db/schema';
-import { customAlphabet } from 'nanoid';
+import { surveyResponseTable, surveyTable } from '~/db/schema';
 import { prettyPrint } from '~/lib/utils';
 import { eq } from 'drizzle-orm';
-
-const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 6);
 
 const { NODE_ENV, FILLOUT_FORM_ID } = env;
 
@@ -16,43 +13,27 @@ async function handleFormResponse(event: FormEvent) {
   if (NODE_ENV === 'development') await writeToFile(event);
   const start_timestamp = event.submission.urlParameters.find(param => param.name === 'start_time')?.value;
   const survey_id = Number(event.submission.urlParameters.find(param => param.name === 'id')?.value);
+  const user_id = event.submission.urlParameters.find(param => param.name === 'user_id')?.value;
+  const passcode = event.submission.urlParameters.find(param => param.name === 'passcode')?.value;
 
   // fetch the survey using the survey_id
   const survey = await db.select().from(surveyTable).where(eq(surveyTable.id, survey_id));
   if (!survey[0]) return null;
 
-  const { email, name } = getUserDetails(event.submission);
-  if (!email || !name) return null;
-  // split name into first and last name
-  const [firstname, lastname] = name.split(' ');
-  const clerk_id = `guest_${nanoid(26)}`;
-  const user = await db
-    .insert(usersTable)
-    .values({
-      clerk_id,
-      firstname: firstname,
-      lastname: lastname,
-      email,
-      username: name,
-      points: survey[0].points
-    })
-    .returning();
-
-  if (!user[0]) return null;
   const completed_at = new Date(event.submission.submissionTime).toISOString();
   const started_at = new Date(Number(start_timestamp)).toISOString();
 
-  console.table({ completed_at, started_at });
+  console.table({ completed_at, started_at, user_id, passcode });
 
   // create survey response record
   const surveyResponse = await db
     .insert(surveyResponseTable)
     .values({
-      user_id: user[0].id,
+      user_id: String(user_id),
       survey_id,
       response_id: event.submission.submissionId,
       survey_code: event.formId,
-      passcode: nanoid(6),
+      passcode,
       started_at,
       completed_at,
       points_earned: survey[0].points,

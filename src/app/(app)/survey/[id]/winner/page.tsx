@@ -1,7 +1,6 @@
 import { Button } from '~/components/ui/button';
-import Link from 'next/link';
 import { auth } from '@clerk/nextjs/server';
-import { trpc } from '~/trpc/server';
+import { HydrateClient, trpc } from '~/trpc/server';
 import { differenceInSeconds } from 'date-fns';
 
 export default async function WinnerAnnouncementPage({ params }: { params: { id: string } }) {
@@ -27,22 +26,26 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
   });
 
   return (
-    <div className='m-auto'>
-      <div className='flex flex-col items-center rounded-lg bg-white/10 p-6 shadow-lg'>
-        <h2 className='mb-4 text-3xl font-bold text-white'>The £30 giftcard winners are...</h2>
-        <div className='mb-6 space-y-4'>
-          {winnerData.map(winner => (
-            <div key={winner.rank} className='flex flex-col items-center'>
-              <h3 className='text-4xl font-bold text-white'>{winner.name}</h3>
-              <p className='text-lg text-gray-300'>
-                Rank: {winner.rank}, Total: {winner.points}
-              </p>
-              <Button className='mt-2 bg-tertiary hover:bg-tertiary/90'>Claim giftcard</Button>
-            </div>
-          ))}
+    <HydrateClient>
+      <div className='m-auto'>
+        <div className='flex flex-col items-center rounded-lg bg-white/10 p-6 shadow-lg'>
+          <h2 className='mb-4 text-3xl font-bold text-white'>
+            The £{survey.giftCards[0]!.value} giftcard winners are...
+          </h2>
+          <div className='mb-6 space-y-4'>
+            {winnerData.map(winner => (
+              <div key={winner.rank} className='flex flex-col items-center'>
+                <h3 className='text-4xl font-bold text-white'>{winner.name}</h3>
+                <p className='text-lg text-gray-300'>
+                  Rank: {winner.rank}, Total: {winner.points}
+                </p>
+                <Button className='mt-2 bg-tertiary hover:bg-tertiary/90'>Claim giftcard</Button>
+              </div>
+            ))}
+          </div>
+          <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>
         </div>
-        <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>
       </div>
-    </div>
+    </HydrateClient>
   );
 }

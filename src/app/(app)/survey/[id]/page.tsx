@@ -1,11 +1,11 @@
 import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { auth } from '@clerk/nextjs/server';
-import { trpc } from '~/trpc/server';
-import { differenceInMinutes, differenceInSeconds, format } from 'date-fns';
+import { HydrateClient, trpc } from '~/trpc/server';
+import { differenceInMinutes, differenceInSeconds } from 'date-fns';
 import { DataTable } from '~/components/leaderboard/data-table';
 import { columns } from '~/components/leaderboard/columns';
-import { MainNav } from '~/components/layout/main-nav';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
 export default async function SurveyDashboard({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -23,6 +23,9 @@ export default async function SurveyDashboard({ params }: { params: { id: string
     return acc + diff;
   }, 0);
   const avg_completion_time = total_completion_time / surveys_completed.length;
+  const total_referrals = survey.responses.reduce((acc, r) => {
+    return acc + r.referrals;
+  }, 0);
 
   // Data
   const sortedResponses = survey.responses.sort((a, b) => {
@@ -34,14 +37,12 @@ export default async function SurveyDashboard({ params }: { params: { id: string
     const completion_time = differenceInSeconds(new Date(response.completed_at), new Date(response.started_at));
     return {
       rank: index + 1,
-      name: response.user.firstname,
+      userId: response.user_id,
       time: completion_time,
-      ref: survey.referrals.filter(r => r.referrer_id === response.user_id).length ?? 0,
+      ref: response.referrals,
       total: response.points_earned
     };
   });
-
-  const isSurveyClosed = new Date(survey.end_date) < new Date();
 
   if (!survey) {
     return (
@@ -58,43 +59,76 @@ export default async function SurveyDashboard({ params }: { params: { id: string
   }
 
   return (
-    <div className='mx-auto flex w-full max-w-3xl flex-col text-white'>
-      <section className='flex flex-col'>
-        <h2 className='mb-2 text-2xl font-bold md:mb-4'>The Big Picture</h2>
-        <div className='mb-2 flex gap-4 md:mb-4 md:gap-8'>
-          <div className='flex flex-col items-center'>
-            <h3 className='text-xl font-semibold'>Completed surveys</h3>
-            <p className='text-2xl font-bold md:text-3xl'>{surveys_completed.length}</p>
+    <HydrateClient>
+      <div className='mx-auto flex w-full max-w-3xl flex-col text-white'>
+        <section className='flex flex-col'>
+          <h2 className='mb-2 text-2xl font-bold md:mb-4'>The Big Picture</h2>
+          <div className='mb-4 grid grid-cols-2 gap-4'>
+            <Card className='border-gray-200 bg-transparent text-white dark:border-gray-200 dark:bg-white/10'>
+              <CardHeader>
+                <CardTitle className='text-xl font-semibold'>Completed Surveys</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='text-4xl font-bold'>{surveys_completed.length}</div>
+              </CardContent>
+            </Card>
+            <Card className='border-gray-200 bg-transparent text-white dark:border-gray-200 dark:bg-white/10'>
+              <CardHeader>
+                <CardTitle className='text-xl font-semibold'># of referrals</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='text-4xl font-bold'>{total_referrals}</div>
+              </CardContent>
+            </Card>
           </div>
-          <div className='flex flex-col items-center'>
-            <h3 className='text-xl font-semibold'># of referrals</h3>
-            <p className='text-2xl font-bold md:text-3xl'>{survey.referrals.length}</p>
+          <div className='mb-2 flex flex-col gap-1 md:mb-4 md:gap-2'>
+            <ul className='divide-y divide-white'>
+              <li className='py-2'>
+                <div className='flex items-center justify-between'>
+                  <span>No. of surveys started:</span>
+                  <span className='font-bold'>{survey.responses.length}</span>
+                </div>
+              </li>
+              <li className='py-2'>
+                <div className='flex items-center justify-between'>
+                  <span>No. of surveys completed:</span>
+                  <span className='font-bold'>{surveys_completed.length}</span>
+                </div>
+              </li>
+              <li className='py-2'>
+                <div className='flex items-center justify-between'>
+                  <span>Survey completion rate:</span>
+                  <span className='font-bold'>{completion_rate}%</span>
+                </div>
+              </li>
+              <li className='py-2'>
+                <div className='flex items-center justify-between'>
+                  <span>Average time taken:</span>
+                  <span className='font-bold'>{avg_completion_time}mins</span>
+                </div>
+              </li>
+              <li className='py-2'>
+                <div className='flex items-center justify-between'>
+                  <span>Total no. of referrals:</span>
+                  <span className='font-bold'>{total_referrals}</span>
+                </div>
+              </li>
+              <li className='py-2'>
+                <div className='flex items-center justify-between'>
+                  <span>Av. number of referrals:</span>
+                  <span className='font-bold'>{survey.referrals.length}</span>
+                </div>
+              </li>
+            </ul>
           </div>
-        </div>
-        <div className='mb-2 flex flex-col gap-1 md:mb-4 md:gap-2'>
-          <p>
-            No. of surveys started: <span className='font-bold'>{survey.responses.length}</span>
-          </p>
-          <p>
-            No. of surveys completed: <span className='font-bold'>{surveys_completed.length}</span>
-          </p>
-          <p>
-            Survey completion rate: <span className='font-bold'>{completion_rate}%</span>
-          </p>
-          <p>
-            Average time taken: <span className='font-bold'>{avg_completion_time}mins</span>
-          </p>
-          <p>
-            Total no. of referrals: <span className='font-bold'>{survey.referrals.length}</span>
-          </p>
-        </div>
-      </section>
-      <section className='mt-5 flex flex-col'>
-        <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
-        <div className='w-full overflow-x-auto'>
-          <DataTable columns={columns} data={data} />
-        </div>
-      </section>
-    </div>
+        </section>
+        <section className='mt-5 flex flex-col'>
+          <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
+          <div className='w-full overflow-x-auto'>
+            <DataTable columns={columns} data={data} />
+          </div>
+        </section>
+      </div>
+    </HydrateClient>
   );
 }

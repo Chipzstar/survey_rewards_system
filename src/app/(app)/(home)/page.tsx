@@ -22,19 +22,15 @@ export default async function Dashboard() {
 
   return (
     <HydrateClient>
-      <main className='flex min-h-screen flex-col xl:p-12 2xl:p-24'>
+      <main className='flex min-h-screen flex-col p-6 xl:p-12 2xl:p-24'>
         <div className='mb-8 flex w-full items-center justify-between'>
           <h1 className='text-4xl font-bold'>Dashboard</h1>
           <UserButton afterSignOutUrl='/' />
         </div>
         <div className='flex flex-col items-center justify-center'>
-          <p className='mb-4'>Welcome to your dashboard.</p>
-          <Button asChild>
-            <Link href='/create-survey'>Create new survey rewards form!</Link>
-          </Button>
           <div className='mt-8'>
             <h2 className='text-2xl font-semibold'>Survey Dashboard</h2>
-            <ul className='mt-2'>
+            <ul className='mt-6'>
               {surveys.map(survey => (
                 <li key={survey.id}>
                   <Link
