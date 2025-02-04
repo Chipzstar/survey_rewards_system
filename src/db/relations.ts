@@ -50,15 +50,15 @@ export const referralRelations = relations(referralTable, ({ one }) => ({
   survey: one(surveyTable, {
     fields: [referralTable.survey_id],
     references: [surveyTable.id]
-  }),
-  referrer: one(usersTable, {
+  })
+  /*referrer: one(usersTable, {
     fields: [referralTable.referrer_id],
     references: [usersTable.id]
   }),
   referee: one(usersTable, {
     fields: [referralTable.referee_id],
     references: [usersTable.id]
-  })
+  })*/
 }));
 
 export const surveyWinnerRelations = relations(surveyWinnerTable, ({ one }) => ({

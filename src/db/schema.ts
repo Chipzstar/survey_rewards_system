@@ -65,12 +65,9 @@ export const referralTable = pgTable('referral', {
   survey_id: integer()
     .references(() => surveyTable.id)
     .notNull(),
-  referrer_id: integer()
-    .references(() => usersTable.id)
-    .notNull(),
-  referee_id: integer()
-    .references(() => usersTable.id)
-    .notNull(),
+  referrer_id: varchar({ length: 255 }).notNull(),
+  referee_id: varchar({ length: 255 }).notNull(),
+  name: varchar({ length: 255 }).notNull(),
   is_completed: boolean().default(false),
   completed_at: timestamp(),
   bonus_points_earned: integer().default(0),

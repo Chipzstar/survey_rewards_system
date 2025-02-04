@@ -23,7 +23,7 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
             <span className='font-bold'>BOOST</span> your position further and get&nbsp;
             <span className='font-bold'>DOUBLE</span> points by sharing your event connections!
           </p>
-          <AddReferralForm />
+          <AddReferralForm surveyId={survey.id} userId={response.user_id} />
           <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>
         </div>
       </main>

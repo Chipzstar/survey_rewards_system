@@ -1,36 +1,60 @@
 'use client';
 
 import { toast } from 'sonner';
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { Form, FormField, FormItem, FormMessage } from '~/components/ui/form';
 import { trpc } from '~/trpc/client';
+import { useLoading } from '~/components/providers/loading-provider';
+
+interface Props {
+  surveyId: number;
+  userId: string;
+}
 
 interface FormValues {
   referralName: string;
 }
 
-export const AddReferralForm = () => {
+export const AddReferralForm: FC<Props> = props => {
+  const { setLoading } = useLoading();
   const form = useForm<FormValues>({
     defaultValues: {
       referralName: ''
     }
   });
-  const { mutateAsync: addReferral } = trpc.survey.addReferral.useMutation({
+  const { mutate: addReferral } = trpc.survey.addReferral.useMutation({
     onSuccess: () => {
       toast.success('Referral added successfully');
       console.log('Referral added successfully');
     },
     onError: error => {
+      if (error?.data?.code === 'BAD_REQUEST') {
+        toast.error('Referral already exists');
+        form.setError('referralName', {
+          type: 'custom',
+          message: 'Referral already exists'
+        });
+      } else {
+        toast.error('Failed to add referral', { description: error.message });
+      }
       console.error(error);
+    },
+    onSettled: () => {
+      setLoading(false);
     }
   });
 
   const handleSubmit = (values: FormValues) => {
-    // Handle referral submission logic here
     console.log('Referral Name:', values);
+    setLoading(true);
+    addReferral({
+      surveyId: props.surveyId,
+      userId: props.userId,
+      name: values.referralName
+    });
   };
 
   return (
