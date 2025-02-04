@@ -40,6 +40,17 @@ module.exports = {
         },
         tertiary: {
           DEFAULT: '#2EEED8',
+          50: '#D8FCF8',
+          100: '#C5FAF4',
+          200: '#9FF7ED',
+          300: '#79F4E6',
+          400: '#54F1DF',
+          500: '#2EEED8',
+          600: '#11D3BD',
+          700: '#0D9F8E',
+          800: '#096B60',
+          900: '#043731',
+          950: '#021D1A',
           foreground: '#ffffff'
         },
         background: 'hsl(var(--background))',

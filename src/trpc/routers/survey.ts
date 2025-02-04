@@ -114,5 +114,17 @@ export const surveyRouter = createTRPCRouter({
       console.error(error);
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
     }
-  })
+  }),
+  addReferral: protectedProcedure
+    .input(z.object({ surveyId: z.number(), userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, input.surveyId));
+        if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'Survey not found' });
+        return true;
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
+      }
+    })
 });

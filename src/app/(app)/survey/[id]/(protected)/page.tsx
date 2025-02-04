@@ -51,7 +51,7 @@ export default async function SurveyDashboard({ params }: { params: { id: string
           <h1 className='mb-4 text-4xl font-bold'>Survey Not Found</h1>
           <p className='mb-8 text-xl'>The survey you're looking for doesn't exist or has been removed.</p>
           <Button asChild>
-            <Link href='/'>Return to Dashboard</Link>
+            <Link href='/public'>Return to Dashboard</Link>
           </Button>
         </div>
       </main>

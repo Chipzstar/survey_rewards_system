@@ -1,10 +1,12 @@
 'use client';
 
+import { toast } from 'sonner';
 import React, { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { Form, FormField, FormItem, FormMessage } from '~/components/ui/form';
+import { trpc } from '~/trpc/client';
 
 interface FormValues {
   referralName: string;
@@ -14,6 +16,15 @@ export const AddReferralForm = () => {
   const form = useForm<FormValues>({
     defaultValues: {
       referralName: ''
+    }
+  });
+  const { mutateAsync: addReferral } = trpc.survey.addReferral.useMutation({
+    onSuccess: () => {
+      toast.success('Referral added successfully');
+      console.log('Referral added successfully');
+    },
+    onError: error => {
+      console.error(error);
     }
   });
 
