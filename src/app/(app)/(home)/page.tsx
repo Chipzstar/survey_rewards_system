@@ -30,7 +30,7 @@ export default async function Dashboard() {
         <div className='flex flex-col items-center justify-center'>
           <div className='mt-8'>
             <h2 className='text-2xl font-semibold'>Survey Dashboard</h2>
-            <ul className='mt-6'>
+            <ul className='mt-6 flex flex-col gap-y-4'>
               {surveys.map(survey => (
                 <li key={survey.id}>
                   <Link

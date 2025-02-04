@@ -24,7 +24,8 @@ export const surveyRouter = createTRPCRouter({
     const survey = await ctx.db.query.surveyTable.findMany({
       with: {
         responses: true
-      }
+      },
+      where: eq(surveyTable.id, input.id)
     });
     if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'No Survey found with that ID' });
     console.log(survey);
@@ -40,7 +41,8 @@ export const surveyRouter = createTRPCRouter({
           where: (referrals, { eq }) => eq(referrals.is_completed, true)
         },
         giftCards: true
-      }
+      },
+      where: eq(surveyTable.id, input.id)
     });
     if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND' });
 
