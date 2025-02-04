@@ -51,6 +51,7 @@ export async function POST(req: Request) {
     const signature = req.headers.get('fillout-signature');
     const isValid = verifySignature(signature);
     if (!isValid) {
+      console.log({ signature });
       return NextResponse.json(
         { received: true, message: `Webhook received`, error: 'Invalid signature' },
         { status: 401 }
