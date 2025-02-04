@@ -6,6 +6,7 @@ import { db } from '~/db';
 import { surveyResponseTable, surveyTable } from '~/db/schema';
 import { prettyPrint } from '~/lib/utils';
 import { eq } from 'drizzle-orm';
+import { posthog } from '~/lib/posthog';
 
 const { NODE_ENV, FILLOUT_FORM_ID } = env;
 
@@ -15,7 +16,11 @@ async function handleFormResponse(event: FormEvent) {
   const survey_id = Number(event.submission.urlParameters.find(param => param.name === 'id')?.value);
   const user_id = event.submission.urlParameters.find(param => param.name === 'user_id')?.value;
   const passcode = event.submission.urlParameters.find(param => param.name === 'passcode')?.value;
-  console.log({ start_timestamp, survey_id, user_id, passcode });
+  posthog.capture({
+    distinctId: event.submission.submissionId,
+    event: 'Survey Completed',
+    properties: { survey_id, user_id, passcode, start_timestamp }
+  });
 
   // fetch the survey using the survey_id
   const survey = await db.select().from(surveyTable).where(eq(surveyTable.id, survey_id));
@@ -41,6 +46,12 @@ async function handleFormResponse(event: FormEvent) {
     .returning();
 
   if (!surveyResponse[0]) return null;
+
+  posthog.capture({
+    distinctId: event.submission.submissionId,
+    event: 'Survey Response',
+    properties: surveyResponse[0]
+  });
   return surveyResponse[0];
 }
 
