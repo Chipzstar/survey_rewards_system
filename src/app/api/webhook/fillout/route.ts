@@ -15,6 +15,7 @@ async function handleFormResponse(event: FormEvent) {
   const survey_id = Number(event.submission.urlParameters.find(param => param.name === 'id')?.value);
   const user_id = event.submission.urlParameters.find(param => param.name === 'user_id')?.value;
   const passcode = event.submission.urlParameters.find(param => param.name === 'passcode')?.value;
+  console.log({ start_timestamp, survey_id, user_id, passcode });
 
   // fetch the survey using the survey_id
   const survey = await db.select().from(surveyTable).where(eq(surveyTable.id, survey_id));
@@ -22,8 +23,6 @@ async function handleFormResponse(event: FormEvent) {
 
   const completed_at = new Date(event.submission.submissionTime).toISOString();
   const started_at = new Date(Number(start_timestamp)).toISOString();
-
-  console.table({ completed_at, started_at, user_id, passcode });
 
   // create survey response record
   const surveyResponse = await db
