@@ -30,7 +30,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
       <div className='m-auto'>
         <div className='flex flex-col items-center rounded-lg bg-white/10 p-6 shadow-lg'>
           <h2 className='mb-4 text-3xl font-bold text-white'>
-            The £{survey.giftCards[0]!.value} giftcard winners are...
+            The £{survey.giftCards[0]!.value} gift card winners are...
           </h2>
           <div className='mb-6 flex flex-col space-y-4'>
             {winnerData.map(winner => (
@@ -39,7 +39,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
               </div>
             ))}
           </div>
-          <Button size='lg' className='mt-2 bg-tertiary hover:bg-tertiary/90'>
+          <Button size='lg' variant='tertiary' className='mt-2'>
             Claim Gift Card
           </Button>
           <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>

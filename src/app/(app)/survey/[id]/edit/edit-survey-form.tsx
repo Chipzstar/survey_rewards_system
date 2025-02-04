@@ -238,7 +238,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
           </div>
         </section>
         <section className='lg:col-span-2'>
-          <Button size='xl' type='submit' className='w-full'>
+          <Button size='xl' type='submit' className='w-full' variant='tertiary'>
             Update Survey
           </Button>
         </section>
