@@ -22,5 +22,6 @@ export async function writeToFile(data: any) {
 export const verifySignature = (sig: string | null) => {
   if (NODE_ENV === 'development') return true;
   const base64Secret = btoa(secret);
+  console.log({ isValid: base64Secret === sig, sig, secret });
   return base64Secret === sig;
 };
