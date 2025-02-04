@@ -4,8 +4,7 @@ import { differenceInSeconds } from 'date-fns';
 import { AddReferralForm } from '~/app/(app)/leaderboard/[surveyId]/[userId]/addReferralForm';
 
 export default async function ThankYouPage({ params }: { params: { surveyId: string; userId: string } }) {
-  // Replace w
-  const survey = await trpc.survey.byIdWithResponses({ id: Number(params.userId) });
+  const survey = await trpc.survey.byIdWithResponses({ id: Number(params.surveyId) });
   const response = survey.responses.find(r => r.user_id === params.userId);
   if (!response) throw new Error(`No response found for user ID:  ${params.userId}`);
 
