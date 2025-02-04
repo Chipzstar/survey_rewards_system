@@ -18,9 +18,9 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
   const winnerData = sortedResponses.slice(0, survey.number_of_winners).map((response, index) => {
     return {
       rank: index + 1,
-      name: response.user.firstname,
-      winnerRef: survey.referrals.find(r => r.referrer_id === response.user_id) || '#',
-      points: response.user.points,
+      name: response.user_id,
+      winnerRef: response.referrals || '#',
+      points: response.points_earned,
       giftCardValue: survey.giftCards[0]?.value ?? '£30'
     };
   });
@@ -35,7 +35,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
           <div className='mb-6 space-y-4'>
             {winnerData.map(winner => (
               <div key={winner.rank} className='flex flex-col items-center'>
-                <h3 className='text-4xl font-bold text-white'>{winner.name}</h3>
+                <h3 className='text-4xl font-bold text-white'>ID: {winner.name}</h3>
                 <p className='text-lg text-gray-300'>
                   Rank: {winner.rank}, Total: {winner.points}
                 </p>

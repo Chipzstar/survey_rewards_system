@@ -15,7 +15,18 @@ export const surveyRouter = createTRPCRouter({
   byId: protectedProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
     // Fetch a specific survey by ID from the database or API
     const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, input.id));
-    if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND' });
+    if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'No Survey found with that ID' });
+    console.log(survey);
+    return survey[0];
+  }),
+  byIdWithResponses: protectedProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
+    // Fetch a specific survey by ID with associated responses from the database or API
+    const survey = await ctx.db.query.surveyTable.findMany({
+      with: {
+        responses: true
+      }
+    });
+    if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'No Survey found with that ID' });
     console.log(survey);
     return survey[0];
   }),
