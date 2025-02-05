@@ -2,9 +2,12 @@ import { Button } from '~/components/ui/button';
 import { auth } from '@clerk/nextjs/server';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { differenceInSeconds } from 'date-fns';
+import Link from 'next/link';
+import { env } from '~/env';
 
 export default async function WinnerAnnouncementPage({ params }: { params: { id: string } }) {
   const { id } = params;
+  const { NEXT_PUBLIC_BASE_URL } = env;
   const user = await auth();
 
   const survey = await trpc.survey.byIdWithAnalytics({ id: Number(id) });
@@ -39,9 +42,12 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
               </div>
             ))}
           </div>
-          <Button size='lg' variant='tertiary' className='mt-2'>
-            Claim Gift Card
-          </Button>
+          <h2 className='mb-4 text-3xl font-bold text-white'>Claim your gift card here</h2>
+          <Link href={`/survey/${id}/check-winner`} className='mt-2 text-white underline' target={'_blank'}>
+            <span>
+              {NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner
+            </span>
+          </Link>
           <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>
         </div>
       </div>

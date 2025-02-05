@@ -33,6 +33,7 @@ export default async function SurveyDashboard({ params }: { params: { id: string
     const timeB = differenceInSeconds(new Date(b.completed_at), new Date(b.started_at));
     return timeA - timeB; // Sort ascending (lowest to highest)
   });
+
   const data = sortedResponses.map((response, index) => {
     const completion_time = differenceInSeconds(new Date(response.completed_at), new Date(response.started_at));
     return {

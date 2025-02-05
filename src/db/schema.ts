@@ -94,9 +94,7 @@ export const surveyWinnerTable = pgTable('survey_winner', {
   survey_id: integer()
     .references(() => surveyTable.id)
     .notNull(),
-  user_id: integer()
-    .references(() => usersTable.id)
-    .notNull(),
+  user_id: varchar({ length: 255 }).notNull(),
   gift_card_id: integer()
     .references(() => giftCardTable.id)
     .notNull(),

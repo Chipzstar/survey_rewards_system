@@ -35,7 +35,7 @@ export const AddReferralForm: FC<Props> = props => {
         toast.error('Referral already exists');
         form.setError('referralName', {
           type: 'custom',
-          message: 'Referral already exists'
+          message: 'You already added this person'
         });
       } else {
         toast.error('Failed to add referral', { description: error.message });

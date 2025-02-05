@@ -1,9 +1,17 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../init';
-import { giftCardTable, referralTable, surveyResponseTable, surveyTable, usersTable } from '~/db/schema';
+import {
+  giftCardTable,
+  referralTable,
+  surveyResponseTable,
+  surveyTable,
+  surveyWinnerTable,
+  usersTable
+} from '~/db/schema';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { and, AnyColumn, eq, sql } from 'drizzle-orm';
 import { editSurveyFormSchema } from '~/lib/validators';
+import { rankResponses } from '~/lib/utils';
 
 const increment = (column: AnyColumn, value = 1) => {
   return sql`${column}
@@ -18,14 +26,14 @@ export const surveyRouter = createTRPCRouter({
     console.log(surveys);
     return surveys;
   }),
-  byId: protectedProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
+  byId: publicProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
     // Fetch a specific survey by ID from the database or API
     const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, input.id));
     if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'No Survey found with that ID' });
     console.log(survey);
     return survey[0];
   }),
-  byIdWithResponses: protectedProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
+  byIdWithResponses: publicProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
     // Fetch a specific survey by ID with associated responses from the database or API
     const survey = await ctx.db.query.surveyTable.findMany({
       with: {
@@ -161,5 +169,57 @@ export const surveyRouter = createTRPCRouter({
         .returning();
       console.log(surveyResponse[0]);
       return surveyResponse[0];
+    }),
+  checkSurveyWinner: publicProcedure
+    .input(z.object({ surveyId: z.number(), passcode: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { surveyId } = input;
+      const survey = await ctx.db.query.surveyTable.findFirst({
+        where: eq(surveyTable.id, surveyId),
+        with: {
+          giftCards: true
+        }
+      });
+      if (!survey) throw new TRPCError({ code: 'NOT_FOUND', message: 'Survey not found' });
+      if (!survey.giftCards[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'Gift card not found' });
+
+      // Check all the survey responses and validate if the passcode belongs to a response
+      const responses = await ctx.db
+        .select()
+        .from(surveyResponseTable)
+        .where(and(eq(surveyResponseTable.survey_id, surveyId), eq(surveyResponseTable.is_completed, true)));
+      const response = responses.find(r => r.passcode === input.passcode);
+      if (!response) throw new TRPCError({ code: 'NOT_FOUND', message: 'Invalid passcode' });
+
+      // Sort the responses using a custom function that takes into account the completion time and the points earned
+      const sortedResponses = responses.sort(rankResponses(responses));
+      const top10 = sortedResponses.slice(0, 10);
+
+      // check if the response is in the top 10
+      const isWinner = top10.some(r => r.user_id === response.user_id);
+      if (!isWinner) throw new TRPCError({ code: 'FORBIDDEN', message: 'Sorry, you are not a selected winner' });
+
+      // check if a survey winner has already been claimed
+      const surveyWinner = await ctx.db
+        .select()
+        .from(surveyWinnerTable)
+        .where(eq(surveyWinnerTable.survey_id, surveyId));
+
+      if (surveyWinner.length)
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Sorry, a winner has already been claimed' });
+
+      // update the survey winner table
+      const winner = await ctx.db
+        .insert(surveyWinnerTable)
+        .values({
+          survey_id: surveyId,
+          total_points: response.points_earned,
+          user_id: response.user_id,
+          gift_card_id: survey.giftCards[0].id,
+          rank: top10.indexOf(response) + 1
+        })
+        .returning();
+      console.log(winner);
+      return winner;
     })
 });
