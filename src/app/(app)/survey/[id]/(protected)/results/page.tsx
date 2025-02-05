@@ -31,25 +31,31 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
 
   return (
     <HydrateClient>
-      <div className='m-auto flex grow flex-col gap-y-4'>
-        <div className='flex grow flex-col items-center justify-around rounded-lg bg-white/10 p-6 shadow-lg'>
+      <div className='my-auto flex grow flex-col gap-y-4 sm:mx-auto'>
+        <div className='flex max-w-3xl grow flex-col items-center justify-around rounded-lg bg-white/10 p-6 shadow-lg'>
           <h2 className='mb-4 text-center text-3xl font-bold text-white'>
             The £{survey.giftCards[0]!.value} gift card winners are...
           </h2>
           <div className='mb-6 flex flex-col space-y-4'>
             {winnerData.map(winner => (
               <div key={winner.rank} className='flex flex-col items-center'>
-                <h3 className='text-4xl font-bold text-white'>ID: {winner.name}</h3>
+                <h3 className='text-3xl font-bold text-white lg:text-4xl'>ID: {winner.name}</h3>
               </div>
             ))}
           </div>
           <section className='flex flex-col items-center space-y-4 text-center'>
-            <h2 className='mb-4 text-3xl font-bold text-white'>Claim your gift card here</h2>
-            <Link href={`/survey/${id}/check-winner`} className='mt-2 text-lg text-white underline' target={'_blank'}>
-              <span>
-                {NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner
-              </span>
-            </Link>
+            <h2 className='mb-4 text-2xl font-bold text-white lg:text-3xl'>Claim your gift card here</h2>
+            <div className='px-2'>
+              <Link
+                href={`/survey/${id}/check-winner`}
+                className='mt-2 text-wrap text-lg text-white underline'
+                target={'_blank'}
+              >
+                <span>
+                  {NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner
+                </span>
+              </Link>
+            </div>
           </section>
         </div>
         <div className='flex flex-col items-center gap-4 text-center'>

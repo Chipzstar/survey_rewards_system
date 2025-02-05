@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang='en'>
           <body className={inter.className}>
             <LoadingProvider>
-              <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+              <ThemeProvider attribute='class' defaultTheme='light' enableSystem={false} disableTransitionOnChange>
                 {children}
                 <div className='fixed bottom-4 left-4 z-50 hidden md:block'>
                   <ThemeToggle />
