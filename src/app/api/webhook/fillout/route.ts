@@ -8,7 +8,7 @@ import { prettyPrint } from '~/lib/utils';
 import { eq } from 'drizzle-orm';
 import { posthog } from '~/lib/posthog';
 
-const { NODE_ENV, FILLOUT_FORM_ID } = env;
+const { NODE_ENV, FILLOUT_FORM_ID_DAY_1, FILLOUT_FORM_ID_DAY_2 } = env;
 
 async function handleFormResponse(event: FormEvent) {
   if (NODE_ENV === 'development') await writeToFile(event);
@@ -59,7 +59,6 @@ async function handleFormResponse(event: FormEvent) {
 export async function POST(req: Request) {
   try {
     const event = (await req.json()) as FormEvent;
-    console.log({ FILLOUT_FORM_ID, formId: event.formId });
     const signature = req.headers.get('fillout-signature');
     const isValid = verifySignature(signature);
     /*if (!isValid) {
@@ -70,7 +69,8 @@ export async function POST(req: Request) {
     }*/
     let data;
     switch (event.formId) {
-      case FILLOUT_FORM_ID:
+      case FILLOUT_FORM_ID_DAY_1:
+      case FILLOUT_FORM_ID_DAY_2:
         data = await handleFormResponse(event);
         break;
       default:
