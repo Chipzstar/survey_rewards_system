@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { CheckWinnerForm } from './check-winner-form';
 import { HydrateClient, trpc } from '~/trpc/server';

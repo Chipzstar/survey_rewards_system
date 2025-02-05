@@ -4,7 +4,7 @@ import { differenceInSeconds } from 'date-fns';
 import { AddReferralForm } from './addReferralForm';
 
 export default async function ThankYouPage({ params }: { params: { id: string; userId: string } }) {
-  const survey = await trpc.survey.byIdWithResponses({ id: Number(params.id) });
+  const survey = await trpc.survey.byIdWithResults({ id: Number(params.id) });
   const response = survey.responses.find(r => r.user_id === params.userId);
   if (!response) throw new Error(`No response found for user ID:  ${params.userId}`);
 
@@ -18,7 +18,7 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
           <p className='mb-6 text-pretty text-2xl'>
             Your finish time was&nbsp;
             <br />
-            <span className='text-secondary-800 text-3xl font-bold'>{completion_time} seconds</span>
+            <span className='text-3xl font-bold text-secondary-800'>{completion_time} seconds</span>
           </p>
           <p className='mb-4 text-balance text-center text-xl md:w-2/3'>
             <span className='font-bold'>BOOST</span> your position further and get&nbsp;

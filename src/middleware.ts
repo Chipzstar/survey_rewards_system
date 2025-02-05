@@ -8,7 +8,10 @@ const isPublicRoute = createRouteMatcher([
   '/forgot-password(.*)',
   '/terms-of-service',
   '/privacy-policy',
-  '/api/webhook(.*)'
+  '/api/webhook(.*)',
+  '/survey/(.*)/check-winner',
+  '/survey/(.*)/winner',
+  '/survey/(.*)/leaderboard/(.*)'
 ]);
 
 export default clerkMiddleware(
