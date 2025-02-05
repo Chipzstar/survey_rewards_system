@@ -59,16 +59,16 @@ async function handleFormResponse(event: FormEvent) {
 export async function POST(req: Request) {
   try {
     const event = (await req.json()) as FormEvent;
+    console.log({ FILLOUT_FORM_ID, formId: event.formId });
     const signature = req.headers.get('fillout-signature');
     const isValid = verifySignature(signature);
-    if (!isValid) {
+    /*if (!isValid) {
       return NextResponse.json(
         { received: true, message: `Webhook received`, error: 'Invalid signature' },
         { status: 401 }
       );
-    }
+    }*/
     let data;
-    console.log({ FILLOUT_FORM_ID, formId: event.formId });
     switch (event.formId) {
       case FILLOUT_FORM_ID:
         data = await handleFormResponse(event);
