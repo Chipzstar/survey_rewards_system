@@ -4,7 +4,7 @@ import Link from 'next/link';
 export function SurveyLink(props: { href: string; surveyLink: string | null }) {
   return (
     <>
-      <div className='hidden flex-col flex-wrap items-center md:flex'>
+      <div className='flex flex-col flex-wrap items-center lg:hidden'>
         <h2 className='mb-4 text-2xl font-bold'>Link</h2>
         <Link href={props.href} className='text-wrap break-words text-white underline' target='_blank'>
           {props.surveyLink}
