@@ -1,4 +1,3 @@
-import QRCode from 'react-qr-code';
 import { auth } from '@clerk/nextjs/server';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { genPasscode, genUserId } from '~/lib/utils';
@@ -22,7 +21,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
           <h2 className='text-balance text-center text-xl font-semibold text-[#6F42FF]'>
             🎉 Scan NOW! The Fastest win the MOST QR Points! 🏆
           </h2>
-          <SurveyLink surveyLink={survey.link} passcode={passcode} userId={user_id} />
+          <SurveyLink surveyId={survey.id} surveyLink={survey.link} passcode={passcode} userId={user_id} />
         </div>
       </div>
     </HydrateClient>

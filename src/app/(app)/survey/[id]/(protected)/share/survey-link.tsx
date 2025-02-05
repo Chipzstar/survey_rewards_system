@@ -5,6 +5,7 @@ import QRCode from 'react-qr-code';
 import { FC, useEffect, useMemo, useState } from 'react';
 
 interface Props {
+  surveyId: number;
   surveyLink: string | null;
   passcode: string;
   userId: string;
@@ -23,7 +24,7 @@ export const SurveyLink: FC<Props> = props => {
   }, []);
 
   const surveyHref = useMemo(() => {
-    return `${props.surveyLink}?id=${props.userId}&start_time=${startTime}&user_id=${props.userId}&passcode=${props.passcode}`;
+    return `${props.surveyLink}?id=${props.surveyId}&start_time=${startTime}&user_id=${props.userId}&passcode=${props.passcode}`;
   }, [props, startTime]);
 
   return (
