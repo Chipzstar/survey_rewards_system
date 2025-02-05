@@ -6,7 +6,9 @@ import { and, AnyColumn, eq, sql } from 'drizzle-orm';
 import { editSurveyFormSchema } from '~/lib/validators';
 
 const increment = (column: AnyColumn, value = 1) => {
-  return sql`${column} + ${value}`;
+  return sql`${column}
+  +
+  ${value}`;
 };
 
 export const surveyRouter = createTRPCRouter({
@@ -122,47 +124,42 @@ export const surveyRouter = createTRPCRouter({
   addReferral: publicProcedure
     .input(z.object({ surveyId: z.number(), userId: z.string(), name: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      try {
-        const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, input.surveyId));
-        if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'Survey not found' });
+      const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, input.surveyId));
+      if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'Survey not found' });
 
-        // check if the name provided is already a referral
-        let referrals = await ctx.db
-          .select()
-          .from(referralTable)
-          .where(
-            and(
-              eq(referralTable.survey_id, input.surveyId),
-              eq(referralTable.referrer_id, input.userId),
-              eq(referralTable.referee_id, input.name.toLowerCase())
-            )
-          );
-        if (referrals.length) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Referral already exists' });
+      // check if the name provided is already a referral
+      let referrals = await ctx.db
+        .select()
+        .from(referralTable)
+        .where(
+          and(
+            eq(referralTable.survey_id, input.surveyId),
+            eq(referralTable.referrer_id, input.userId),
+            eq(referralTable.referee_id, input.name.toLowerCase())
+          )
+        );
+      if (referrals.length) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Referral already exists' });
 
-        // add new referral to the database
-        await ctx.db.insert(referralTable).values({
-          survey_id: input.surveyId,
-          referrer_id: input.userId,
-          referee_id: input.name.toLowerCase(),
-          name: input.name,
-          is_completed: false,
-          completed_at: null,
-          bonus_points_earned: 0
-        });
-        // increment the user's surveyResponse referrals count
-        const surveyResponse = await ctx.db
-          .update(surveyResponseTable)
-          .set({
-            referrals: increment(surveyResponseTable.referrals),
-            points_earned: increment(surveyResponseTable.points_earned, 25)
-          })
-          .where(and(eq(surveyResponseTable.user_id, input.userId), eq(surveyResponseTable.survey_id, input.surveyId)))
-          .returning();
-        console.log(surveyResponse[0]);
-        return surveyResponse[0];
-      } catch (error) {
-        console.error(error);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
-      }
+      // add new referral to the database
+      await ctx.db.insert(referralTable).values({
+        survey_id: input.surveyId,
+        referrer_id: input.userId,
+        referee_id: input.name.toLowerCase(),
+        name: input.name,
+        is_completed: false,
+        completed_at: null,
+        bonus_points_earned: 0
+      });
+      // increment the user's surveyResponse referrals count
+      const surveyResponse = await ctx.db
+        .update(surveyResponseTable)
+        .set({
+          referrals: increment(surveyResponseTable.referrals),
+          points_earned: increment(surveyResponseTable.points_earned, 25)
+        })
+        .where(and(eq(surveyResponseTable.user_id, input.userId), eq(surveyResponseTable.survey_id, input.surveyId)))
+        .returning();
+      console.log(surveyResponse[0]);
+      return surveyResponse[0];
     })
 });
