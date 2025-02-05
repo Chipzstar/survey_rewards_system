@@ -3,7 +3,7 @@ import { HydrateClient, trpc } from '~/trpc/server';
 import { format } from 'date-fns';
 
 export default async function WinnerDetailsPage({ params }: { params: { id: string; userId: string } }) {
-  const winner = await trpc.winner.getSurveyWinner({ surveyId: Number(params.id) });
+  const winner = await trpc.winner.getSurveyWinner({ surveyId: Number(params.id), userId: params.userId });
   const giftCardDetails = winner.giftCard;
 
   if (!winner) throw new Error('No Survey winner found');

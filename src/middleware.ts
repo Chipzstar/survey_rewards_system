@@ -10,7 +10,7 @@ const isPublicRoute = createRouteMatcher([
   '/privacy-policy',
   '/api/webhook(.*)',
   '/survey/(.*)/check-winner',
-  '/survey/(.*)/winner',
+  '/survey/(.*)/winner/(.*)',
   '/survey/(.*)/leaderboard/(.*)'
 ]);
 

@@ -1,17 +1,9 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../init';
-import {
-  giftCardTable,
-  referralTable,
-  surveyResponseTable,
-  surveyTable,
-  surveyWinnerTable,
-  usersTable
-} from '~/db/schema';
+import { giftCardTable, referralTable, surveyResponseTable, surveyTable, usersTable } from '~/db/schema';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { and, AnyColumn, eq, sql } from 'drizzle-orm';
 import { editSurveyFormSchema } from '~/lib/validators';
-import { rankResponses } from '~/lib/utils';
 
 const increment = (column: AnyColumn, value = 1) => {
   return sql`${column}

@@ -6,17 +6,19 @@ import { TRPCError } from '@trpc/server';
 import { rankResponses } from '~/lib/utils';
 
 export const winnerRouter = createTRPCRouter({
-  getSurveyWinner: publicProcedure.input(z.object({ surveyId: z.number() })).query(async ({ ctx, input }) => {
-    const winner = await ctx.db.query.surveyWinnerTable.findFirst({
-      where: eq(surveyWinnerTable.survey_id, input.surveyId),
-      with: {
-        survey: true,
-        giftCard: true
-      }
-    });
-    if (!winner) throw new TRPCError({ code: 'NOT_FOUND', message: 'Survey winner not found' });
-    return winner;
-  }),
+  getSurveyWinner: publicProcedure
+    .input(z.object({ surveyId: z.number(), userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const winner = await ctx.db.query.surveyWinnerTable.findFirst({
+        where: and(eq(surveyWinnerTable.survey_id, input.surveyId), eq(surveyWinnerTable.user_id, input.userId)),
+        with: {
+          survey: true,
+          giftCard: true
+        }
+      });
+      if (!winner) throw new TRPCError({ code: 'NOT_FOUND', message: 'Survey winner not found' });
+      return winner;
+    }),
   checkSurveyWinner: publicProcedure
     .input(z.object({ surveyId: z.number(), passcode: z.string() }))
     .mutation(async ({ ctx, input }) => {
