@@ -12,27 +12,17 @@ export default async function EventSharePage({ params }: { params: { id: string 
 
   const user_id = genUserId();
   const passcode = genPasscode();
-  const start_time = new Date().getTime();
 
-  const surveyLink = `${survey.link}?id=${id}&start_time=${start_time}&user_id=${user_id}&passcode=${passcode}`;
+  // const surveyLink = `${survey.link}?id=${id}&start_time=${start_time}&user_id=${user_id}&passcode=${passcode}`;
 
   return (
     <HydrateClient>
-      <div className='py-12 text-white md:my-auto'>
+      <div className='overflow-x-hidden py-12 text-white md:my-auto'>
         <div className='flex flex-col items-center space-y-6'>
           <h2 className='text-balance text-center text-xl font-semibold text-[#6F42FF]'>
             🎉 Scan NOW! The Fastest win the MOST QR Points! 🏆
           </h2>
-          <div className='mb-4 md:mb-8'>
-            <QRCode
-              value={surveyLink}
-              size={256}
-              className='sm:max-w-2xl'
-              style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-              viewBox={`0 0 256 256`}
-            />
-          </div>
-          <SurveyLink href={surveyLink} surveyLink={survey.link} />
+          <SurveyLink surveyLink={survey.link} passcode={passcode} userId={user_id} />
         </div>
       </div>
     </HydrateClient>
