@@ -1,9 +1,10 @@
-import { Button } from '~/components/ui/button';
 import { auth } from '@clerk/nextjs/server';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { differenceInSeconds } from 'date-fns';
 import Link from 'next/link';
 import { env } from '~/env';
+import Image from 'next/image';
+import React from 'react';
 
 export default async function WinnerAnnouncementPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -30,9 +31,9 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
 
   return (
     <HydrateClient>
-      <div className='m-auto'>
-        <div className='flex flex-col items-center rounded-lg bg-white/10 p-6 shadow-lg'>
-          <h2 className='mb-4 text-3xl font-bold text-white'>
+      <div className='m-auto flex grow flex-col gap-y-4'>
+        <div className='flex grow flex-col items-center justify-around rounded-lg bg-white/10 p-6 shadow-lg'>
+          <h2 className='mb-4 text-center text-3xl font-bold text-white'>
             The £{survey.giftCards[0]!.value} gift card winners are...
           </h2>
           <div className='mb-6 flex flex-col space-y-4'>
@@ -42,13 +43,17 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
               </div>
             ))}
           </div>
-          <h2 className='mb-4 text-3xl font-bold text-white'>Claim your gift card here</h2>
-          <Link href={`/survey/${id}/check-winner`} className='mt-2 text-white underline' target={'_blank'}>
-            <span>
-              {NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner
-            </span>
-          </Link>
-          <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>
+          <section className='flex flex-col items-center space-y-4 text-center'>
+            <h2 className='mb-4 text-3xl font-bold text-white'>Claim your gift card here</h2>
+            <Link href={`/survey/${id}/check-winner`} className='mt-2 text-lg text-white underline' target={'_blank'}>
+              <span>
+                {NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner
+              </span>
+            </Link>
+          </section>
+        </div>
+        <div className='flex flex-col items-center gap-4 text-center'>
+          <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
         </div>
       </div>
     </HydrateClient>

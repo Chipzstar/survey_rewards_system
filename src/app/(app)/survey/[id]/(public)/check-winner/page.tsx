@@ -1,6 +1,7 @@
 import React from 'react';
 import { CheckWinnerForm } from './check-winner-form';
 import { HydrateClient, trpc } from '~/trpc/server';
+import Image from 'next/image';
 
 export default async function CheckWinnerPage({ params }: { params: { id: string } }) {
   const survey = await trpc.survey.byId({ id: Number(params.id) });
@@ -18,7 +19,7 @@ export default async function CheckWinnerPage({ params }: { params: { id: string
           <p className='mb-2 text-center text-xl'>Enter your unique passcode to win:</p>
           <CheckWinnerForm surveyId={params.id} />
           <p className='mt-4 text-sm text-gray-300'>The Mount Motherland 2025</p>
-          <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>
+          <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
         </div>
       </main>
     </HydrateClient>

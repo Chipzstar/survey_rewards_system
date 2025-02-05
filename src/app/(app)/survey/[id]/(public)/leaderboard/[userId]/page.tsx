@@ -2,6 +2,7 @@ import React from 'react';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { differenceInSeconds } from 'date-fns';
 import { AddReferralForm } from './addReferralForm';
+import Image from 'next/image';
 
 export default async function ThankYouPage({ params }: { params: { id: string; userId: string } }) {
   const survey = await trpc.survey.byIdWithResults({ id: Number(params.id) });
@@ -25,7 +26,7 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
             <span className='font-bold'>DOUBLE</span> points by sharing your event connections!
           </p>
           <AddReferralForm surveyId={survey.id} userId={response.user_id} />
-          <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>
+          <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
         </div>
       </main>
     </HydrateClient>

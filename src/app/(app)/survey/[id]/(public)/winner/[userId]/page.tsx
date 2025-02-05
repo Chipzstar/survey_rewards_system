@@ -1,6 +1,7 @@
 import React from 'react';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { format } from 'date-fns';
+import Image from 'next/image';
 
 export default async function WinnerDetailsPage({ params }: { params: { id: string; userId: string } }) {
   const winner = await trpc.winner.getSurveyWinner({ surveyId: Number(params.id), userId: params.userId });
@@ -23,7 +24,7 @@ export default async function WinnerDetailsPage({ params }: { params: { id: stri
           <p>Expiry date: {format(new Date(giftCardDetails.expiry_date), 'dd/MM/yyyy')}</p>
           <p className='mt-4 text-sm text-gray-300'>{winner.survey.name}</p>
           {/*<p className='text-sm text-gray-300'>Okwu ID & Ozo Run Club Team</p>*/}
-          <p className='mt-4 text-xs text-gray-300'>Powered by Genus</p>
+          <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
         </div>
       </main>
     </HydrateClient>
