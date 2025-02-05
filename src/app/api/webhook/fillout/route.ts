@@ -68,6 +68,7 @@ export async function POST(req: Request) {
       );
     }
     let data;
+    console.log({ FILLOUT_FORM_ID, formId: event.formId });
     switch (event.formId) {
       case FILLOUT_FORM_ID:
         data = await handleFormResponse(event);
