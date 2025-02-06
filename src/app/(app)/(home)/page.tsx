@@ -1,5 +1,4 @@
 import { UserButton } from '@clerk/nextjs';
-import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { auth } from '@clerk/nextjs/server';
 import { HydrateClient, trpc } from '~/trpc/server';

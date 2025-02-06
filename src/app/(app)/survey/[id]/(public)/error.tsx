@@ -14,7 +14,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   return (
     <div className='flex h-[calc(100vh-4rem)] flex-col items-center justify-center gap-4'>
       <h2 className='text-2xl font-bold text-red-600'>Something went wrong!</h2>
-      <p className='text-neutral-600'>{error.message || 'An error occurred while processing your request.'}</p>
+      <p className='text-neutral-600'>An error occurred while processing your request</p>
       <div className='flex gap-4'>
         <Button onClick={() => reset()} variant='outline'>
           Try again

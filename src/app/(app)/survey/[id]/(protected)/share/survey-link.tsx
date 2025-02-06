@@ -15,6 +15,7 @@ export const SurveyLink: FC<Props> = props => {
   const [startTime, setStartTime] = useState(new Date().getTime());
 
   useEffect(() => {
+    console.log(startTime);
     const interval = setInterval(() => {
       setStartTime(new Date().getTime());
     }, 500);
