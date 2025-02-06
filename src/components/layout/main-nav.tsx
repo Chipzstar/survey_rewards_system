@@ -21,8 +21,8 @@ export const MainNav: FC<Props> = ({ className, surveyId }) => {
       )}
     >
       {[
-        { href: '/', label: 'Home' },
-        { href: `/survey/${surveyId}`, label: 'Analytics' },
+        { href: `/survey/${surveyId}`, label: 'Leaderboard' },
+        { href: `/survey/${surveyId}/analytics`, label: 'Analytics' },
         { href: `/survey/${surveyId}/edit`, label: 'Edit' },
         { href: `/survey/${surveyId}/share`, label: 'Share' },
         { href: `/survey/${surveyId}/results`, label: 'Results' }
@@ -31,7 +31,7 @@ export const MainNav: FC<Props> = ({ className, surveyId }) => {
           key={href}
           href={href}
           className={cn(
-            'rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 sm:px-4 md:rounded-full',
+            'rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200 sm:px-4 md:rounded-full md:text-sm',
             'truncate text-ellipsis hover:bg-gray-100 hover:shadow-sm',
             pathname === href ? 'bg-white text-primary shadow-sm' : 'text-gray-600'
           )}
