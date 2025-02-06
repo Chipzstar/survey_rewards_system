@@ -4,9 +4,9 @@ import { ColumnDef } from '@tanstack/react-table';
 
 interface LeaderboardData {
   rank: number;
-  name: string;
+  userId: string;
   time: number;
-  ref: string | number;
+  ref: number;
   total: number;
 }
 
@@ -16,8 +16,8 @@ export const columns: ColumnDef<LeaderboardData>[] = [
     header: 'Rank'
   },
   {
-    accessorKey: 'name',
-    header: 'Name'
+    accessorKey: 'userId',
+    header: 'User ID'
   },
   {
     accessorKey: 'time',

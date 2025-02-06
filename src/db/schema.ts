@@ -32,8 +32,8 @@ export const surveyTable = pgTable('survey', {
   description: varchar({ length: 255 }),
   location: varchar({ length: 255 }),
   link: varchar({ length: 255 }),
-  start_date: timestamp().notNull(),
-  end_date: timestamp().notNull(),
+  start_date: timestamp({ mode: 'string' }).notNull(),
+  end_date: timestamp({ mode: 'string' }).notNull(),
   points: integer().notNull(),
   referral_bonus_points: integer().notNull(),
   created_by: integer()
@@ -48,9 +48,7 @@ export const surveyResponseTable = pgTable('survey_response', {
   survey_id: integer()
     .references(() => surveyTable.id)
     .notNull(),
-  user_id: integer()
-    .references(() => usersTable.id)
-    .notNull(),
+  user_id: varchar({ length: 255 }).notNull(),
   response_id: varchar({ length: 255 }).notNull(),
   started_at: timestamp({ mode: 'string' }).notNull(),
   completed_at: timestamp({ mode: 'string' }).defaultNow().notNull(),
@@ -58,6 +56,7 @@ export const surveyResponseTable = pgTable('survey_response', {
   points_earned: integer().default(0).notNull(),
   survey_code: varchar({ length: 255 }).default('10021'),
   passcode: varchar({ length: 255 }),
+  referrals: integer().default(0).notNull(),
   ...timestamps
 });
 
@@ -66,12 +65,9 @@ export const referralTable = pgTable('referral', {
   survey_id: integer()
     .references(() => surveyTable.id)
     .notNull(),
-  referrer_id: integer()
-    .references(() => usersTable.id)
-    .notNull(),
-  referee_id: integer()
-    .references(() => usersTable.id)
-    .notNull(),
+  referrer_id: varchar({ length: 255 }).notNull(),
+  referee_id: varchar({ length: 255 }).notNull(),
+  name: varchar({ length: 255 }).notNull(),
   is_completed: boolean().default(false),
   completed_at: timestamp(),
   bonus_points_earned: integer().default(0),
@@ -87,7 +83,7 @@ export const giftCardTable = pgTable('gift_card', {
   brand: varchar({ length: 255 }).notNull(),
   name: varchar({ length: 255 }).notNull(),
   code: varchar({ length: 255 }).notNull().unique(),
-  expiry_date: timestamp().notNull(),
+  expiry_date: timestamp({ mode: 'string' }).notNull(),
   value: integer().notNull(), // Store value in cents
   is_redeemed: boolean().default(false),
   ...timestamps
@@ -98,9 +94,7 @@ export const surveyWinnerTable = pgTable('survey_winner', {
   survey_id: integer()
     .references(() => surveyTable.id)
     .notNull(),
-  user_id: integer()
-    .references(() => usersTable.id)
-    .notNull(),
+  user_id: varchar({ length: 255 }).notNull(),
   gift_card_id: integer()
     .references(() => giftCardTable.id)
     .notNull(),
