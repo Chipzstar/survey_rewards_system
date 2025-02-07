@@ -4,6 +4,7 @@ import { customAlphabet } from 'nanoid';
 import { surveyResponseTable } from '~/db/schema';
 import { differenceInSeconds } from 'date-fns';
 
+type SurveyResponse = typeof surveyResponseTable.$inferSelect;
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -20,8 +21,8 @@ export const genUserId = customAlphabet('1234567890', 4);
 
 export const genPasscode = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
 
-export function rankResponses(responses: (typeof surveyResponseTable.$inferSelect)[]) {
-  return (a: typeof surveyResponseTable.$inferSelect, b: typeof surveyResponseTable.$inferSelect) => {
+export function rankResponses(responses: SurveyResponse[]) {
+  return (a: SurveyResponse, b: SurveyResponse) => {
     // Calculate completion times in seconds
     const timeA = differenceInSeconds(new Date(a.completed_at), new Date(a.started_at));
     const timeB = differenceInSeconds(new Date(b.completed_at), new Date(b.started_at));
@@ -49,4 +50,12 @@ export function rankResponses(responses: (typeof surveyResponseTable.$inferSelec
     // Sort descending (highest to lowest score)
     return finalScoreB - finalScoreA;
   };
+}
+
+export function sortResponsesByCompletionTime(responses: SurveyResponse[]): SurveyResponse[] {
+  return responses.sort((a, b) => {
+    const timeA = differenceInSeconds(new Date(a.completed_at), new Date(a.started_at));
+    const timeB = differenceInSeconds(new Date(b.completed_at), new Date(b.started_at));
+    return timeA - timeB;
+  });
 }

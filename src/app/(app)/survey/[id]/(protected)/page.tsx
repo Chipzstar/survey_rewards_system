@@ -5,6 +5,7 @@ import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { DataTable } from '~/components/leaderboard/data-table';
 import { columns } from '~/components/leaderboard/columns';
+import { sortResponsesByCompletionTime } from '~/lib/utils';
 
 export default async function SurveyAnalytics({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -13,11 +14,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
   const survey = await trpc.survey.byIdWithResults({ id: Number(id) });
 
   // Data
-  const sortedResponses = survey.responses.sort((a, b) => {
-    const timeA = differenceInSeconds(new Date(a.completed_at), new Date(a.started_at));
-    const timeB = differenceInSeconds(new Date(b.completed_at), new Date(b.started_at));
-    return timeA - timeB; // Sort ascending (lowest to highest)
-  });
+  const sortedResponses = sortResponsesByCompletionTime(survey.responses);
 
   const data = sortedResponses.map((response, index) => {
     const completion_time = differenceInSeconds(new Date(response.completed_at), new Date(response.started_at));
@@ -50,7 +47,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
         <section className='mt-5 flex flex-col'>
           <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
           <div className='w-full overflow-x-auto'>
-            <DataTable columns={columns} data={data} />
+            <DataTable surveyId={id} columns={columns} data={data} />
           </div>
         </section>
       </div>

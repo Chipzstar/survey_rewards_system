@@ -6,6 +6,7 @@ import { differenceInMinutes, differenceInSeconds } from 'date-fns';
 import { DataTable } from '~/components/leaderboard/data-table';
 import { columns } from '~/components/leaderboard/columns';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { sortResponsesByCompletionTime } from '~/lib/utils';
 
 export default async function SurveyAnalytics({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -28,11 +29,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
   const avg_referrals = Number(total_referrals / survey.responses.length).toFixed(2);
 
   // Data
-  const sortedResponses = survey.responses.sort((a, b) => {
-    const timeA = differenceInSeconds(new Date(a.completed_at), new Date(a.started_at));
-    const timeB = differenceInSeconds(new Date(b.completed_at), new Date(b.started_at));
-    return timeA - timeB; // Sort ascending (lowest to highest)
-  });
+  const sortedResponses = sortResponsesByCompletionTime(survey.responses);
 
   const data = sortedResponses.map((response, index) => {
     const completion_time = differenceInSeconds(new Date(response.completed_at), new Date(response.started_at));

@@ -3,15 +3,27 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
+import { trpc } from '~/trpc/client';
+import { LeaderboardData } from '~/lib/types';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData extends LeaderboardData> {
+  surveyId: string;
+  columns: ColumnDef<TData>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends LeaderboardData = LeaderboardData>({
+  surveyId,
+  columns,
+  data
+}: DataTableProps<TData>) {
+  const { data: responses } = trpc.response.getLeaderboard.useQuery(
+    { id: Number(surveyId) },
+    { initialData: data, refetchInterval: 5000 }
+  );
+
   const table = useReactTable({
-    data,
+    data: responses,
     columns,
     getCoreRowModel: getCoreRowModel()
   });
