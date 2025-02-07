@@ -5,7 +5,7 @@ import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { DataTable } from '~/components/leaderboard/data-table';
 import { columns } from '~/components/leaderboard/columns';
-import { rankResponses, sortResponsesByCompletionTime } from '~/lib/utils';
+import { rankResponses } from '~/lib/utils';
 
 export default async function SurveyAnalytics({ params }: { params: { id: string } }) {
   const { id } = params;

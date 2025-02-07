@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { env } from '~/env';
 import Image from 'next/image';
 import React from 'react';
-import { sortResponsesByCompletionTime } from '~/lib/utils';
+import { rankResponses, sortResponsesByCompletionTime } from '~/lib/utils';
 
 export default async function WinnerAnnouncementPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -14,7 +14,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
 
   const survey = await trpc.survey.byIdWithAnalytics({ id: Number(id) });
 
-  const sortedResponses = sortResponsesByCompletionTime(survey.responses);
+  const sortedResponses = survey.responses.sort(rankResponses(survey.responses));
 
   // Winner data
   const winnerData = sortedResponses.slice(0, survey.number_of_winners).map((response, index) => {
