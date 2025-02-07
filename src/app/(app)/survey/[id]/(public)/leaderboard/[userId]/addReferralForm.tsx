@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { Form, FormField, FormItem, FormMessage } from '~/components/ui/form';
 import { trpc } from '~/trpc/client';
 import { useLoading } from '~/components/providers/loading-provider';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   surveyId: number;
@@ -20,15 +21,17 @@ interface FormValues {
 
 export const AddReferralForm: FC<Props> = props => {
   const { setLoading } = useLoading();
+  const router = useRouter();
   const form = useForm<FormValues>({
     defaultValues: {
       referralNames: ''
     }
   });
+
   const { mutate: addReferral } = trpc.survey.addReferral.useMutation({
     onSuccess: data => {
       toast.success(`${data.name} added successfully`);
-      console.log('Referral added successfully');
+      router.refresh();
     },
     onError: (error, input) => {
       if (error?.data?.code === 'BAD_REQUEST') {
