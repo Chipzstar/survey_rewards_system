@@ -15,30 +15,30 @@ interface Props {
 }
 
 interface FormValues {
-  referralName: string;
+  referralNames: string;
 }
 
 export const AddReferralForm: FC<Props> = props => {
   const { setLoading } = useLoading();
   const form = useForm<FormValues>({
     defaultValues: {
-      referralName: ''
+      referralNames: ''
     }
   });
   const { mutate: addReferral } = trpc.survey.addReferral.useMutation({
-    onSuccess: () => {
-      toast.success('Referral added successfully');
+    onSuccess: data => {
+      toast.success(`${data.name} added successfully`);
       console.log('Referral added successfully');
     },
-    onError: error => {
+    onError: (error, input) => {
       if (error?.data?.code === 'BAD_REQUEST') {
-        toast.error('Referral already exists');
-        form.setError('referralName', {
+        toast.error(`You already added ${input.name} as a referral`);
+        form.setError('referralNames', {
           type: 'custom',
-          message: 'You already added this person'
+          message: 'One or more names are already added'
         });
       } else {
-        toast.error('Failed to add referral', { description: error.message });
+        toast.error('Failed to add referrals', { description: error.message });
       }
       console.error(error);
     },
@@ -48,13 +48,25 @@ export const AddReferralForm: FC<Props> = props => {
   });
 
   const handleSubmit = (values: FormValues) => {
-    console.log('Referral Name:', values);
+    const names = values.referralNames
+      .split(',')
+      .map(name => name.trim())
+      .filter(name => name.length > 0); // Remove empty names
+    if (names.length === 0) {
+      form.setError('referralNames', {
+        type: 'custom',
+        message: 'Please enter at least one name'
+      });
+      return;
+    }
     setLoading(true);
-    addReferral({
-      surveyId: props.surveyId,
-      userId: props.userId,
-      name: values.referralName
-    });
+    for (const name of names) {
+      void addReferral({
+        surveyId: props.surveyId,
+        userId: props.userId,
+        name: name
+      });
+    }
   };
 
   return (
@@ -62,12 +74,12 @@ export const AddReferralForm: FC<Props> = props => {
       <div className='flex w-full flex-col gap-y-6'>
         <FormField
           control={form.control}
-          name='referralName'
+          name='referralNames'
           render={({ field }) => (
             <FormItem>
               <Input
                 type='text'
-                placeholder='Write name(s) here'
+                placeholder='Enter names separated by comma (e.g., John, Jane, Bob)'
                 className='text-black'
                 value={field.value}
                 onChange={field.onChange}

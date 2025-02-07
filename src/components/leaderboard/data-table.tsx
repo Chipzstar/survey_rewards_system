@@ -8,7 +8,7 @@ import { LeaderboardData } from '~/lib/types';
 
 interface DataTableProps<TData extends LeaderboardData> {
   surveyId: string;
-  columns: ColumnDef<TData>[];
+  columns: ColumnDef<LeaderboardData>[];
   data: TData[];
 }
 
@@ -17,10 +17,7 @@ export function DataTable<TData extends LeaderboardData = LeaderboardData>({
   columns,
   data
 }: DataTableProps<TData>) {
-  const { data: responses } = trpc.response.getLeaderboard.useQuery(
-    { id: Number(surveyId) },
-    { initialData: data, refetchInterval: 5000 }
-  );
+  const { data: responses } = trpc.response.getLeaderboard.useQuery({ id: Number(surveyId) }, { initialData: data });
 
   const table = useReactTable({
     data: responses,

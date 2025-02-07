@@ -1,14 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-
-interface LeaderboardData {
-  rank: number;
-  userId: string;
-  time: number;
-  ref: number;
-  total: number;
-}
+import { LeaderboardData } from '~/lib/types';
 
 export const columns: ColumnDef<LeaderboardData>[] = [
   {

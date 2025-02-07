@@ -139,18 +139,29 @@ export const surveyRouter = createTRPCRouter({
             eq(referralTable.referee_id, input.name.toLowerCase())
           )
         );
-      if (referrals.length) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Referral already exists' });
+      if (referrals.length)
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Referral already exists', cause: input.name });
 
       // add new referral to the database
-      await ctx.db.insert(referralTable).values({
-        survey_id: input.surveyId,
-        referrer_id: input.userId,
-        referee_id: input.name.toLowerCase(),
-        name: input.name,
-        is_completed: false,
-        completed_at: null,
-        bonus_points_earned: 0
-      });
+      const referral = await ctx.db
+        .insert(referralTable)
+        .values({
+          survey_id: input.surveyId,
+          referrer_id: input.userId,
+          referee_id: input.name.toLowerCase(),
+          name: input.name,
+          is_completed: false,
+          completed_at: null,
+          bonus_points_earned: 0
+        })
+        .returning();
+
+      if (!referral[0]) {
+        throw new TRPCError({
+          message: 'There was an error creating the referral',
+          code: 'INTERNAL_SERVER_ERROR'
+        });
+      }
       // increment the user's surveyResponse referrals count
       const surveyResponse = await ctx.db
         .update(surveyResponseTable)
@@ -158,9 +169,8 @@ export const surveyRouter = createTRPCRouter({
           referrals: increment(surveyResponseTable.referrals),
           points_earned: increment(surveyResponseTable.points_earned, 25)
         })
-        .where(and(eq(surveyResponseTable.user_id, input.userId), eq(surveyResponseTable.survey_id, input.surveyId)))
-        .returning();
-      console.log(surveyResponse[0]);
-      return surveyResponse[0];
+        .where(and(eq(surveyResponseTable.user_id, input.userId), eq(surveyResponseTable.survey_id, input.surveyId)));
+      console.log(referral[0]);
+      return referral[0];
     })
 });
