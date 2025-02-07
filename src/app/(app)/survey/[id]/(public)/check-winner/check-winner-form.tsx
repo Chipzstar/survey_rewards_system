@@ -17,9 +17,9 @@ export const CheckWinnerForm: FC<{ surveyId: string }> = props => {
     onSuccess: data => {
       void router.push(`/survey/${props.surveyId}/winner/${data.user_id}`);
     },
-    onError: error => {
+    onError: (error, input) => {
       toast.error(error.message);
-      console.error();
+      void router.push(`/survey/${props.surveyId}/winner/0`);
     },
     onSettled: () => {
       setLoading(false);
