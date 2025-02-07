@@ -22,6 +22,8 @@ export default async function WinnerDetailsPage({ params }: { params: { id: stri
           <p className='mb-2'>Amount: £{giftCardDetails.value}</p>
           <p className='mb-2'>Voucher code: {giftCardDetails.code}</p>
           <p>Expiry date: {format(new Date(giftCardDetails.expiry_date), 'dd/MM/yyyy')}</p>
+        </div>
+        <div className='flex flex-col items-center gap-4 text-center'>
           <p className='mt-4 text-sm text-gray-300'>{winner.survey.name}</p>
           {/*<p className='text-sm text-gray-300'>Okwu ID & Ozo Run Club Team</p>*/}
           <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />

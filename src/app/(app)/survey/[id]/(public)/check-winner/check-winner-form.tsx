@@ -15,7 +15,6 @@ export const CheckWinnerForm: FC<{ surveyId: string }> = props => {
 
   const { mutate: checkSurveyWinner } = trpc.winner.checkSurveyWinner.useMutation({
     onSuccess: data => {
-      toast.success('Winner claimed successfully');
       void router.push(`/survey/${props.surveyId}/winner/${data.user_id}`);
     },
     onError: error => {

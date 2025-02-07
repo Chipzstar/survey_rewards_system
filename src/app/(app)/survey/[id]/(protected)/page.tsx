@@ -5,7 +5,7 @@ import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { DataTable } from '~/components/leaderboard/data-table';
 import { columns } from '~/components/leaderboard/columns';
-import { sortResponsesByCompletionTime } from '~/lib/utils';
+import { rankResponses, sortResponsesByCompletionTime } from '~/lib/utils';
 
 export default async function SurveyAnalytics({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -14,7 +14,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
   const survey = await trpc.survey.byIdWithResults({ id: Number(id) });
 
   // Data
-  const sortedResponses = sortResponsesByCompletionTime(survey.responses);
+  const sortedResponses = survey.responses.sort(rankResponses(survey.responses));
 
   const data = sortedResponses.map((response, index) => {
     const completion_time = differenceInSeconds(new Date(response.completed_at), new Date(response.started_at));

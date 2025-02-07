@@ -6,7 +6,7 @@ import { differenceInMinutes, differenceInSeconds } from 'date-fns';
 import { DataTable } from '~/components/leaderboard/data-table';
 import { columns } from '~/components/leaderboard/columns';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { sortResponsesByCompletionTime } from '~/lib/utils';
+import { rankResponses, sortResponsesByCompletionTime } from '~/lib/utils';
 
 export default async function SurveyAnalytics({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -28,8 +28,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
   }, 0);
   const avg_referrals = Number(total_referrals / survey.responses.length).toFixed(2);
 
-  // Data
-  const sortedResponses = sortResponsesByCompletionTime(survey.responses);
+  const sortedResponses = survey.responses.sort(rankResponses(survey.responses));
 
   const data = sortedResponses.map((response, index) => {
     const completion_time = differenceInSeconds(new Date(response.completed_at), new Date(response.started_at));
@@ -123,7 +122,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
         <section className='mt-5 flex flex-col'>
           <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
           <div className='w-full overflow-x-auto'>
-            <DataTable columns={columns} data={data} />
+            <DataTable surveyId={id} columns={columns} data={data} />
           </div>
         </section>
       </div>
