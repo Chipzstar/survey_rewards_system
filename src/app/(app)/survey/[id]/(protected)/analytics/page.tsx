@@ -120,7 +120,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
           </div>
         </section>
         <section className='mt-5 flex flex-col'>
-          <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
+          <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift Card Leaderboard</h2>
           <div className='w-full overflow-x-auto'>
             <DataTable surveyId={id} columns={columns} data={data} />
           </div>

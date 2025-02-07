@@ -45,7 +45,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
     <HydrateClient>
       <div className='mx-auto flex w-full max-w-3xl flex-col text-white'>
         <section className='mt-5 flex flex-col'>
-          <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift card Leaderboard</h2>
+          <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift Card Leaderboard</h2>
           <div className='w-full overflow-x-auto'>
             <DataTable surveyId={id} columns={columns} data={data} />
           </div>
