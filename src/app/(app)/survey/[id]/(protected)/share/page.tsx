@@ -1,5 +1,4 @@
 import { HydrateClient, trpc } from '~/trpc/server';
-import { genPasscode, genUserId } from '~/lib/utils';
 import { SurveyLink } from '~/app/(app)/survey/[id]/(protected)/share/survey-link';
 
 export default async function EventSharePage({ params }: { params: { id: string } }) {

@@ -17,15 +17,17 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
   const sortedResponses = survey.responses.sort(rankResponses(survey.responses));
 
   // Winner data
-  const winnerData = sortedResponses.slice(0, survey.number_of_winners).map((response, index) => {
-    return {
-      rank: index + 1,
-      name: response.user_id,
-      winnerRef: response.referrals || '#',
-      points: response.points_earned,
-      giftCardValue: survey.giftCards[0]?.value ?? '£30'
-    };
-  });
+  const winnerData = sortedResponses
+    .map((response, index) => {
+      return {
+        rank: index + 1,
+        name: response.user_id,
+        winnerRef: response.referrals || '#',
+        points: response.points_earned,
+        giftCardValue: survey.giftCards[0]?.value ?? '£30'
+      };
+    })
+    .slice(0, survey.number_of_winners);
 
   return (
     <HydrateClient>
@@ -35,7 +37,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
             The £{survey.giftCards[0]!.value} gift card winners are...
           </h2>
           <div className='mb-6 flex flex-col space-y-4'>
-            {winnerData.slice(0, survey.number_of_winners).map(winner => (
+            {winnerData.map(winner => (
               <div key={winner.rank} className='flex flex-col items-center'>
                 <h3 className='text-3xl font-bold text-white lg:text-4xl'>ID: {winner.name}</h3>
               </div>
