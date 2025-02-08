@@ -136,8 +136,7 @@ export const surveyRouter = createTRPCRouter({
           and(
             eq(referralTable.survey_id, input.surveyId),
             eq(referralTable.referrer_id, input.userId),
-            eq(referralTable.referee_id, input.name.
-            ())
+            eq(referralTable.referee_id, input.name.toLowerCase())
           )
         );
       if (referrals.length)
