@@ -35,7 +35,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
             The £{survey.giftCards[0]!.value} gift card winners are...
           </h2>
           <div className='mb-6 flex flex-col space-y-4'>
-            {winnerData.map(winner => (
+            {winnerData.slice(0, survey.number_of_winners).map(winner => (
               <div key={winner.rank} className='flex flex-col items-center'>
                 <h3 className='text-3xl font-bold text-white lg:text-4xl'>ID: {winner.name}</h3>
               </div>
