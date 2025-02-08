@@ -3,30 +3,32 @@
 import Link from 'next/link';
 import QRCode from 'react-qr-code';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { genPasscode, genUserId } from '~/lib/utils';
 
 interface Props {
   surveyId: number;
   surveyLink: string | null;
-  passcode: string;
-  userId: string;
 }
 
 export const SurveyLink: FC<Props> = props => {
   const [startTime, setStartTime] = useState(new Date().getTime());
+  const [userId, setUserId] = useState(genUserId());
+  const [passcode, setPasscode] = useState(genPasscode());
 
   useEffect(() => {
-    console.log(startTime);
     const interval = setInterval(() => {
       setStartTime(new Date().getTime());
-    }, 500);
+      setUserId(genUserId());
+      setPasscode(genPasscode());
+    }, 300);
 
     // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, []);
 
   const surveyHref = useMemo(() => {
-    return `${props.surveyLink}?id=${props.surveyId}&start_time=${startTime}&user_id=${props.userId}&passcode=${props.passcode}`;
-  }, [props, startTime]);
+    return `${props.surveyLink}?id=${props.surveyId}&start_time=${startTime}&user_id=${userId}&passcode=${passcode}`;
+  }, [props, startTime, userId, passcode]);
 
   return (
     <>

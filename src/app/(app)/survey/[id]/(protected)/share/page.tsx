@@ -7,9 +7,6 @@ export default async function EventSharePage({ params }: { params: { id: string 
 
   const survey = await trpc.survey.byIdWithAnalytics({ id: Number(id) });
 
-  const user_id = genUserId();
-  const passcode = genPasscode();
-
   return (
     <HydrateClient>
       <div className='overflow-x-hidden py-12 text-white md:my-auto'>
@@ -17,7 +14,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
           <h2 className='text-balance text-center text-xl font-semibold text-[#6F42FF]'>
             🎉 Scan NOW and let the games begin! 🏆
           </h2>
-          <SurveyLink surveyId={survey.id} surveyLink={survey.link} passcode={passcode} userId={user_id} />
+          <SurveyLink surveyId={survey.id} surveyLink={survey.link} />
         </div>
       </div>
     </HydrateClient>
