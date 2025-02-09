@@ -2,6 +2,7 @@ import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { auth } from '@clerk/nextjs/server';
 import { HydrateClient, trpc } from '~/trpc/server';
+import { SurveyListCard } from '~/app/(app)/(home)/survey-list-card';
 
 export default async function Dashboard() {
   const user = await auth();
@@ -30,30 +31,8 @@ export default async function Dashboard() {
           <div className='mt-8'>
             <h2 className='text-2xl font-semibold'>Survey Dashboard</h2>
             <ul className='mt-6 flex flex-col gap-y-4'>
-              {surveys.map(survey => (
-                <li key={survey.id}>
-                  <Link
-                    href={`/survey/${survey.id}`}
-                    className='block rounded-md border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-primary hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary'
-                  >
-                    <div className='flex items-center justify-between'>
-                      <span className='text-lg font-medium text-gray-800 dark:text-gray-100'>{survey.name}</span>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        viewBox='0 0 20 20'
-                        fill='currentColor'
-                        className='h-5 w-5 text-gray-500 dark:text-gray-400'
-                      >
-                        <path
-                          fillRule='evenodd'
-                          d='M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z'
-                          clipRule='evenodd'
-                        />
-                      </svg>
-                    </div>
-                    <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>{survey.description}</p>
-                  </Link>
-                </li>
+              {surveys.map((survey, index) => (
+                <SurveyListCard key={survey.id} survey={survey} isDay1={survey.id === 1 || index === 0} />
               ))}
             </ul>
           </div>
