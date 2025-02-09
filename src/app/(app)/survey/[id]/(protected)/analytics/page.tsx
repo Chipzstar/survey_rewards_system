@@ -60,21 +60,13 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
       <div className='mx-auto flex w-full max-w-3xl flex-col text-white'>
         <section className='flex flex-col'>
           <h2 className='mb-2 text-2xl font-bold md:mb-4'>The Big Picture</h2>
-          <div className='mb-4 grid grid-cols-2 gap-4'>
+          <div className='mb-4 grid grid-cols-1 gap-4'>
             <Card className='border-gray-200 bg-transparent text-white dark:border-gray-200 dark:bg-white/10'>
               <CardHeader>
                 <CardTitle className='text-xl font-semibold'>Completed Surveys</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className='text-4xl font-bold'>{surveys_completed.length}</div>
-              </CardContent>
-            </Card>
-            <Card className='border-gray-200 bg-transparent text-white dark:border-gray-200 dark:bg-white/10'>
-              <CardHeader>
-                <CardTitle className='text-xl font-semibold'># of referrals</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='text-4xl font-bold'>{total_referrals}</div>
               </CardContent>
             </Card>
           </div>
