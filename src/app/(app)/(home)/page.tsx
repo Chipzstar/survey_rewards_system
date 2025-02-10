@@ -32,7 +32,7 @@ export default async function Dashboard() {
             <h2 className='text-2xl font-semibold'>Survey Dashboard</h2>
             <ul className='mt-6 flex flex-col gap-y-4'>
               {surveys.map((survey, index) => (
-                <SurveyListCard key={survey.id} survey={survey} isDay1={survey.id === 1 || index === 0} />
+                <SurveyListCard key={survey.id} survey={survey} isDay1={false} />
               ))}
             </ul>
           </div>

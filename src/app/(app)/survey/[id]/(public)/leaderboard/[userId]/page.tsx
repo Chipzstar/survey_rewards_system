@@ -23,12 +23,12 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
               <p className='mb-4 text-balance text-center text-xl md:w-2/3'>
                 <span>Thank you for sharing your connections!</span>
               </p>
-              <p className='mb-4 text-balance text-center text-xl md:w-2/3'>
+              {/*<p className='mb-4 text-balance text-center text-xl md:w-2/3'>
                 <span>
                   You've successfully referred {referrals.length} {referrals.length === 1 ? 'person' : 'people'},
                   earning extra points!
                 </span>
-              </p>
+              </p>*/}
               <p className='mb-6 text-pretty text-2xl'>
                 Total points earned:
                 <br />
