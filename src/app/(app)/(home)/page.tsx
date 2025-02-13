@@ -25,19 +25,19 @@ export default async function Dashboard() {
 
   return (
     <HydrateClient>
-      <main className='flex min-h-screen grow flex-col p-6 xl:p-12 2xl:p-24'>
+      <main className='flex min-h-screen grow flex-col p-6 sm:h-screen xl:p-12 2xl:p-24'>
         <div className='mb-8 flex w-full items-center justify-between'>
           <h1 className='text-4xl font-bold'>Dashboard</h1>
           <UserButton afterSignOutUrl='/' />
         </div>
-        <div className='grid h-full grid-cols-1 gap-8 lg:grid-cols-2'>
+        <div className='grid h-full grid-cols-1 gap-y-8 lg:grid-cols-2 lg:divide-x-2 lg:divide-gray-200'>
           {/* Events Section */}
-          <section className='flex flex-col justify-center'>
+          <section className='flex grow flex-col lg:px-6'>
             <div className='mb-4 flex items-center justify-between'>
               <h2 className='text-2xl font-semibold'>Events</h2>
               <CreateEventDialog />
             </div>
-            <div className='space-y-4'>
+            <div className='flex grow flex-col space-y-4'>
               {events.map(event => (
                 <div
                   key={event.id}
@@ -51,21 +51,25 @@ export default async function Dashboard() {
                   </div>
                 </div>
               ))}
-              {events.length === 0 && <p className='text-center text-gray-500'>No events created yet.</p>}
+              <div className='my-auto'>
+                {events.length === 0 && <p className='text-center text-gray-500'>No events created yet.</p>}
+              </div>
             </div>
           </section>
 
           {/* Surveys Section */}
-          <section>
+          <section className='flex grow flex-col lg:px-6'>
             <div className='mb-4 flex items-center justify-between'>
               <h2 className='text-2xl font-semibold'>Surveys</h2>
               <CreateSurveyDialog />
             </div>
-            <div className='space-y-4'>
+            <div className='flex grow flex-col space-y-4'>
               {surveys.map(survey => (
                 <SurveyListCard key={survey.id} survey={survey} />
               ))}
-              {surveys.length === 0 && <p className='text-center text-gray-500'>No surveys created yet.</p>}
+              <div className='my-auto'>
+                {surveys.length === 0 && <p className='text-center text-gray-500'>No surveys created yet.</p>}
+              </div>
             </div>
           </section>
         </div>
