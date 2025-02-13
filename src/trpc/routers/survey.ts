@@ -18,6 +18,15 @@ export const surveyRouter = createTRPCRouter({
     console.log(surveys);
     return surveys;
   }),
+  fromUser: protectedProcedure.query(async ({ ctx, input }) => {
+    // Fetch survey data from a database or API
+    const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
+    if (!dbUser) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+
+    const surveys = await ctx.db.select().from(surveyTable).where(eq(surveyTable.created_by, dbUser.id));
+    console.log(surveys);
+    return surveys;
+  }),
   byId: publicProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
     // Fetch a specific survey by ID from the database or API
     const survey = await ctx.db.select().from(surveyTable).where(eq(surveyTable.id, input.id));
@@ -56,6 +65,57 @@ export const surveyRouter = createTRPCRouter({
     console.log(survey);
     return survey[0];
   }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(2, 'Survey name must be at least 2 characters'),
+        description: z.string().min(10, 'Description must be at least 10 characters'),
+        link: z.string().url('Must be a valid URL'),
+        startDate: z.union([z.date(), z.string()]),
+        endDate: z.union([z.date(), z.string()]),
+        points: z.number().min(1, 'Points must be at least 1'),
+        referralBonusPoints: z.number().min(1, 'Referral bonus points must be at least 1'),
+        numberOfWinners: z.number().min(1, 'Must have at least 1 winner'),
+        eventId: z.number().optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const user = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
+        if (!user[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+
+        const survey = await ctx.db
+          .insert(surveyTable)
+          .values({
+            name: input.name,
+            description: input.description,
+            link: input.link,
+            start_date: new Date(input.startDate).toISOString(),
+            end_date: new Date(input.endDate).toISOString(),
+            points: input.points,
+            referral_bonus_points: input.referralBonusPoints,
+            number_of_winners: input.numberOfWinners,
+            event_id: input.eventId,
+            created_by: user[0].id
+          })
+          .returning();
+
+        if (!survey[0]) {
+          throw new TRPCError({
+            message: 'There was an error creating the survey',
+            code: 'INTERNAL_SERVER_ERROR'
+          });
+        }
+
+        return survey[0];
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error instanceof Error ? error.message : 'Failed to create survey'
+        });
+      }
+    }),
   update: protectedProcedure.input(editSurveyFormSchema.extend({ id: z.number() })).mutation(async ({ ctx, input }) => {
     try {
       const user = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));

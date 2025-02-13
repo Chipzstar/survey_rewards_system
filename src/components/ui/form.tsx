@@ -7,6 +7,7 @@ import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useF
 
 import { cn } from '~/lib/utils';
 import { Label } from '~/components/ui/label';
+import { usePathname } from 'next/navigation';
 
 const Form = FormProvider;
 
@@ -79,11 +80,14 @@ const FormLabel = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
   const { error, formItemId } = useFormField();
+  const path = usePathname();
 
   return (
     <Label
       ref={ref}
-      className={cn('text-white', error && 'text-destructive', className)}
+      className={cn(error && 'text-destructive', className, {
+        'text-white': path.includes('/survey')
+      })}
       htmlFor={formItemId}
       {...props}
     />
