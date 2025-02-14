@@ -4,7 +4,7 @@ import { HydrateClient, trpc } from '~/trpc/server';
 import Image from 'next/image';
 
 export default async function CheckWinnerPage({ params }: { params: { id: string } }) {
-  const survey = await trpc.survey.byId({ id: Number(params.id) });
+  const survey = await trpc.survey.byIdWithEvent({ id: Number(params.id) });
 
   if (!survey) throw new Error('No Survey found');
 
@@ -20,7 +20,7 @@ export default async function CheckWinnerPage({ params }: { params: { id: string
           <CheckWinnerForm surveyId={params.id} />
         </div>
         <div className='flex flex-col items-center gap-4 text-center'>
-          <p className='mt-4 text-sm text-gray-300'>The Mount Motherland 2025</p>
+          <p className='mt-4 text-sm text-gray-300'>{survey.event?.name}</p>
           <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
         </div>
       </main>

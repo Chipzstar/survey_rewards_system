@@ -69,7 +69,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
           </section>
         </div>
         <div className='flex flex-col items-center gap-4 text-center'>
-          <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
+          <Image src='/powered-by-genus.png' alt='Arc 2.0' width={200} height={100} />
         </div>
       </div>
     </HydrateClient>

@@ -17,7 +17,6 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <p className='text-center text-xl'>We truly appreciate your contribution, though — thank you!</p>
       </div>
       <div className='flex flex-col items-center gap-4 text-center'>
-        <p className='mt-4 text-sm text-gray-300'>Mount Motherland 2025</p>
         {/*<p className='text-sm text-gray-300'>Okwu ID & Ozo Run Club Team</p>*/}
         <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
       </div>
