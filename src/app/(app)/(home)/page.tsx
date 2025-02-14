@@ -6,6 +6,7 @@ import { SurveyListCard } from '~/app/(app)/(home)/survey-list-card';
 import { CreateEventDialog } from '~/components/modals/create-event-dialog';
 import { format } from 'date-fns';
 import { CreateSurveyDialog } from '~/components/modals/create-survey-dialog';
+import { ScrollArea } from '~/components/ui/scroll-area';
 
 export default async function Dashboard() {
   const user = await auth();
@@ -37,11 +38,11 @@ export default async function Dashboard() {
               <h2 className='text-2xl font-semibold'>Events</h2>
               <CreateEventDialog />
             </div>
-            <div className='flex grow flex-col space-y-4'>
+            <ScrollArea className='flex flex-col sm:h-[72vh]'>
               {events.map(event => (
                 <div
                   key={event.id}
-                  className='rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-primary dark:border-gray-700 dark:bg-gray-800'
+                  className='mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-primary dark:border-gray-700 dark:bg-gray-800'
                 >
                   <h3 className='text-lg font-medium'>{event.name}</h3>
                   <p className='mt-1 text-sm text-gray-500'>{event.description}</p>
@@ -54,23 +55,23 @@ export default async function Dashboard() {
               <div className='my-auto'>
                 {events.length === 0 && <p className='text-center text-gray-500'>No events created yet.</p>}
               </div>
-            </div>
+            </ScrollArea>
           </section>
 
           {/* Surveys Section */}
           <section className='flex grow flex-col lg:px-6'>
             <div className='mb-4 flex items-center justify-between'>
               <h2 className='text-2xl font-semibold'>Surveys</h2>
-              <CreateSurveyDialog />
+              <CreateSurveyDialog events={events} />
             </div>
-            <div className='flex grow flex-col space-y-4'>
+            <ScrollArea className='flex flex-col sm:h-[72vh]'>
               {surveys.map(survey => (
                 <SurveyListCard key={survey.id} survey={survey} />
               ))}
               <div className='my-auto'>
                 {surveys.length === 0 && <p className='text-center text-gray-500'>No surveys created yet.</p>}
               </div>
-            </div>
+            </ScrollArea>
           </section>
         </div>
       </main>

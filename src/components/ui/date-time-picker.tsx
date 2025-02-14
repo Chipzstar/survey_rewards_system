@@ -16,9 +16,11 @@ interface DateTimePickerProps {
   date?: Date;
   setDate: (date: Date) => void;
   className?: string;
+  showTime?: boolean;
+  isModal?: boolean;
 }
 
-export function DateTimePicker({ date, setDate, className }: DateTimePickerProps) {
+export function DateTimePicker({ date, setDate, className, showTime = true, isModal = false }: DateTimePickerProps) {
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(date);
 
   // Handle date selection
@@ -47,13 +49,9 @@ export function DateTimePicker({ date, setDate, className }: DateTimePickerProps
     }
   };
 
-  useEffect(() => {
-    console.log(date);
-  }, [date]);
-
   return (
     <div className={cn('grid gap-2', className)}>
-      <Popover>
+      <Popover modal={isModal}>
         <PopoverTrigger asChild>
           <Button
             variant={'outline'}
@@ -63,17 +61,19 @@ export function DateTimePicker({ date, setDate, className }: DateTimePickerProps
             {selectedDate ? format(selectedDate, 'PPP p') : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='w-auto p-0' align='start'>
-          <Calendar mode='single' selected={selectedDate} onSelect={handleDateSelect} initialFocus />
-          <div className='border-t p-3'>
-            <Input
-              type='time'
-              onChange={handleTimeChange}
-              value={selectedDate ? format(selectedDate, 'HH:mm') : ''}
-              className='w-full'
-            />
-          </div>
-        </PopoverContent>
+        {showTime && (
+          <PopoverContent className='w-auto p-0' align='start'>
+            <Calendar mode='single' selected={selectedDate} onSelect={handleDateSelect} initialFocus />
+            <div className='border-t p-3'>
+              <Input
+                type='time'
+                onChange={handleTimeChange}
+                value={selectedDate ? format(selectedDate, 'HH:mm') : ''}
+                className='w-full'
+              />
+            </div>
+          </PopoverContent>
+        )}
       </Popover>
     </div>
   );

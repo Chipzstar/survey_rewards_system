@@ -21,10 +21,14 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '~/trpc/client';
 import { useRouter } from 'next/navigation';
+import { RouterOutput } from '~/lib/trpc';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
+import { useState } from 'react';
 
 const formSchema = z.object({
+  eventId: z.string().transform(val => Number(val)),
   name: z.string().min(2, 'Survey name must be at least 2 characters'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  description: z.string().min(10, 'Description must be at least 10 characters').nullable().optional(),
   link: z.string().url('Must be a valid URL'),
   startDate: z.union([z.date(), z.string()]),
   endDate: z.union([z.date(), z.string()]),
@@ -37,30 +41,42 @@ const formSchema = z.object({
     .transform(val => (typeof val === 'string' ? parseInt(val, 10) : val))
 });
 
-export function CreateSurveyDialog() {
+export function CreateSurveyDialog({ events }: { events: RouterOutput['event']['fromUser'] }) {
   const router = useRouter();
+  const [opened, setOpened] = useState(false);
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      eventId: undefined,
       name: '',
-      description: '',
+      description: null,
       link: '',
       startDate: new Date(),
       endDate: new Date(),
       points: 100,
       referralBonusPoints: 25,
-      numberOfWinners: 1
+      numberOfWinners: 20
     }
   });
 
   const { mutate: createSurvey } = trpc.survey.create.useMutation({
+    onMutate: () => {
+      setLoading(true);
+    },
     onSuccess: () => {
       toast.success('Survey created successfully');
+      setOpened(false);
       form.reset();
       router.refresh();
     },
     onError: error => {
+      console.log(error.message);
+      console.error(error);
       toast.error('Failed to create survey', { description: error.message });
+    },
+    onSettled: () => {
+      setLoading(false);
     }
   });
 
@@ -69,20 +85,49 @@ export function CreateSurveyDialog() {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <Dialog open={opened} onOpenChange={setOpened}>
+      <DialogTrigger asChild disabled={!events.length}>
         <Button>
           <Plus className='mr-2 h-4 w-4' />
           Create Survey
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='sm:max-w-2xl'>
         <DialogHeader>
           <DialogTitle>Create Survey</DialogTitle>
           <DialogDescription>Create a new survey with rewards and points.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+            <FormField
+              control={form.control}
+              name='eventId'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Event</FormLabel>
+                  <Select
+                    onValueChange={val => {
+                      console.log(val);
+                      field.onChange(val);
+                    }}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select an event' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {events.map(event => (
+                        <SelectItem key={event.id} value={String(event.id)}>
+                          {event.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name='name'
@@ -130,7 +175,7 @@ export function CreateSurveyDialog() {
                   <FormItem>
                     <FormLabel>Start Date</FormLabel>
                     <FormControl>
-                      <DateTimePicker {...field} setDate={date => field.onChange(date)} />
+                      <DateTimePicker {...field} setDate={date => field.onChange(date)} isModal={true} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -143,7 +188,7 @@ export function CreateSurveyDialog() {
                   <FormItem>
                     <FormLabel>End Date</FormLabel>
                     <FormControl>
-                      <DateTimePicker {...field} setDate={date => field.onChange(date)} />
+                      <DateTimePicker {...field} setDate={date => field.onChange(date)} isModal={true} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,7 +237,9 @@ export function CreateSurveyDialog() {
               )}
             />
             <DialogFooter>
-              <Button type='submit'>Create Survey</Button>
+              <Button type='submit' isLoading={loading}>
+                Create Survey
+              </Button>
             </DialogFooter>
           </form>
         </Form>

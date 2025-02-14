@@ -21,6 +21,8 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '~/trpc/client';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useLoading } from '~/components/providers/loading-provider';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Event name must be at least 2 characters'),
@@ -31,6 +33,8 @@ const formSchema = z.object({
 
 export function CreateEventDialog() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,13 +46,20 @@ export function CreateEventDialog() {
   });
 
   const { mutate: createEvent } = trpc.event.create.useMutation({
+    onMutate: () => {
+      setLoading(true);
+    },
     onSuccess: () => {
       toast.success('Event created successfully');
+      setOpen(false);
       form.reset();
       router.refresh();
     },
     onError: error => {
       toast.error('Failed to create event', { description: error.message });
+    },
+    onSettled: () => {
+      setLoading(false);
     }
   });
 
@@ -57,14 +68,14 @@ export function CreateEventDialog() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus className='mr-2 h-4 w-4' />
           Create Event
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='sm:max-w-3xl'>
         <DialogHeader>
           <DialogTitle>Create Event</DialogTitle>
           <DialogDescription>Create a new event to manage surveys and rewards.</DialogDescription>
@@ -117,14 +128,16 @@ export function CreateEventDialog() {
                 <FormItem>
                   <FormLabel>Date</FormLabel>
                   <FormControl>
-                    <DateTimePicker {...field} setDate={date => field.onChange(date)} />
+                    <DateTimePicker {...field} setDate={date => field.onChange(date)} isModal={true} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button type='submit'>Create Event</Button>
+              <Button type='submit' isLoading={loading}>
+                Create Event
+              </Button>
             </DialogFooter>
           </form>
         </Form>
