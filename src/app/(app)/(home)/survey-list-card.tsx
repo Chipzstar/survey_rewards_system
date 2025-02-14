@@ -4,24 +4,24 @@ import { RouterOutput } from '~/lib/trpc';
 import Link from 'next/link';
 import { FC } from 'react';
 
-export const SurveyListCard: FC<{ survey: RouterOutput['survey']['all'][number]; isDay1: boolean }> = ({
-  isDay1,
+export const SurveyListCard: FC<{ survey: RouterOutput['survey']['all'][number]; disabled?: boolean }> = ({
+  disabled = false,
   survey
 }) => (
-  <li key={survey.id}>
+  <li key={survey.id} className='list-none'>
     <Link
-      href={isDay1 ? '#' : `/survey/${survey.id}`}
+      href={disabled ? '#' : `/survey/${survey.id}`}
       className={`block rounded-md border p-4 shadow-sm transition-colors ${
-        isDay1
+        disabled
           ? 'cursor-not-allowed border-gray-300 bg-gray-100 opacity-60 dark:border-gray-600 dark:bg-gray-700'
           : 'border-gray-200 bg-white hover:border-primary hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary'
       }`}
-      onClick={isDay1 ? e => e.preventDefault() : undefined}
+      onClick={disabled ? e => e.preventDefault() : undefined}
     >
       <div className='flex items-center justify-between'>
         <span className='text-lg font-medium text-gray-800 dark:text-gray-100'>
           {survey.name}
-          {isDay1 && <span className='ml-2 text-sm text-gray-500'>(Expired)</span>}
+          {disabled && <span className='ml-2 text-sm text-gray-500'>(Expired)</span>}
         </span>
         <svg
           xmlns='http://www.w3.org/2000/svg'
