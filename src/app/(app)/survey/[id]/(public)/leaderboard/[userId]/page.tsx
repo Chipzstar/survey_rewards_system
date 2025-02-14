@@ -23,12 +23,12 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
               <p className='mb-4 text-balance text-center text-xl md:w-2/3'>
                 <span>Thank you for sharing your connections!</span>
               </p>
-              {/*<p className='mb-4 text-balance text-center text-xl md:w-2/3'>
+              <p className='mb-4 text-balance text-center text-xl md:w-2/3'>
                 <span>
                   You've successfully referred {referrals.length} {referrals.length === 1 ? 'person' : 'people'},
                   earning extra points!
                 </span>
-              </p>*/}
+              </p>
               <p className='mb-6 text-pretty text-2xl'>
                 Total points earned:
                 <br />
@@ -42,11 +42,16 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
                 <br />
                 <span className='text-3xl font-bold text-secondary-800'>{completion_time} seconds</span>
               </p>
-              <p className='mb-4 text-balance text-center text-xl md:w-2/3'>
+              {/*<p className='mb-4 text-balance text-center text-xl md:w-2/3'>
                 <span className='font-bold'>BOOST</span> your position further and get&nbsp;
                 <span className='font-bold'>DOUBLE</span> points by sharing your event connections!
+              </p>*/}
+              <p className='mb-6 text-pretty text-2xl'>
+                Total points earned:
+                <br />
+                <span className='text-3xl font-bold text-secondary-800'>{response.points_earned} points</span>
               </p>
-              <AddReferralForm surveyId={survey.id} userId={response.user_id} />
+              {/*<AddReferralForm surveyId={survey.id} userId={response.user_id} />*/}
             </>
           )}
           <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
