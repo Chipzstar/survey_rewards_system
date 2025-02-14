@@ -19,7 +19,7 @@ export const editSurveyFormSchema = z.object({
       }
       return val;
     }),
-  surveyLink: z.string().url('Must be a valid URL').nullable(),
+  surveyLink: z.string().url('Must be a valid URL'),
   potentialWinners: z.number().min(1, 'Must have at least 1 winner'),
   deadline: z.union([
     z.date().min(new Date(), 'Deadline must be in the future'),
@@ -27,6 +27,7 @@ export const editSurveyFormSchema = z.object({
   ]),
 
   // Gift card details
+  giftCardId: z.number().optional(),
   giftCardName: z.string().min(3, 'Gift card name must be at least 3 characters'),
   giftCardBrand: z.string().min(1, 'Gift card brand is required'),
   voucherCode: z.string().min(1, 'Voucher code is required'),

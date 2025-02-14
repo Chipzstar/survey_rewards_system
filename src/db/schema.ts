@@ -31,7 +31,7 @@ export const surveyTable = pgTable('survey', {
   name: varchar({ length: 255 }).notNull(),
   description: varchar({ length: 255 }),
   location: varchar({ length: 255 }),
-  link: varchar({ length: 255 }),
+  link: varchar({ length: 255 }).notNull(),
   start_date: timestamp({ mode: 'string' }).notNull(),
   end_date: timestamp({ mode: 'string' }).notNull(),
   points: integer().notNull(),

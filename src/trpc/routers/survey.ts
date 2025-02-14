@@ -128,6 +128,7 @@ export const surveyRouter = createTRPCRouter({
         referralPoints,
         potentialWinners,
         surveyDescription,
+        giftCardId,
         giftCardAmount,
         giftCardExpiry,
         giftCardBrand,
@@ -147,7 +148,21 @@ export const surveyRouter = createTRPCRouter({
         })
         .where(eq(surveyTable.id, input.id));
       // upsert the gift card details
-      if (giftCardName && giftCardExpiry && giftCardAmount) {
+      if (giftCardId) {
+        const [giftCard] = await ctx.db
+          .update(giftCardTable)
+          .set({
+            name: giftCardName,
+            brand: giftCardBrand,
+            code: voucherCode,
+            expiry_date: new Date(giftCardExpiry).toDateString(),
+            value: giftCardAmount,
+            is_redeemed: false
+          })
+          .where(eq(giftCardTable.id, giftCardId))
+          .returning();
+        console.log(giftCard);
+      } else {
         const [giftCard] = await ctx.db
           .insert(giftCardTable)
           .values({
@@ -159,17 +174,6 @@ export const surveyRouter = createTRPCRouter({
             expiry_date: new Date(giftCardExpiry).toDateString(),
             value: giftCardAmount,
             is_redeemed: false
-          })
-          .onConflictDoUpdate({
-            target: giftCardTable.code,
-            set: {
-              name: giftCardName,
-              brand: giftCardBrand,
-              code: voucherCode,
-              expiry_date: new Date(giftCardExpiry).toDateString(),
-              value: giftCardAmount,
-              is_redeemed: false
-            }
           })
           .returning();
         console.log(giftCard);

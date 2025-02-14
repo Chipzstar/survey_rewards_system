@@ -41,6 +41,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
       potentialWinners: survey.number_of_winners,
       deadline: new Date(survey.end_date),
       // Handle empty giftCards array with default values
+      giftCardId: survey.giftCards?.[0]?.id ?? undefined,
       giftCardName: survey.giftCards?.[0]?.name ?? '',
       giftCardBrand: survey.giftCards?.[0]?.brand ?? '',
       voucherCode: survey.giftCards?.[0]?.code ?? '',
