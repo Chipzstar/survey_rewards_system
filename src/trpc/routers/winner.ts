@@ -36,10 +36,16 @@ export const winnerRouter = createTRPCRouter({
       const responses = await ctx.db
         .select()
         .from(surveyResponseTable)
-        .where(and(eq(surveyResponseTable.survey_id, surveyId), eq(surveyResponseTable.is_completed, true)));
-      const response = responses.find(r => r.passcode === input.passcode);
-      if (!response) throw new TRPCError({ code: 'NOT_FOUND', message: 'Invalid passcode' });
-
+        .where(
+          and(
+            eq(surveyResponseTable.survey_id, surveyId),
+            eq(surveyResponseTable.is_completed, true),
+            eq(surveyResponseTable.passcode, input.passcode)
+          )
+        );
+      console.log(responses);
+      if (!responses[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'Invalid passcode' });
+      const response = responses[0];
       // check if a survey winner has already been claimed
       const surveyWinner = await ctx.db
         .select()
