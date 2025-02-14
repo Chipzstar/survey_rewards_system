@@ -56,16 +56,16 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
                   viewBox={`0 0 256 256`}
                 />
               </div>
-              {/* <Link
-                href={`/survey/${id}/check-winner`}
-                className='mt-2 text-wrap text-lg text-white underline'
-                target={'_blank'}
-              >
-                <span>
-                  {NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner
-                </span>
-              </Link>*/}
             </div>
+            <Link
+              href={`/survey/${id}/check-winner`}
+              className='mt-2 text-wrap text-lg text-white underline'
+              target={'_blank'}
+            >
+              <span>
+                {NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner
+              </span>
+            </Link>
           </section>
         </div>
         <div className='flex flex-col items-center gap-4 text-center'>
