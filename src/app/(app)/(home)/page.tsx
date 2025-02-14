@@ -7,9 +7,11 @@ import { CreateEventDialog } from '~/components/modals/create-event-dialog';
 import { format } from 'date-fns';
 import { CreateSurveyDialog } from '~/components/modals/create-survey-dialog';
 import { ScrollArea } from '~/components/ui/scroll-area';
+import { prettyPrint } from '~/lib/utils';
 
 export default async function Dashboard() {
   const user = await auth();
+  prettyPrint(user);
 
   if (!user.userId) {
     return (

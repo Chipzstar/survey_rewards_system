@@ -14,14 +14,12 @@ const increment = (column: AnyColumn, value = 1) => {
 export const surveyRouter = createTRPCRouter({
   all: protectedProcedure.query(async ({ ctx }) => {
     // Fetch survey data from a database or API
-    const surveys = await ctx.db.select().from(surveyTable);
-    console.log(surveys);
-    return surveys;
+    return await ctx.db.select().from(surveyTable);
   }),
   fromUser: protectedProcedure.query(async ({ ctx, input }) => {
     // Fetch survey data from a database or API
     const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
-    if (!dbUser) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+    if (!dbUser) return [];
 
     const surveys = await ctx.db.select().from(surveyTable).where(eq(surveyTable.created_by, dbUser.id));
     console.log(surveys);

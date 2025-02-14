@@ -6,14 +6,12 @@ import { z } from 'zod';
 
 export const eventRouter = createTRPCRouter({
   all: protectedProcedure.query(async ({ ctx }) => {
-    const events = await ctx.db.select().from(eventTable);
-    console.log(events);
-    return events;
+    return await ctx.db.select().from(eventTable);
   }),
   fromUser: protectedProcedure.query(async ({ ctx, input }) => {
     // Fetch survey data from a database or API
     const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
-    if (!dbUser) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+    if (!dbUser) return [];
 
     const events = await ctx.db.select().from(eventTable).where(eq(eventTable.created_by, dbUser.id));
     console.log(events);
