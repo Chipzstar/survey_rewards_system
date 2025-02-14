@@ -68,14 +68,15 @@ export async function POST(req: Request) {
       );
     }*/
     let data;
-    switch (event.formId) {
+    /*switch (event.formId) {
       case FILLOUT_FORM_ID_DAY_1:
       case FILLOUT_FORM_ID_DAY_2:
         data = await handleFormResponse(event);
         break;
       default:
         break;
-    }
+    }*/
+    data = await handleFormResponse(event);
 
     prettyPrint(data);
     return NextResponse.json({ received: true, message: `Webhook received`, data });
