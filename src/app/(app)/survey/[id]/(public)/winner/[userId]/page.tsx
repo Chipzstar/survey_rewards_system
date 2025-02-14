@@ -2,6 +2,7 @@ import React from 'react';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { format } from 'date-fns';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default async function WinnerDetailsPage({ params }: { params: { id: string; userId: string } }) {
   const winner = await trpc.winner.getSurveyWinner({ surveyId: Number(params.id), userId: params.userId });
@@ -20,7 +21,9 @@ export default async function WinnerDetailsPage({ params }: { params: { id: stri
             <p className='text-3xl font-bold'>{giftCardDetails.brand}</p>
           </div>
           <p className='mb-2'>Amount: £{giftCardDetails.value}</p>
-          <p className='mb-2'>Voucher code: {giftCardDetails.code}</p>
+          <Link href={giftCardDetails.code} className='mb-2 text-wrap' target={'_blank'}>
+            {giftCardDetails.code}
+          </Link>
           <p>Expiry date: {format(new Date(giftCardDetails.expiry_date), 'dd/MM/yyyy')}</p>
         </div>
         <div className='flex flex-col items-center gap-4 text-center'>
