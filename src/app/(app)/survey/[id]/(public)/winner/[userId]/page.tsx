@@ -14,7 +14,7 @@ export default async function WinnerDetailsPage({ params }: { params: { id: stri
   return (
     <HydrateClient>
       <main className='flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-primary to-secondary p-4 text-white md:p-24'>
-        <div className='flex w-full max-w-3xl flex-col flex-wrap items-center rounded-lg bg-white/10 p-6 shadow-lg'>
+        <div className='flex w-full max-w-3xl flex-col items-center rounded-lg bg-white/10 p-6 shadow-lg'>
           <h2 className='mb-4 text-center text-3xl font-bold drop-shadow-md md:text-4xl'>Congratulations! 🎉</h2>
           <p className='mb-6 text-center text-2xl'>You have won the Gift Card! 🥳</p>
           <div className='mb-4 rounded-md bg-blue-500 px-16 py-12 text-center'>
