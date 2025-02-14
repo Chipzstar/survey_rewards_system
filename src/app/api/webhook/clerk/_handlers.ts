@@ -24,9 +24,9 @@ export const createNewUser = async (event: UserWebhookEvent) => {
     await db.insert(usersTable).values({
       clerk_id: String(payload.id),
       email: String(payload.email_addresses[0]?.email_address),
-      username: payload.username,
-      firstname: payload.first_name,
-      lastname: payload.last_name
+      username: payload.username ?? '',
+      firstname: payload.first_name ?? '',
+      lastname: payload.last_name ?? ''
     });
 
     const dbUser = (await db.select().from(usersTable).where(eq(usersTable.clerk_id, payload.id)))[0];
@@ -88,11 +88,11 @@ export const deleteUser = async (event: UserWebhookEvent) => {
   try {
     const payload = event.data as DeletedObjectJSON;
     // check if the user exists in the db
-    const dbUser = (await db.select().from(usersTable).where(eq(usersTable.clerkId, payload.id!)))[0];
+    const dbUser = (await db.select().from(usersTable).where(eq(usersTable.clerk_id, payload.id!)))[0];
     if (!dbUser) throw new Error('Could not find user');
     // delete any entities in the DB that link directly to the user
     // delete the user in db
-    await db.delete(usersTable).where(eq(usersTable.clerkId, payload.id!));
+    await db.delete(usersTable).where(eq(usersTable.clerk_id, payload.id!));
     posthog.capture({
       distinctId: dbUser.email,
       event: 'User Deleted',
