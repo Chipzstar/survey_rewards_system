@@ -6,6 +6,7 @@ import { env } from '~/env';
 import Image from 'next/image';
 import React from 'react';
 import { rankResponses, sortResponsesByCompletionTime } from '~/lib/utils';
+import QRCode from 'react-qr-code';
 
 export default async function WinnerAnnouncementPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -46,7 +47,16 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
           <section className='flex flex-col items-center space-y-4 text-center'>
             <h2 className='mb-4 text-2xl font-bold text-white lg:text-3xl'>Claim your gift card here</h2>
             <div className='px-2'>
-              <Link
+              <div className='mb-4 md:mb-8'>
+                <QRCode
+                  value={`${NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner`}
+                  size={256}
+                  className='sm:max-w-2xl'
+                  style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+                  viewBox={`0 0 256 256`}
+                />
+              </div>
+              {/* <Link
                 href={`/survey/${id}/check-winner`}
                 className='mt-2 text-wrap text-lg text-white underline'
                 target={'_blank'}
@@ -54,7 +64,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
                 <span>
                   {NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner
                 </span>
-              </Link>
+              </Link>*/}
             </div>
           </section>
         </div>
