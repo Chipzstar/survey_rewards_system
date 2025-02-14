@@ -49,7 +49,7 @@ export default async function WinnerAnnouncementPage({ params }: { params: { id:
             <div className='px-2'>
               <div className='mb-4 md:mb-8'>
                 <QRCode
-                  value={`${NEXT_PUBLIC_BASE_URL}/survey/{id}/check-winner`}
+                  value={`${NEXT_PUBLIC_BASE_URL}/survey/${id}/check-winner`}
                   size={256}
                   className='sm:max-w-2xl'
                   style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
