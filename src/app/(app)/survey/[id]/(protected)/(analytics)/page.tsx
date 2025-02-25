@@ -2,8 +2,6 @@ import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { differenceInMinutes, differenceInSeconds } from 'date-fns';
-import { DataTable } from '~/components/leaderboard/data-table';
-import { columns } from '~/components/leaderboard/columns';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { rankResponses } from '~/lib/utils';
 
