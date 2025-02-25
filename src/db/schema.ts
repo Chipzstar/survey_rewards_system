@@ -1,5 +1,7 @@
-import { boolean, integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgTable, timestamp, varchar, pgEnum } from 'drizzle-orm/pg-core';
 import { timestamps } from './column.helpers';
+
+// const roleEnum = pgEnum('role', ['admin', 'user', 'guest']);
 
 export const usersTable = pgTable('user', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -10,6 +12,9 @@ export const usersTable = pgTable('user', {
   lastname: varchar({ length: 255 }).notNull(),
   org_id: varchar({ length: 255 }),
   points: integer().default(0).notNull(),
+  role: varchar({ enum: ['admin', 'user', 'guest'] })
+    .default('user')
+    .notNull(),
   ...timestamps
 });
 
@@ -71,6 +76,19 @@ export const referralTable = pgTable('referral', {
   is_completed: boolean().default(false),
   completed_at: timestamp(),
   bonus_points_earned: integer().default(0),
+  ...timestamps
+});
+
+export const rewardTable = pgTable('reward', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  reward_id: integer().notNull(),
+  survey_id: integer()
+    .references(() => surveyTable.id)
+    .notNull(),
+  name: varchar({ length: 255 }).notNull(),
+  cta_text: varchar({ length: 255 }).notNull(),
+  link: varchar({ length: 255 }).notNull(),
+  limit: integer().notNull(),
   ...timestamps
 });
 

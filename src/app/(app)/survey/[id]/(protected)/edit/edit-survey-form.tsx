@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '~/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
@@ -15,6 +15,7 @@ import { FC } from 'react';
 import { RouterOutput } from '~/lib/trpc';
 import { editSurveyFormSchema } from '~/lib/validators';
 import { useLoading } from '~/components/providers/loading-provider';
+import { Plus, Trash2 } from 'lucide-react';
 
 export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalytics'] }> = ({ survey }) => {
   const router = useRouter();
@@ -40,17 +41,28 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
       surveyLink: survey.link,
       potentialWinners: survey.number_of_winners,
       deadline: new Date(survey.end_date),
-      // Handle empty giftCards array with default values
-      giftCardId: survey.giftCards?.[0]?.id ?? undefined,
-      giftCardName: survey.giftCards?.[0]?.name ?? '',
-      giftCardBrand: survey.giftCards?.[0]?.brand ?? '',
-      voucherCode: survey.giftCards?.[0]?.code ?? '',
-      giftCardExpiry: survey.giftCards?.[0]?.expiry_date
-        ? new Date(survey.giftCards[0].expiry_date)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default to 30 days from now
-      giftCardAmount: survey.giftCards?.[0]?.value
+      rewards: survey.rewards.length
+        ? survey.rewards.map(reward => ({
+            name: reward.name,
+            cta_text: reward.cta_text,
+            link: reward.link,
+            limit: reward.limit
+          }))
+        : [
+            {
+              name: '',
+              cta_text: '',
+              link: '',
+              limit: 1000
+            }
+          ]
     },
     reValidateMode: 'onSubmit'
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    name: 'rewards',
+    control: form.control
   });
 
   async function onSubmit(values: z.infer<typeof editSurveyFormSchema>) {
@@ -73,11 +85,11 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='grid grid-cols-1 place-content-evenly gap-8 lg:grid-cols-2'
+        className='grid h-full grid-cols-1 place-content-evenly gap-8 lg:grid-cols-2'
       >
         <section className='flex grow flex-col space-y-6'>
           <h3 className='text-lg font-medium text-white'>Survey Details</h3>
-          <div className='flex h-full flex-col justify-between space-y-4'>
+          <div className='flex h-full flex-col justify-between space-y-4 rounded-lg border border-white/20 p-4'>
             <FormField
               control={form.control}
               name='surveyName'
@@ -165,77 +177,75 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
             />
           </div>
         </section>
-        <section className='flex grow flex-col space-y-6'>
-          <h3 className='text-lg font-medium text-white'>Gift Card Details</h3>
-          <div className='flex h-full flex-col justify-between space-y-4'>
-            <FormField
-              control={form.control}
-              name='giftCardName'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gift Card Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='giftCardBrand'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gift Card Brand</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='voucherCode'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Voucher Code</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='giftCardExpiry'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gift Card Expiry</FormLabel>
-                  <FormControl>
-                    <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='giftCardAmount'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gift Card Amount</FormLabel>
-                  <FormControl>
-                    <Input type='number' {...field} onChange={e => field.onChange(e.target.value)} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <section className='flex grow flex-col space-y-6 lg:h-[calc(100vh-16rem)] lg:overflow-hidden'>
+          <div className='flex items-center justify-between'>
+            <h3 className='text-lg font-medium text-white'>Reward Details</h3>
+            <Button
+              type='button'
+              variant='outline'
+              size='sm'
+              className='border-white text-white hover:bg-white/20'
+              onClick={() => append({ name: '', cta_text: '', link: '', limit: 1000 })}
+            >
+              <Plus className='mr-2 h-4 w-4' />
+              <span className='text-sm'>Add Reward</span>
+            </Button>
+          </div>
+          <div className='flex flex-col space-y-6 lg:overflow-y-auto lg:pr-4'>
+            {fields.map((field, index) => (
+              <div key={field.id} className='relative rounded-lg border border-white/20 p-4'>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='absolute right-2 top-2 text-white hover:bg-white/20'
+                  onClick={() => remove(index)}
+                >
+                  <Trash2 className='h-4 w-4' />
+                </Button>
+                <div className='space-y-4'>
+                  <FormField
+                    control={form.control}
+                    name={`rewards.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Reward Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`rewards.${index}.cta_text`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Call to Action Text</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`rewards.${index}.link`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Reward Link</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </section>
         <section className='lg:col-span-2'>

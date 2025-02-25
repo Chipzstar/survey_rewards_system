@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../init';
-import { giftCardTable, referralTable, surveyResponseTable, surveyTable, usersTable } from '~/db/schema';
+import { giftCardTable, referralTable, rewardTable, surveyResponseTable, surveyTable, usersTable } from '~/db/schema';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { and, AnyColumn, eq, inArray, sql } from 'drizzle-orm';
@@ -66,7 +66,7 @@ export const surveyRouter = createTRPCRouter({
         referrals: {
           where: (referrals, { eq }) => eq(referrals.is_completed, true)
         },
-        giftCards: true
+        rewards: true
       },
       where: eq(surveyTable.id, input.id)
     });
@@ -140,12 +140,7 @@ export const surveyRouter = createTRPCRouter({
         referralPoints,
         potentialWinners,
         surveyDescription,
-        giftCardId,
-        giftCardAmount,
-        giftCardExpiry,
-        giftCardBrand,
-        giftCardName,
-        voucherCode
+        rewards
       } = input;
       await ctx.db
         .update(surveyTable)
@@ -159,36 +154,23 @@ export const surveyRouter = createTRPCRouter({
           description: surveyDescription
         })
         .where(eq(surveyTable.id, input.id));
-      // upsert the gift card details
-      if (giftCardId) {
-        const [giftCard] = await ctx.db
-          .update(giftCardTable)
-          .set({
-            name: giftCardName,
-            brand: giftCardBrand,
-            code: voucherCode,
-            expiry_date: new Date(giftCardExpiry).toDateString(),
-            value: giftCardAmount,
-            is_redeemed: false
-          })
-          .where(eq(giftCardTable.id, giftCardId))
-          .returning();
-        console.log(giftCard);
-      } else {
-        const [giftCard] = await ctx.db
-          .insert(giftCardTable)
-          .values({
-            survey_id: input.id,
-            priority: 1,
-            name: giftCardName,
-            brand: giftCardBrand,
-            code: voucherCode,
-            expiry_date: new Date(giftCardExpiry).toDateString(),
-            value: giftCardAmount,
-            is_redeemed: false
-          })
-          .returning();
-        console.log(giftCard);
+      if (input.rewards) {
+        // Delete existing rewards
+        await ctx.db.delete(rewardTable).where(eq(rewardTable.survey_id, input.id));
+
+        // Insert new rewards
+        if (input.rewards.length > 0) {
+          await ctx.db.insert(rewardTable).values(
+            input.rewards.map((reward, index) => ({
+              reward_id: index + 1,
+              survey_id: input.id,
+              name: reward.name,
+              cta_text: reward.cta_text,
+              link: reward.link,
+              limit: reward.limit
+            }))
+          );
+        }
       }
       return survey[0];
     } catch (error) {

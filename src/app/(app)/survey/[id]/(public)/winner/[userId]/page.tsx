@@ -21,7 +21,7 @@ export default async function WinnerDetailsPage({ params }: { params: { id: stri
             <p className='text-3xl font-bold'>{giftCardDetails.brand}</p>
           </div>
           <p className='mb-2'>Amount: £{giftCardDetails.value}</p>
-          <p className='mb-2 text-wrap underline'>
+          <p className='underlineos mb-2 w-fit text-wrap'>
             <Link href={giftCardDetails.code} target={'_blank'}>
               {giftCardDetails.code}
             </Link>

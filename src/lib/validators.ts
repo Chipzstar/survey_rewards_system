@@ -1,5 +1,16 @@
 import * as z from 'zod';
 
+const rewardSchema = z.object({
+  name: z.string().min(3, 'Reward name must be at least 3 characters'),
+  cta_text: z.string().min(1, 'Call to action text is required'),
+  link: z.string().url('Must be a valid URL'),
+  limit: z
+    .union([z.string(), z.number()])
+    .transform(val => (typeof val === 'string' ? parseInt(val, 10) : val))
+    .default(1000)
+    .refine(val => val > 0, 'Limit must be greater than 0')
+});
+
 export const editSurveyFormSchema = z.object({
   surveyName: z.string().min(2, 'Survey name must be at least 2 characters'),
   surveyDescription: z.string().min(10, 'Description must be at least 10 characters').nullable(),
@@ -25,22 +36,5 @@ export const editSurveyFormSchema = z.object({
     z.date().min(new Date(), 'Deadline must be in the future'),
     z.string().min(1, 'Deadline must be in the future')
   ]),
-
-  // Gift card details
-  giftCardId: z.number().optional(),
-  giftCardName: z.string().min(3, 'Gift card name must be at least 3 characters'),
-  giftCardBrand: z.string().min(1, 'Gift card brand is required'),
-  voucherCode: z.string().min(1, 'Voucher code is required'),
-  giftCardExpiry: z.union([
-    z.date().min(new Date(), 'Expiry date must be in the future'),
-    z.string().min(1, 'Expiry date must be in the future')
-  ]),
-  giftCardAmount: z
-    .union([z.string().min(1, 'Amount must be greater than 0'), z.number().min(1, 'Amount must be greater than 0')])
-    .transform(val => {
-      if (typeof val === 'string') {
-        return parseInt(val, 10);
-      }
-      return val;
-    })
+  rewards: z.array(rewardSchema)
 });
