@@ -6,6 +6,7 @@ import { FC } from 'react';
 import { AlertCircle, Gift } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 import { cn } from '~/lib/utils';
+import { Button } from '~/components/ui/button';
 
 export const SurveyListCard: FC<{ survey: RouterOutput['survey']['fromUser'][number]; disabled?: boolean }> = ({
   disabled = false,
@@ -29,7 +30,7 @@ export const SurveyListCard: FC<{ survey: RouterOutput['survey']['fromUser'][num
           </span>
           {survey.rewards && survey.rewards.length > 0 ? (
             <div className='flex items-center gap-1'>
-              <Gift className='h-4 w-4 text-green-500' />
+              <Gift className='h-5 w-5 text-green-500' />
               <span
                 className={cn(
                   'flex h-5 items-center justify-center rounded-full bg-green-100 px-2 text-xs font-medium text-green-600',
@@ -40,13 +41,20 @@ export const SurveyListCard: FC<{ survey: RouterOutput['survey']['fromUser'][num
               </span>
             </div>
           ) : (
-            <TooltipProvider>
+            <TooltipProvider delayDuration={200}>
               <Tooltip>
                 <TooltipTrigger>
-                  <AlertCircle className='h-4 w-4 text-yellow-500' />
+                  <AlertCircle className='h-5 w-5 text-yellow-500' />
                 </TooltipTrigger>
-                <TooltipContent>
-                  <p>Attendees will not receive a reward for completing this survey</p>
+                <TooltipContent className='flex max-w-xs flex-col gap-2 p-3'>
+                  <p className='text-sm'>
+                    This survey has no rewards configured. Attendees won't receive any incentives for participation.
+                  </p>
+                  <Link href={`/survey/${survey.id}/edit`} className='text-primary' passHref>
+                    <Button variant='secondary' size='sm' className='w-full'>
+                      Add Rewards
+                    </Button>
+                  </Link>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

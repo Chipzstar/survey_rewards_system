@@ -42,21 +42,13 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
       surveyLink: survey.link,
       potentialWinners: survey.number_of_winners,
       deadline: new Date(survey.end_date).toISOString(),
-      rewards: survey.rewards.length
-        ? survey.rewards.map(reward => ({
-            name: reward.name,
-            cta_text: reward.cta_text,
-            link: reward.link,
-            limit: reward.limit
-          }))
-        : [
-            {
-              name: '',
-              cta_text: 'Unlock your exclusive resource pack here! 🥳',
-              link: '',
-              limit: 1000
-            }
-          ]
+      rewards:
+        survey.rewards?.map(reward => ({
+          name: reward.name,
+          cta_text: reward.cta_text,
+          link: reward.link,
+          limit: reward.limit
+        })) ?? []
     },
     reValidateMode: 'onSubmit'
   });
