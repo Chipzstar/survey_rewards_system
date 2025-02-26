@@ -11,15 +11,16 @@ import { DateTimePicker } from '~/components/ui/date-time-picker';
 import { toast } from 'sonner';
 import { trpc } from '~/trpc/client';
 import { useRouter } from 'next/navigation';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { RouterOutput } from '~/lib/trpc';
 import { editSurveyFormSchema } from '~/lib/validators';
 import { useLoading } from '~/components/providers/loading-provider';
-import { Plus, Trash2 } from 'lucide-react';
+import { Info, Plus, Trash2 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 
 export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalytics'] }> = ({ survey }) => {
   const router = useRouter();
-  const { loading, setLoading } = useLoading();
+  const { setLoading } = useLoading();
   const utils = trpc.useUtils();
   const { mutateAsync: updateSurvey } = trpc.survey.update.useMutation({
     onSuccess: () => {
@@ -40,7 +41,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
       referralPoints: survey.referral_bonus_points,
       surveyLink: survey.link,
       potentialWinners: survey.number_of_winners,
-      deadline: new Date(survey.end_date),
+      deadline: new Date(survey.end_date).toISOString(),
       rewards: survey.rewards.length
         ? survey.rewards.map(reward => ({
             name: reward.name,
@@ -51,7 +52,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
         : [
             {
               name: '',
-              cta_text: '',
+              cta_text: 'Unlock your exclusive resource pack here! 🥳',
               link: '',
               limit: 1000
             }
@@ -64,6 +65,12 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
     name: 'rewards',
     control: form.control
   });
+
+  const { deadline } = form.watch();
+
+  useEffect(() => {
+    console.log(deadline);
+  }, [deadline]);
 
   async function onSubmit(values: z.infer<typeof editSurveyFormSchema>) {
     try {
@@ -169,7 +176,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                 <FormItem>
                   <FormLabel>Survey Deadline</FormLabel>
                   <FormControl>
-                    <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} />
+                    <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} date={deadline} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -235,9 +242,23 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                     name={`rewards.${index}.link`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Reward Link</FormLabel>
+                        <FormLabel className='flex items-center gap-2'>
+                          Reward Link
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className='h-4 w-4 cursor-help text-white/70' />
+                              </TooltipTrigger>
+                              <TooltipContent className='max-w-xs bg-white text-gray-900'>
+                                <p>
+                                  The URL where attendees can claim or download their reward (e.g. pdf resources, etc)
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Input {...field} placeholder='https://example.com/reward' />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
