@@ -48,10 +48,14 @@ export const PdfUploader: FC<Props> = props => {
     [props]
   );
 
-  const copyRewardLink = useCallback(() => {
-    navigator.clipboard.writeText(props.rewardLink);
-    toast.success('Reward link copied to clipboard');
-  }, [props.rewardLink]);
+  const copyRewardLink = useCallback(
+    (e: React.MouseEvent<SVGSVGElement>) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(props.rewardLink);
+      toast.success('Reward link copied to clipboard');
+    },
+    [props.rewardLink]
+  );
 
   return (
     <div {...getRootProps()}>
