@@ -29,8 +29,9 @@ export const PdfUploader: FC<Props> = props => {
       toast.success('PDF uploaded successfully');
       props.setRewardLink(res[0]!.ufsUrl);
     },
-    onUploadError: () => {
+    onUploadError: error => {
       toast.error('Failed to upload PDF');
+      console.log(error);
     },
     onUploadBegin: ({ file }) => {
       console.log('Upload has begun for', file);
