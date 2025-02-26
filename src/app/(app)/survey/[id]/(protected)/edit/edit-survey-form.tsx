@@ -260,7 +260,10 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                             <TabsTrigger value='link'>Link</TabsTrigger>
                           </TabsList>
                           <TabsContent value='upload' className='mt-4'>
-                            <PdfUploader setRewardLink={val => form.setValue(`rewards.${index}.link`, val)} />
+                            <PdfUploader
+                              rewardLink={field.value}
+                              setRewardLink={val => form.setValue(`rewards.${index}.link`, val)}
+                            />
                           </TabsContent>
                           <TabsContent value='link' className='mt-4'>
                             <FormControl>
