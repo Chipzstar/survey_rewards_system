@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from '~/trpc/init';
-import { eventTable, usersTable } from '~/db/schema';
+import { eventTable, surveyTable, usersTable } from '~/db/schema';
 import { eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -12,6 +12,10 @@ export const eventRouter = createTRPCRouter({
     // Fetch survey data from a database or API
     const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
     if (!dbUser) return [];
+
+    if (dbUser.role === 'admin') {
+      return await ctx.db.select().from(eventTable);
+    }
 
     const events = await ctx.db.select().from(eventTable).where(eq(eventTable.created_by, dbUser.id));
     console.log(events);

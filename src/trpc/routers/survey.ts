@@ -21,6 +21,9 @@ export const surveyRouter = createTRPCRouter({
     const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
     if (!dbUser) return [];
 
+    if (dbUser.role === 'admin') {
+      return await ctx.db.select().from(surveyTable);
+    }
     const surveys = await ctx.db.select().from(surveyTable).where(eq(surveyTable.created_by, dbUser.id));
     console.log(surveys);
     return surveys;
