@@ -37,6 +37,7 @@
     "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-tabs": "^1.1.3",
     "@radix-ui/react-tooltip": "^1.1.6",
     "@t3-oss/env-nextjs": "^0.11.1",
     "@tanstack/react-form": "^0.41.3",
@@ -46,6 +47,7 @@
     "@trpc/next": "11.0.0-rc.700",
     "@trpc/react-query": "11.0.0-rc.700",
     "@trpc/server": "11.0.0-rc.700",
+    "@uploadthing/react": "^7.3.0",
     "@xata.io/client": "^0.30.1",
     "class-variance-authority": "^0.7.1",
     "client-only": "^0.0.1",
@@ -76,6 +78,7 @@
     "svix": "^1.45.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^7.5.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {

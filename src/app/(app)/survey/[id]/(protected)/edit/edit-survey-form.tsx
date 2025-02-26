@@ -11,15 +11,20 @@ import { DateTimePicker } from '~/components/ui/date-time-picker';
 import { toast } from 'sonner';
 import { trpc } from '~/trpc/client';
 import { useRouter } from 'next/navigation';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { RouterOutput } from '~/lib/trpc';
 import { editSurveyFormSchema } from '~/lib/validators';
 import { useLoading } from '~/components/providers/loading-provider';
 import { Info, Plus, Trash2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
+import { PdfUploader } from '~/components/ui/pdf-uploader';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+
+type TabState = 'upload' | 'link';
 
 export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalytics'] }> = ({ survey }) => {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<TabState>('upload');
   const { setLoading } = useLoading();
   const utils = trpc.useUtils();
   const { mutateAsync: updateSurvey } = trpc.survey.update.useMutation({
@@ -191,8 +196,8 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
             </Button>
           </div>
           <div className='flex flex-col space-y-6 lg:overflow-y-auto lg:pr-4'>
-            {fields.map((field, index) => (
-              <div key={field.id} className='relative rounded-lg border border-white/20 p-4'>
+            {fields.map((_field, index) => (
+              <div key={_field.id} className='relative rounded-lg border border-white/20 p-4'>
                 <Button
                   type='button'
                   variant='ghost'
@@ -249,10 +254,21 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                             </Tooltip>
                           </TooltipProvider>
                         </FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder='https://example.com/reward' />
-                        </FormControl>
-                        <FormMessage />
+                        <Tabs defaultValue={activeTab}>
+                          <TabsList className='grid w-full grid-cols-2'>
+                            <TabsTrigger value='upload'>Upload</TabsTrigger>
+                            <TabsTrigger value='link'>Link</TabsTrigger>
+                          </TabsList>
+                          <TabsContent value='upload' className='mt-4'>
+                            <PdfUploader setRewardLink={val => form.setValue(`rewards.${index}.link`, val)} />
+                          </TabsContent>
+                          <TabsContent value='link' className='mt-4'>
+                            <FormControl>
+                              <Input {...field} placeholder='https://example.com/reward' />
+                            </FormControl>
+                            <FormMessage />
+                          </TabsContent>
+                        </Tabs>
                       </FormItem>
                     )}
                   />
