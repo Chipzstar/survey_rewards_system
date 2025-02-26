@@ -6,7 +6,8 @@ import {
   surveyResponseTable,
   surveyTable,
   surveyWinnerTable,
-  usersTable
+  usersTable,
+  rewardTable
 } from './schema';
 
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
@@ -36,7 +37,8 @@ export const surveyRelations = relations(surveyTable, ({ one, many }) => ({
   responses: many(surveyResponseTable),
   referrals: many(referralTable),
   winners: many(surveyWinnerTable),
-  giftCards: many(giftCardTable)
+  // giftCards: many(giftCardTable),
+  rewards: many(rewardTable)
 }));
 
 export const surveyResponseRelations = relations(surveyResponseTable, ({ one }) => ({
@@ -79,6 +81,13 @@ export const surveyWinnerRelations = relations(surveyWinnerTable, ({ one }) => (
 export const giftCardRelations = relations(giftCardTable, ({ one }) => ({
   survey: one(surveyTable, {
     fields: [giftCardTable.survey_id],
+    references: [surveyTable.id]
+  })
+}));
+
+export const rewardRelations = relations(rewardTable, ({ one }) => ({
+  survey: one(surveyTable, {
+    fields: [rewardTable.survey_id],
     references: [surveyTable.id]
   })
 }));

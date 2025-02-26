@@ -2,8 +2,6 @@ import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { differenceInMinutes, differenceInSeconds } from 'date-fns';
-import { DataTable } from '~/components/leaderboard/data-table';
-import { columns } from '~/components/leaderboard/columns';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { rankResponses } from '~/lib/utils';
 
@@ -95,7 +93,7 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
                   <span className='font-bold'>{avg_completion_time} mins</span>
                 </div>
               </li>
-              <li className='py-2'>
+              {/* <li className='py-2'>
                 <div className='flex items-center justify-between'>
                   <span>Total no. of referrals:</span>
                   <span className='font-bold'>{total_referrals}</span>
@@ -106,16 +104,16 @@ export default async function SurveyAnalytics({ params }: { params: { id: string
                   <span>Av. number of referrals:</span>
                   <span className='font-bold'>{avg_referrals}</span>
                 </div>
-              </li>
+              </li>*/}
             </ul>
           </div>
         </section>
-        <section className='mt-5 flex flex-col'>
+        {/* <section className='mt-5 flex flex-col'>
           <h2 className='mb-2 text-2xl font-bold md:mb-4'>Gift Card Leaderboard</h2>
           <div className='w-full overflow-x-auto'>
             <DataTable surveyId={id} columns={columns} data={data} />
           </div>
-        </section>
+        </section>*/}
       </div>
     </HydrateClient>
   );

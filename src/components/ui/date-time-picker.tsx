@@ -13,7 +13,7 @@ import { Input } from './input';
 import { useEffect } from 'react';
 
 interface DateTimePickerProps {
-  date?: Date;
+  date?: Date | undefined;
   setDate: (date: Date) => void;
   className?: string;
   showTime?: boolean;
