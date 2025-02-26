@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from '~/trpc/init';
 import { eventTable, surveyTable, usersTable } from '~/db/schema';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
@@ -14,7 +14,9 @@ export const eventRouter = createTRPCRouter({
     if (!dbUser) return [];
 
     if (dbUser.role === 'admin') {
-      return await ctx.db.select().from(eventTable);
+      return await ctx.db.query.eventTable.findMany({
+        orderBy: desc(eventTable.created_at)
+      });
     }
 
     const events = await ctx.db.select().from(eventTable).where(eq(eventTable.created_by, dbUser.id));

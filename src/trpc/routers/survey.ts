@@ -2,7 +2,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from '../init';
 import { giftCardTable, referralTable, rewardTable, surveyResponseTable, surveyTable, usersTable } from '~/db/schema';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { and, AnyColumn, eq, inArray, sql } from 'drizzle-orm';
+import { and, AnyColumn, desc, eq, inArray, sql } from 'drizzle-orm';
 import { editSurveyFormSchema } from '~/lib/validators';
 
 const increment = (column: AnyColumn, value = 1) => {
@@ -22,9 +22,20 @@ export const surveyRouter = createTRPCRouter({
     if (!dbUser) return [];
 
     if (dbUser.role === 'admin') {
-      return await ctx.db.select().from(surveyTable);
+      return await ctx.db.query.surveyTable.findMany({
+        with: {
+          rewards: true
+        },
+        orderBy: desc(surveyTable.created_at)
+      });
     }
-    const surveys = await ctx.db.select().from(surveyTable).where(eq(surveyTable.created_by, dbUser.id));
+    const surveys = await ctx.db.query.surveyTable.findMany({
+      with: {
+        rewards: true
+      },
+      where: eq(surveyTable.created_by, dbUser.id),
+      orderBy: desc(surveyTable.created_at)
+    });
     console.log(surveys);
     return surveys;
   }),
