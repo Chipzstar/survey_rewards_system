@@ -8,7 +8,7 @@ export const SurveyListCard: FC<{ survey: RouterOutput['survey']['all'][number];
   disabled = false,
   survey
 }) => (
-  <li key={survey.id} className='list-none'>
+  <li key={survey.id} className='mb-4 list-none'>
     <Link
       href={disabled ? '#' : `/survey/${survey.id}`}
       className={`block rounded-md border p-4 shadow-sm transition-colors ${

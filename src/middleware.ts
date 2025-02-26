@@ -11,7 +11,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhook(.*)',
   '/survey/(.*)/check-winner',
   '/survey/(.*)/winner/(.*)',
-  '/survey/(.*)/leaderboard/(.*)'
+  '/survey/(.*)/reward/(.*)'
 ]);
 
 export default clerkMiddleware(
