@@ -3,8 +3,11 @@
 import { RouterOutput } from '~/lib/trpc';
 import Link from 'next/link';
 import { FC } from 'react';
+import { AlertCircle, Gift } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
+import { cn } from '~/lib/utils';
 
-export const SurveyListCard: FC<{ survey: RouterOutput['survey']['all'][number]; disabled?: boolean }> = ({
+export const SurveyListCard: FC<{ survey: RouterOutput['survey']['fromUser'][number]; disabled?: boolean }> = ({
   disabled = false,
   survey
 }) => (
@@ -19,10 +22,37 @@ export const SurveyListCard: FC<{ survey: RouterOutput['survey']['all'][number];
       onClick={disabled ? e => e.preventDefault() : undefined}
     >
       <div className='flex items-center justify-between'>
-        <span className='text-lg font-medium text-gray-800 dark:text-gray-100'>
-          {survey.name}
-          {disabled && <span className='ml-2 text-sm text-gray-500'>(Expired)</span>}
-        </span>
+        <div className='flex items-center gap-2'>
+          <span className='text-lg font-medium text-gray-800 dark:text-gray-100'>
+            {survey.name}
+            {disabled && <span className='ml-2 text-sm text-gray-500'>(Expired)</span>}
+          </span>
+          {survey.rewards && survey.rewards.length > 0 ? (
+            <div className='flex items-center gap-1'>
+              <Gift className='h-4 w-4 text-green-500' />
+              <span
+                className={cn(
+                  'flex h-5 items-center justify-center rounded-full bg-green-100 px-2 text-xs font-medium text-green-600',
+                  'dark:bg-green-900/30 dark:text-green-400'
+                )}
+              >
+                {survey.rewards.length}
+              </span>
+            </div>
+          ) : (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <AlertCircle className='h-4 w-4 text-yellow-500' />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Attendees will not receive a reward for completing this survey</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+
         <svg
           xmlns='http://www.w3.org/2000/svg'
           viewBox='0 0 20 20'
