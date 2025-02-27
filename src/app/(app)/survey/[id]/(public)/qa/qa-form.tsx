@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
 import { useRouter } from 'next/navigation';
 import { trpc } from '~/trpc/client';
 import { Textarea } from '~/components/ui/textarea';
+import { useLoading } from '~/components/providers/loading-provider';
 
 const formSchema = z.object({
   attendanceReason: z.enum(['learn', 'inspire'], {
@@ -21,13 +22,20 @@ const formSchema = z.object({
 
 export default function SurveyForm({ surveyId }: { surveyId: number }) {
   const router = useRouter();
+  const { setLoading } = useLoading();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema)
   });
 
   const { mutate: submitResponse } = trpc.response.create.useMutation({
+    onMutate: () => {
+      setLoading(true);
+    },
     onSuccess: data => {
       router.push(`/survey/${surveyId}/reward/${data.user_id}`);
+    },
+    onSettled: () => {
+      setLoading(false);
     }
   });
 
