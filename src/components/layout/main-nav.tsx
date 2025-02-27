@@ -23,7 +23,8 @@ export const MainNav: FC<Props> = ({ className, surveyId }) => {
       {[
         { href: `/survey/${surveyId}`, label: 'Analytics' },
         { href: `/survey/${surveyId}/edit`, label: 'Edit' },
-        { href: `/survey/${surveyId}/share`, label: 'Share' }
+        { href: `/survey/${surveyId}/share`, label: 'Share' },
+        { href: `/survey/${surveyId}/qa`, label: 'Q&A' }
       ].map(({ href, label }) => (
         <Link
           key={href}
