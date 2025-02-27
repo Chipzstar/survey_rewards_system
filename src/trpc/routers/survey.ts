@@ -67,7 +67,8 @@ export const surveyRouter = createTRPCRouter({
       with: {
         event: true,
         rewards: true,
-        responses: true
+        responses: true,
+        genBotResponses: true
       },
       where: eq(surveyTable.id, input.id)
     });

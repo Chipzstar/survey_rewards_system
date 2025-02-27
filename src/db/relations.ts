@@ -7,7 +7,8 @@ import {
   surveyTable,
   surveyWinnerTable,
   usersTable,
-  rewardTable
+  rewardTable,
+  genBotResponseTable
 } from './schema';
 
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
@@ -37,13 +38,20 @@ export const surveyRelations = relations(surveyTable, ({ one, many }) => ({
   responses: many(surveyResponseTable),
   referrals: many(referralTable),
   winners: many(surveyWinnerTable),
-  // giftCards: many(giftCardTable),
-  rewards: many(rewardTable)
+  rewards: many(rewardTable),
+  genBotResponses: many(genBotResponseTable)
 }));
 
 export const surveyResponseRelations = relations(surveyResponseTable, ({ one }) => ({
   survey: one(surveyTable, {
     fields: [surveyResponseTable.survey_id],
+    references: [surveyTable.id]
+  })
+}));
+
+export const genBotResponseRelations = relations(genBotResponseTable, ({ one }) => ({
+  survey: one(surveyTable, {
+    fields: [genBotResponseTable.survey_id],
     references: [surveyTable.id]
   })
 }));

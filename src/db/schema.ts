@@ -108,6 +108,18 @@ export const giftCardTable = pgTable('gift_card', {
   ...timestamps
 });
 
+export const genBotResponseTable = pgTable('gen_bot_response', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  survey_id: integer()
+    .references(() => surveyTable.id)
+    .notNull(),
+  user_id: varchar({ length: 255 }).default('1001').notNull(),
+  response_id: varchar({ length: 255 }).notNull(),
+  question: varchar({ length: 255 }).notNull(),
+  attendance_reason: varchar({ length: 255 }).notNull(),
+  ...timestamps
+});
+
 export const surveyWinnerTable = pgTable('survey_winner', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   survey_id: integer()
