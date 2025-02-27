@@ -1,8 +1,8 @@
 import { createTRPCRouter, protectedProcedure } from '~/trpc/init';
-import { surveyResponseTable } from '~/db/schema';
+import { genBotResponseTable, surveyResponseTable, usersTable } from '~/db/schema';
 import { z } from 'zod';
 import { desc, eq } from 'drizzle-orm';
-import { sortResponsesByCompletionTime } from '~/lib/utils';
+import { genPasscode, genUserId, sortResponsesByCompletionTime } from '~/lib/utils';
 import { differenceInSeconds } from 'date-fns';
 
 export const responseRouter = createTRPCRouter({
@@ -27,5 +27,26 @@ export const responseRouter = createTRPCRouter({
     });
     console.log(data);
     return data;
-  })
+  }),
+  create: protectedProcedure
+    .input(z.object({ surveyId: z.number(), attendanceReason: z.string(), question: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const [user] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
+      if (!user) throw new Error('User not found');
+
+      const response = await ctx.db
+        .insert(genBotResponseTable)
+        .values({
+          response_id: `response_${genPasscode()}`,
+          survey_id: input.surveyId,
+          user_id: genUserId(),
+          question: input.question,
+          attendance_reason: input.attendanceReason
+        })
+        .returning();
+
+      if (!response[0]) throw new Error('Failed to create response');
+
+      return response[0];
+    })
 });
