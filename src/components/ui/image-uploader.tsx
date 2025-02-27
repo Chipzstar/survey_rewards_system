@@ -3,31 +3,34 @@ import React, { FC, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { generateClientDropzoneAccept, generatePermittedFileTypes } from 'uploadthing/client';
 import { useUploadThing } from '~/lib/uploadthing';
-import { CopyIcon, Upload, XCircle } from 'lucide-react';
+import { Upload, XCircle } from 'lucide-react';
+import Image from 'next/image';
 
 interface Props {
-  rewardLink: string;
-  setRewardLink: (url: string) => void;
+  thumbnail: string | null;
+  setThumbnail: (url: string) => void;
 }
 
-export const PdfUploader: FC<Props> = props => {
+export const ImageUploader: FC<Props> = props => {
   const [files, setFiles] = useState<File[]>([]);
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
     void startUpload(acceptedFiles);
   }, []);
 
-  const { startUpload, routeConfig, isUploading } = useUploadThing('pdfUploader', {
+  const { startUpload, routeConfig, isUploading } = useUploadThing('imageUploader', {
     onClientUploadComplete: res => {
       console.log('Files: ', res);
-      props.setRewardLink(res[0]!.ufsUrl);
+      props.setThumbnail(res[0]!.ufsUrl);
     },
     onUploadError: error => {
-      toast.error('Failed to upload PDF');
+      toast.error('Failed to upload Image', {
+        description: error.message
+      });
       console.log(error);
     },
-    onUploadBegin: ({ file }) => {
-      console.log('Upload has begun for', file);
+    onUploadBegin: filename => {
+      console.log('Upload has begun for', filename);
     }
   });
 
@@ -42,28 +45,19 @@ export const PdfUploader: FC<Props> = props => {
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       setFiles([]);
-      props.setRewardLink('');
+      props.setThumbnail('');
     },
     [props]
-  );
-
-  const copyRewardLink = useCallback(
-    (e: React.MouseEvent<SVGSVGElement>) => {
-      e.stopPropagation();
-      navigator.clipboard.writeText(props.rewardLink);
-      toast.success('Reward link copied to clipboard');
-    },
-    [props.rewardLink]
   );
 
   return (
     <div {...getRootProps()}>
       <input {...getInputProps()} />
-      {props.rewardLink || files.length > 0 ? (
+      {props.thumbnail || files[0] ? (
         <div className='flex w-full flex-col justify-center rounded-lg bg-background p-3'>
           <div className='flex grow flex-col space-y-1'>
             <div className='flex w-fit items-center space-x-4'>
-              <p className='text-sm font-bold'>PDF Reward Link</p>
+              <p className='text-sm font-bold'>Reward Thumbnail</p>
               <div className='flex items-center space-x-4'>
                 <button
                   onClick={clearSelection}
@@ -74,15 +68,14 @@ export const PdfUploader: FC<Props> = props => {
                 </button>
               </div>
             </div>
-            <div className='flex items-center space-x-4'>
-              <span className='text-overflow-ellipsis overflow-hidden truncate whitespace-nowrap text-sm'>
-                {files[0] ? `${files[0].name}` : props.rewardLink}
-              </span>
-              {!files.length && (
-                <div className='grow'>
-                  <CopyIcon size={20} className='grow text-gray-500 hover:text-gray-700' onClick={copyRewardLink} />
-                </div>
-              )}
+            <div className='flex items-center justify-center space-x-4 pt-2'>
+              <Image
+                // @ts-ignore
+                src={files[0] ? URL.createObjectURL(files[0]) : props.thumbnail}
+                alt='thumbnail'
+                width={200}
+                height={200}
+              />
             </div>
           </div>
         </div>
@@ -94,7 +87,7 @@ export const PdfUploader: FC<Props> = props => {
           <div className='mb-2 flex items-center justify-center p-2'>
             <Upload size={30} />
           </div>
-          <p className='mb-2 text-lg font-medium'>Drag & drop PDF here to upload</p>
+          <p className='mb-2 text-lg font-medium'>Drag & drop image here to upload</p>
           {isUploading ? <p className='text-sm'>Uploading...</p> : <p className='text-sm'>or click to select files</p>}
         </div>
       )}

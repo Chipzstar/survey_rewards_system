@@ -19,6 +19,7 @@ import { Info, Plus, Trash2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 import { PdfUploader } from '~/components/ui/pdf-uploader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { ImageUploader } from '~/components/ui/image-uploader';
 
 type TabState = 'upload' | 'link';
 
@@ -49,8 +50,10 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
       deadline: new Date(survey.end_date).toISOString(),
       rewards:
         survey.rewards?.map(reward => ({
+          id: reward.id,
           name: reward.name,
           cta_text: reward.cta_text,
+          thumbnail: reward.thumbnail,
           link: reward.link,
           limit: reward.limit
         })) ?? []
@@ -64,10 +67,6 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
   });
 
   const { deadline } = form.watch();
-
-  useEffect(() => {
-    console.log(deadline);
-  }, [deadline]);
 
   async function onSubmit(values: z.infer<typeof editSurveyFormSchema>) {
     try {
@@ -99,7 +98,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
               name='surveyName'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Survey Name</FormLabel>
+                  <FormLabel required>Survey Name</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -157,7 +156,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
               name='surveyLink'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Survey Link</FormLabel>
+                  <FormLabel required>Survey Link</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -171,7 +170,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
               name='deadline'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Survey Deadline</FormLabel>
+                  <FormLabel required>Survey Deadline</FormLabel>
                   <FormControl>
                     <DateTimePicker {...field} setDate={date => field.onChange(date.toISOString())} date={deadline} />
                   </FormControl>
@@ -189,7 +188,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
               variant='outline'
               size='sm'
               className='border-white text-white hover:bg-white/20'
-              onClick={() => append({ name: '', cta_text: '', link: '', limit: 1000 })}
+              onClick={() => append({ name: '', cta_text: '', link: '', limit: 1000, thumbnail: null })}
             >
               <Plus className='mr-2 h-4 w-4' />
               <span className='text-sm'>Add Reward</span>
@@ -213,7 +212,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                     name={`rewards.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Reward Name</FormLabel>
+                        <FormLabel required>Reward Name</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -226,7 +225,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                     name={`rewards.${index}.cta_text`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Call to Action Text</FormLabel>
+                        <FormLabel required>Call to Action Text</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -239,7 +238,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                     name={`rewards.${index}.link`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
+                        <FormLabel required className='flex items-center gap-2'>
                           Reward Link
                           <TooltipProvider>
                             <Tooltip>
@@ -272,6 +271,22 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                             <FormMessage />
                           </TabsContent>
                         </Tabs>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`rewards.${index}.thumbnail`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Reward Thumbnail</FormLabel>
+                        <FormControl>
+                          <ImageUploader
+                            thumbnail={field.value}
+                            setThumbnail={val => form.setValue(`rewards.${index}.thumbnail`, val)}
+                          />
+                        </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />

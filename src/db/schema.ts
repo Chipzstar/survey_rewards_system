@@ -88,6 +88,7 @@ export const rewardTable = pgTable('reward', {
   name: varchar({ length: 255 }).notNull(),
   cta_text: varchar({ length: 255 }).notNull(),
   link: varchar({ length: 255 }).notNull(),
+  thumbnail: varchar({ length: 255 }),
   limit: integer().notNull(),
   ...timestamps
 });

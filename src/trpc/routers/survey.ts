@@ -4,6 +4,9 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { and, AnyColumn, desc, eq, inArray, sql } from 'drizzle-orm';
 import { editSurveyFormSchema } from '~/lib/validators';
+import { customAlphabet } from 'nanoid';
+
+const genRewardId = customAlphabet('0123456789', 6);
 
 const increment = (column: AnyColumn, value = 1) => {
   return sql`${column}
@@ -158,6 +161,7 @@ export const surveyRouter = createTRPCRouter({
         surveyDescription,
         rewards
       } = input;
+      console.log(rewards);
       await ctx.db
         .update(surveyTable)
         .set({
@@ -170,22 +174,32 @@ export const surveyRouter = createTRPCRouter({
           description: surveyDescription
         })
         .where(eq(surveyTable.id, input.id));
-      if (input.rewards) {
-        // Delete existing rewards
-        await ctx.db.delete(rewardTable).where(eq(rewardTable.survey_id, input.id));
-
-        // Insert new rewards
-        if (input.rewards.length > 0) {
-          await ctx.db.insert(rewardTable).values(
-            input.rewards.map((reward, index) => ({
-              reward_id: index + 1,
+      if (rewards) {
+        for (const reward of rewards) {
+          if (reward.id) {
+            // Update existing reward
+            await ctx.db
+              .update(rewardTable)
+              .set({
+                name: reward.name,
+                cta_text: reward.cta_text,
+                link: reward.link,
+                thumbnail: reward.thumbnail
+              })
+              .where(eq(rewardTable.id, reward.id));
+          } else {
+            const reward_id = parseInt(genRewardId(6), 10);
+            // Insert new reward
+            await ctx.db.insert(rewardTable).values({
               survey_id: input.id,
+              reward_id,
               name: reward.name,
               cta_text: reward.cta_text,
               link: reward.link,
-              limit: reward.limit
-            }))
-          );
+              limit: reward.limit,
+              thumbnail: reward.thumbnail
+            });
+          }
         }
       }
       return survey[0];
