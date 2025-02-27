@@ -12,7 +12,8 @@ const isPublicRoute = createRouteMatcher([
   '/api/uploadthing(.*)',
   '/survey/(.*)/check-winner',
   '/survey/(.*)/winner/(.*)',
-  '/survey/(.*)/reward/(.*)'
+  '/survey/(.*)/reward/(.*)',
+  '/survey/(.*)/qa/(.*)'
 ]);
 
 export default clerkMiddleware(
