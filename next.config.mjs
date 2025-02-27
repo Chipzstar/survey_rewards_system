@@ -21,8 +21,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: process.env.DOPPLER_ENVIRONMENT === 'prd' ? 'h4fbbawejb.ufs.sh' : 'gw1i78clzu.ufs.sh',
         port: '',
-        pathname: '/**',
-        search: ''
+        pathname: '/**'
       }
     ]
   }
