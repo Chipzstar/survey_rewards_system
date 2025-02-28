@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 interface Props {
   thumbnail: string | null;
-  setThumbnail: (url: string) => void;
+  setThumbnail: (url: string | null) => void;
 }
 
 export const ImageUploader: FC<Props> = props => {
@@ -45,7 +45,7 @@ export const ImageUploader: FC<Props> = props => {
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       setFiles([]);
-      props.setThumbnail('');
+      props.setThumbnail(null);
     },
     [props]
   );
