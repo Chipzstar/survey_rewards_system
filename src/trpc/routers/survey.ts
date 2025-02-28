@@ -5,6 +5,10 @@ import { TRPCError } from '@trpc/server';
 import { and, AnyColumn, desc, eq, inArray, sql } from 'drizzle-orm';
 import { editSurveyFormSchema } from '~/lib/validators';
 import { customAlphabet } from 'nanoid';
+import { UTApi } from 'uploadthing/server';
+import { prettyPrint } from '~/lib/utils';
+
+export const utapi = new UTApi();
 
 const genRewardId = customAlphabet('0123456789', 6);
 
@@ -178,6 +182,20 @@ export const surveyRouter = createTRPCRouter({
       if (rewards) {
         for (const reward of rewards) {
           if (reward.id) {
+            const [existingReward] = await ctx.db.select().from(rewardTable).where(eq(rewardTable.id, reward.id));
+            if (reward.thumbnail === null && existingReward?.thumbnail) {
+              // extract the file key from the url
+              const key = existingReward.thumbnail.split('/').pop();
+              // delete the file from the UT API
+              void utapi
+                .deleteFiles([key!])
+                .then(() => {
+                  console.log('deleted file');
+                })
+                .catch(err => {
+                  prettyPrint(err, '*');
+                });
+            }
             // Update existing reward
             await ctx.db
               .update(rewardTable)
