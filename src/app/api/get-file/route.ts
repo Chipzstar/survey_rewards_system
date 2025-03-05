@@ -1,8 +1,6 @@
-import { UTApi } from 'uploadthing/server';
+import { utapi } from '~/trpc/routers/utils';
 
-export const utapi = new UTApi({
-  // ...options,
-});
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const key = 'XLNdKOzlMKEivyb6nSgKQChlUSfBFw9oyenxHb3TuzWLktEO';
