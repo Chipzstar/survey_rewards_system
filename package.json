@@ -84,6 +84,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@clerk/backend": "^1.25.0",
     "@types/node": "20.6.0",
     "@types/pg": "^8.11.10",
     "@types/react": "18.3.18",

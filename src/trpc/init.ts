@@ -79,3 +79,6 @@ export const protectedProcedure = baseProcedure.use(timingMiddleware).use(({ ctx
     }
   });
 });
+
+// For inferring the context now, do it like this instead:
+export type TContext = Awaited<ReturnType<typeof createTRPCContext>>;

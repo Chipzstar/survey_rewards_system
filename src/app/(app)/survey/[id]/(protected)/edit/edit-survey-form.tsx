@@ -188,7 +188,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
               variant='outline'
               size='sm'
               className='border-white text-white hover:bg-white/20'
-              onClick={() => append({ name: '', cta_text: '', link: '', limit: 1000, thumbnail: null })}
+              onClick={() => append({ id: null, name: '', cta_text: '', link: '', limit: 1000, thumbnail: null })}
             >
               <Plus className='mr-2 h-4 w-4' />
               <span className='text-sm'>Add Reward</span>

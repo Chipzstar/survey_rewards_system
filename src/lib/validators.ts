@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-const rewardSchema = z.object({
+export const rewardSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(3, 'Reward name must be at least 3 characters'),
   cta_text: z.string().min(1, 'Call to action text is required'),
