@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import './globals.css';
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
 import { ClerkProvider } from '@clerk/nextjs';
@@ -11,7 +11,7 @@ import { Toaster } from 'sonner';
 import { extractRouterConfig } from 'uploadthing/server';
 import { uploadFileRouter } from '~/trpc/routers/root';
 
-const inter = Inter({ subsets: ['latin'] });
+const montserrat = Montserrat({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Survey Rewards System',
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <TRPCProvider>
         <html lang='en'>
-          <body className={inter.className}>
+          <body className={montserrat.className}>
             <LoadingProvider>
               <ThemeProvider attribute='class' defaultTheme='light' enableSystem={false} disableTransitionOnChange>
                 <NextSSRPlugin
