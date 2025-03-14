@@ -14,7 +14,8 @@ const isPublicRoute = createRouteMatcher([
   '/survey/(.*)/check-winner',
   '/survey/(.*)/winner/(.*)',
   '/survey/(.*)/reward/(.*)',
-  '/survey/(.*)/qa/(.*)'
+  '/survey/(.*)/qa/(.*)',
+  '/survey/(.*)/qr'
 ]);
 
 export default clerkMiddleware(

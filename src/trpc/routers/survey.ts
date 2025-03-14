@@ -106,6 +106,20 @@ export const surveyRouter = createTRPCRouter({
     console.log(survey);
     return survey[0];
   }),
+  byIdWithRewards: publicProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
+    // Fetch a specific survey by ID with associated responses from the database or API
+    const survey = await ctx.db.query.surveyTable.findMany({
+      with: {
+        event: true,
+        rewards: true
+      },
+      where: eq(surveyTable.id, input.id)
+    });
+    if (!survey[0]) throw new TRPCError({ code: 'NOT_FOUND' });
+
+    console.log(survey);
+    return survey[0];
+  }),
   create: protectedProcedure
     .input(
       z.object({
