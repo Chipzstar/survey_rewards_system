@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { generateClientDropzoneAccept, generatePermittedFileTypes } from 'uploadthing/client';
 import { useUploadThing } from '~/lib/uploadthing';
 import { CopyIcon, Upload, XCircle } from 'lucide-react';
+import { useLoading } from '~/components/providers/loading-provider';
 
 interface Props {
   rewardLink: string;
@@ -12,6 +13,7 @@ interface Props {
 
 export const PdfUploader: FC<Props> = props => {
   const [files, setFiles] = useState<File[]>([]);
+  const { loading, setLoading } = useLoading();
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
     void startUpload(acceptedFiles);
@@ -21,13 +23,16 @@ export const PdfUploader: FC<Props> = props => {
     onClientUploadComplete: res => {
       console.log('Files: ', res);
       props.setRewardLink(res[0]!.ufsUrl);
+      setLoading(false);
     },
     onUploadError: error => {
       toast.error('Failed to upload PDF');
       console.log(error);
+      setLoading(false);
     },
-    onUploadBegin: ({ file }) => {
+    onUploadBegin: file => {
       console.log('Upload has begun for', file);
+      setLoading(true);
     }
   });
 
