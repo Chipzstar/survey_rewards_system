@@ -75,7 +75,6 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
         id: survey.id,
         ...values
       });
-      toast.success('Survey updated successfully');
       router.refresh();
     } catch (error) {
       toast.error(error.message);

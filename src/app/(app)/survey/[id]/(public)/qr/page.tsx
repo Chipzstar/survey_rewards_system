@@ -19,7 +19,13 @@ export default async function EventSharePage({ params }: { params: { id: string 
             })}
           >
             <section className={cn(thumbnails[0] ? 'block items-center' : 'hidden')}>
-              <Image src={thumbnails[0]} alt='thumbnail' width={200} height={200} />
+              <Image
+                src={thumbnails[0]}
+                alt='thumbnail'
+                width={500}
+                height={600}
+                className='object-cover object-center'
+              />
             </section>
             <section className='flex flex-col items-center space-y-6'>
               <h2 className='text-balance text-center text-xl font-semibold text-[#6F42FF]'>🎉 Scan NOW!!! 🏆</h2>

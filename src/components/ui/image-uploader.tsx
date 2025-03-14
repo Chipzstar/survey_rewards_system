@@ -5,6 +5,7 @@ import { generateClientDropzoneAccept, generatePermittedFileTypes } from 'upload
 import { useUploadThing } from '~/lib/uploadthing';
 import { Upload, XCircle } from 'lucide-react';
 import Image from 'next/image';
+import { useLoading } from '~/components/providers/loading-provider';
 
 interface Props {
   thumbnail: string | null;
@@ -13,21 +14,25 @@ interface Props {
 
 export const ImageUploader: FC<Props> = props => {
   const [files, setFiles] = useState<File[]>([]);
+  const { setLoading } = useLoading();
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
     void startUpload(acceptedFiles);
+    setLoading(true);
   }, []);
 
   const { startUpload, routeConfig, isUploading } = useUploadThing('imageUploader', {
     onClientUploadComplete: res => {
       console.log('Files: ', res);
       props.setThumbnail(res[0]!.ufsUrl);
+      setLoading(false);
     },
     onUploadError: error => {
       toast.error('Failed to upload Image', {
         description: error.message
       });
       console.log(error);
+      setLoading(false);
     },
     onUploadBegin: filename => {
       console.log('Upload has begun for', filename);

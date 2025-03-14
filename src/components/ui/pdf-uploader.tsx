@@ -17,6 +17,7 @@ export const PdfUploader: FC<Props> = props => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
     void startUpload(acceptedFiles);
+    setLoading(true);
   }, []);
 
   const { startUpload, routeConfig, isUploading } = useUploadThing('pdfUploader', {
@@ -32,7 +33,6 @@ export const PdfUploader: FC<Props> = props => {
     },
     onUploadBegin: file => {
       console.log('Upload has begun for', file);
-      setLoading(true);
     }
   });
 
