@@ -1,5 +1,5 @@
 import { HydrateClient, trpc } from '~/trpc/server';
-import { SurveyLink } from '~/app/(app)/survey/[id]/(protected)/share/survey-link';
+import { SurveyLink } from '~/components/ui/survey-link';
 import { cn } from '~/lib/utils';
 import Image from 'next/image';
 

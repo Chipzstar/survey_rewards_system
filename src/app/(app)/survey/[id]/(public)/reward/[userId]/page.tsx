@@ -10,6 +10,7 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
   const response =
     survey.responses.find(r => r.user_id === params.userId) ||
     survey.genBotResponses.find(r => r.user_id === params.userId);
+  console.log(response);
   if (!response) throw new Error(`No response found for user ID:  ${params.userId}`);
 
   // choose a reward at random
