@@ -32,10 +32,6 @@ const formSchema = z.object({
   link: z.string().url('Must be a valid URL'),
   startDate: z.union([z.date(), z.string()]),
   endDate: z.union([z.date(), z.string()]),
-  points: z.union([z.string(), z.number()]).transform(val => (typeof val === 'string' ? parseInt(val, 10) : val)),
-  referralBonusPoints: z
-    .union([z.string(), z.number()])
-    .transform(val => (typeof val === 'string' ? parseInt(val, 10) : val)),
   numberOfWinners: z
     .union([z.string(), z.number()])
     .transform(val => (typeof val === 'string' ? parseInt(val, 10) : val))
@@ -54,8 +50,6 @@ export function CreateSurveyDialog({ events }: { events: RouterOutput['event']['
       link: '',
       startDate: new Date(),
       endDate: new Date(),
-      points: 100,
-      referralBonusPoints: 25,
       numberOfWinners: 20
     }
   });
@@ -189,34 +183,6 @@ export function CreateSurveyDialog({ events }: { events: RouterOutput['event']['
                     <FormLabel>End Date</FormLabel>
                     <FormControl>
                       <DateTimePicker {...field} setDate={date => field.onChange(date)} isModal={true} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className='grid grid-cols-2 gap-4'>
-              <FormField
-                control={form.control}
-                name='points'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Points</FormLabel>
-                    <FormControl>
-                      <Input type='number' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='referralBonusPoints'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Referral Points</FormLabel>
-                    <FormControl>
-                      <Input type='number' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

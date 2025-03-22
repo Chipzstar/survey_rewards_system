@@ -15,10 +15,8 @@ async function updateSurveyDetails(ctx: TContext, input: z.infer<typeof editSurv
     .update(surveyTable)
     .set({
       name: input.surveyName,
-      points: input.completionPoints,
       link: input.surveyLink,
       end_date: input.deadline,
-      referral_bonus_points: input.referralPoints,
       number_of_winners: input.potentialWinners,
       description: input.surveyDescription
     })

@@ -22,7 +22,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
               <Image
                 src={thumbnails[0]}
                 alt='thumbnail'
-                width={500}
+                width={600}
                 height={600}
                 className='object-cover object-center'
               />

@@ -39,8 +39,6 @@ export const surveyTable = pgTable('survey', {
   link: varchar({ length: 255 }).notNull(),
   start_date: timestamp({ mode: 'string' }).notNull(),
   end_date: timestamp({ mode: 'string' }).notNull(),
-  points: integer().notNull(),
-  referral_bonus_points: integer().notNull(),
   created_by: integer()
     .references(() => usersTable.id)
     .notNull(),
