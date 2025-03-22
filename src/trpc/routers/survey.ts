@@ -126,8 +126,6 @@ export const surveyRouter = createTRPCRouter({
         link: z.string().url('Must be a valid URL'),
         startDate: z.union([z.date(), z.string()]),
         endDate: z.union([z.date(), z.string()]),
-        points: z.number().min(1, 'Points must be at least 1'),
-        referralBonusPoints: z.number().min(1, 'Referral bonus points must be at least 1'),
         numberOfWinners: z.number().min(1, 'Must have at least 1 winner'),
         eventId: z.number()
       })
@@ -145,8 +143,6 @@ export const surveyRouter = createTRPCRouter({
             link: input.link,
             start_date: new Date(input.startDate).toISOString(),
             end_date: new Date(input.endDate).toISOString(),
-            points: input.points,
-            referral_bonus_points: input.referralBonusPoints,
             number_of_winners: input.numberOfWinners,
             event_id: input.eventId,
             created_by: user[0].id
