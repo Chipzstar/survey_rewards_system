@@ -64,6 +64,13 @@
       "when": 1740680989896,
       "tag": "0008_cynical_callisto",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1742648084608,
+      "tag": "0009_whole_chat",
+      "breakpoints": true
     }
   ]
 }

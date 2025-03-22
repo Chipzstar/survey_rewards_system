@@ -19,7 +19,11 @@ export const eventRouter = createTRPCRouter({
       });
     }
 
-    const events = await ctx.db.select().from(eventTable).where(eq(eventTable.created_by, dbUser.id));
+    const events = await ctx.db
+      .select()
+      .from(eventTable)
+      .orderBy(desc(eventTable.created_at))
+      .where(eq(eventTable.created_by, dbUser.id));
     console.log(events);
     return events;
   }),

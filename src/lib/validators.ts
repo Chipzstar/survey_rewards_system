@@ -16,22 +16,6 @@ export const rewardSchema = z.object({
 export const editSurveyFormSchema = z.object({
   surveyName: z.string().min(2, 'Survey name must be at least 2 characters'),
   surveyDescription: z.string().min(10, 'Description must be at least 10 characters').nullable(),
-  completionPoints: z
-    .union([z.string().min(1, 'Must be at least 1 point'), z.number().min(1, 'Must be at least 1 point')])
-    .transform(val => {
-      if (typeof val === 'string') {
-        return parseInt(val, 10);
-      }
-      return val;
-    }),
-  referralPoints: z
-    .union([z.string().min(1, 'Must be at least 1 point'), z.number().min(1, 'Must be at least 1 point')])
-    .transform(val => {
-      if (typeof val === 'string') {
-        return parseInt(val, 10);
-      }
-      return val;
-    }),
   surveyLink: z.string().url('Must be a valid URL'),
   potentialWinners: z.number().min(1, 'Must have at least 1 winner'),
   deadline: z.union([
