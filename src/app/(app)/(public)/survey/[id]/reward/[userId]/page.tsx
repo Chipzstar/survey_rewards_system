@@ -1,7 +1,7 @@
 import React from 'react';
 import { HydrateClient, trpc } from '~/trpc/server';
 import Image from 'next/image';
-import DownloadResource from '~/app/(app)/survey/[id]/(public)/reward/[userId]/download-resource';
+import DownloadResource from '~/app/(app)/(public)/survey/[id]/reward/[userId]/download-resource';
 
 export default async function ThankYouPage({ params }: { params: { id: string; userId: string } }) {
   const survey = await trpc.survey.byIdWithResults({ id: Number(params.id) });
