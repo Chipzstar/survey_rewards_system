@@ -18,7 +18,7 @@ export default async function Dashboard() {
 
   return (
     <HydrateClient>
-      <main className='flex grow flex-col p-6 sm:h-full lg:px-12 lg:py-6 xl:p-12 2xl:p-24'>
+      <main className='flex grow flex-col p-6 pb-12 sm:h-full lg:px-12 lg:py-6 xl:px-12 xl:pb-12 2xl:px-24'>
         {events.length === 0 ? (
           <div className='flex flex-1 flex-col items-center justify-center gap-4'>
             <Image src='/document-text.svg' alt='No Events or Surveys Yet' width={120} height={120} />
@@ -26,14 +26,20 @@ export default async function Dashboard() {
             <p className='text-gray-500 dark:text-white'>Get started by creating your first event or survey!</p>
             <div className='mt-4 flex gap-4'>
               <CreateEventDialog />
-              <CreateSurveyDialog events={events} />
+              <CreateSurveyDialog events={events} variant='neutral' />
             </div>
           </div>
         ) : (
           <div className='grid h-full grid-cols-1 gap-y-8'>
             {/* Overview Section */}
             <section>
-              <h2 className='mb-6 text-2xl'>Overview</h2>
+              <div className='mb-6 flex items-center justify-between'>
+                <h2 className='text-2xl'>Overview</h2>
+                <div className='flex gap-4'>
+                  <CreateEventDialog />
+                  <CreateSurveyDialog events={events} />
+                </div>
+              </div>
               <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
                 <Card>
                   <CardContent className='flex flex-col space-y-6 p-6'>

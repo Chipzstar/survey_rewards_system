@@ -5,6 +5,8 @@ import { AppSidebar } from '~/components/layout/app-sidebar';
 import { DashboardHeader } from '~/components/layout/nav-header';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import ChatwootWidget from '~/components/layout/chatwoot';
+import { env } from '~/env';
 
 interface Props extends PropsWithChildren {
   params: {
@@ -24,6 +26,7 @@ export default async function SurveyLayout({ children, params }: Props) {
         </div>
         {children}
       </main>
+      <ChatwootWidget token={env.NEXT_PUBLIC_CHATWOOT_TOKEN} />
     </SidebarProvider>
   );
 }

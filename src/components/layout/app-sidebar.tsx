@@ -56,12 +56,10 @@ export function AppSidebar() {
 
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href='/support' passHref legacyBehavior>
-              <SidebarMenuButton tooltip='Chat Support'>
-                <MessageSquareMore className='h-4 w-4' />
-                <span className='text-base'>Chat Support</span>
-              </SidebarMenuButton>
-            </Link>
+            <SidebarMenuButton tooltip='Chat Support' onClick={() => (window as any).$chatwoot.toggle('open')}>
+              <MessageSquareMore className='h-4 w-4' />
+              <span className='text-base'>Chat Support</span>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
