@@ -17,17 +17,17 @@ export const DashboardHeader: FC<Props> = props => {
         <p className='text-sub'>Create engaging surveys and get real feedback effortlessly!</p>
       </div>
       <div className='flex items-center space-x-4'>
-        <Input type='search' placeholder='Search' className='w-64' />
+        <Input type='search' placeholder='Search' className='max-w-64 sm:w-64' />
         <UserButton afterSignOutUrl='/' />
       </div>
     </div>
   );
 };
 
-export const DashboardActions = () => {
+/*export const DashboardActions = () => {
   return (
     <div className='flex items-center justify-start space-x-4 p-6'>
       <CreateEventDialog />
     </div>
   );
-};
+};*/

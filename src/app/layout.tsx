@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   routerConfig={extractRouterConfig(uploadFileRouter)}
                 />
                 {children}
-                <div className='fixed bottom-4 left-4 z-50 hidden md:block'>
+                <div className='fixed bottom-4 right-4 z-50 hidden md:block'>
                   <ThemeToggle />
                 </div>
                 <Toaster richColors />

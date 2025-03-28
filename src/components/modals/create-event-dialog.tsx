@@ -17,7 +17,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { DateTimePicker } from '~/components/ui/date-time-picker';
-import { Plus } from 'lucide-react';
+import { CirclePlus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '~/trpc/client';
 import { useRouter } from 'next/navigation';
@@ -70,8 +70,8 @@ export function CreateEventDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className='mr-2 h-4 w-4' />
+        <Button variant='outline' radius='xl'>
+          <CirclePlus className='mr-2 h-4 w-4' />
           Create Event
         </Button>
       </DialogTrigger>

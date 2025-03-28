@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react'; // Import the spinner icon
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background focus-visible:ring-offset-0',
+  'inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background focus-visible:ring-offset-0',
   {
     variants: {
       variant: {
@@ -14,6 +14,7 @@ const buttonVariants = cva(
         outline: 'bg-transparent border border-input hover:bg-accent hover:text-accent-foreground',
         secondary: 'bg-secondary-600 text-secondary-foreground hover:bg-secondary/80',
         tertiary: 'bg-tertiary-600 text-secondary-foreground hover:bg-tertiary-600/80',
+        neutral: 'bg-foreground text-background hover:bg-foreground/80',
         ghost: 'bg-transparent hover:bg-accent hover:text-accent-foreground',
         link: 'bg-transparent underline-offset-4 hover:underline text-primary'
       },
@@ -23,11 +24,20 @@ const buttonVariants = cva(
         lg: 'h-11 px-8 rounded-md text-base',
         xl: 'h-12 px-10 rounded-md text-lg',
         icon: 'h-10 w-10'
+      },
+      radius: {
+        none: 'rounded-none',
+        sm: 'rounded-sm',
+        default: 'rounded-md',
+        lg: 'rounded-lg',
+        xl: 'rounded-xl',
+        full: 'rounded-full'
       }
     },
     defaultVariants: {
       variant: 'default',
-      size: 'default'
+      size: 'default',
+      radius: 'default'
     }
   }
 );
@@ -40,10 +50,15 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading = false, children, ...props }, ref) => {
+  ({ className, variant, radius, size, asChild = false, isLoading = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
     return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} disabled={isLoading} {...props}>
+      <Comp
+        className={cn(buttonVariants({ variant, size, radius, className }))}
+        ref={ref}
+        disabled={isLoading}
+        {...props}
+      >
         {isLoading ? (
           <>
             {children}
