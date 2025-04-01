@@ -7,6 +7,7 @@ export const env = createEnv({
     CLERK_SECRET_KEY: z.string().min(1),
     CLERK_WEBHOOK_SECRET: z.string().min(1),
     POSTHOG_API_TOKEN: z.string().min(1),
+    GOOGLE_API_KEY: z.string().min(1),
     FILLOUT_FORM_ID_DAY_1: z.string().min(1),
     FILLOUT_FORM_ID_DAY_2: z.string().min(1),
     FILLOUT_WEBHOOK_SECRET: z.string().min(1)

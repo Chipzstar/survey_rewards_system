@@ -5,7 +5,7 @@ import { CreateEventDialog } from '~/components/modals/create-event-dialog';
 import { CreateSurveyDialog } from '~/components/modals/create-survey-dialog';
 import { Card, CardContent } from '~/components/ui/card';
 import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import { Badge } from '~/components/ui/badge';
 
 export default async function Dashboard() {
@@ -25,7 +25,7 @@ export default async function Dashboard() {
             <h2 className='text-2xl font-medium text-sub dark:text-white'>No Events or Surveys Yet</h2>
             <p className='text-gray-500 dark:text-white'>Get started by creating your first event or survey!</p>
             <div className='mt-4 flex gap-4'>
-              <CreateEventDialog />
+              <CreateEventDialog variant='outline' />
               <CreateSurveyDialog events={events} variant='neutral' />
             </div>
           </div>
@@ -33,7 +33,7 @@ export default async function Dashboard() {
           <div className='grid h-full grid-cols-1 gap-y-8'>
             {/* Overview Section */}
             <section>
-              <div className='mb-6 flex items-center justify-between'>
+              <div className='mb-6 flex flex-col justify-between space-y-4 md:flex-row md:items-center md:space-y-0'>
                 <h2 className='text-2xl'>Overview</h2>
                 <div className='flex gap-4'>
                   <CreateEventDialog />
@@ -66,7 +66,7 @@ export default async function Dashboard() {
               <h2 className='text-2xl'>Your Events</h2>
               {events.map(event => {
                 const eventDate = new Date(event.date!);
-                const isActive = eventDate > new Date();
+                const isActive = isSameDay(eventDate, new Date());
                 const isCompleted = eventDate <= new Date();
                 return (
                   <Link
@@ -74,20 +74,24 @@ export default async function Dashboard() {
                     href={`/event/${event.id}`}
                     className='mb-4 block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-primary dark:border-gray-700 dark:bg-gray-800'
                   >
-                    <div className='flex items-start justify-between'>
-                      <div>
-                        <h3 className='text-lg font-medium'>{event.name}</h3>
-                        <p className='mt-1 text-sm text-gray-500'>{event.description}</p>
-                        <div className='mt-2 flex items-center gap-2 text-sm text-gray-500'>
-                          <CalendarIcon className='h-4 w-4' />
-                          <span>{event.date ? format(new Date(event.date), 'MMM dd, yyyy') : 'No date set'}</span>
-                          <span>•</span>
-                          <span>{event.location}</span>
-                        </div>
+                    <div className='relative flex w-full flex-col items-start'>
+                      <h3 className='text-lg font-medium'>{event.name}</h3>
+                      <div className='mt-1 md:absolute md:right-0 md:top-0 md:mt-0'>
+                        <Badge
+                          className=''
+                          radius='lg'
+                          variant={isActive ? 'active' : isCompleted ? 'completed' : 'upcoming'}
+                        >
+                          {isActive ? 'Active' : isCompleted ? 'Completed' : 'Upcoming'}
+                        </Badge>
                       </div>
-                      <Badge variant={isActive ? 'active' : isCompleted ? 'completed' : 'upcoming'}>
-                        {isActive ? 'Active' : isCompleted ? 'Completed' : 'Upcoming'}
-                      </Badge>
+                      <p className='mt-2 text-sm text-gray-500'>{event.description}</p>
+                      <div className='mt-2 flex w-full items-center gap-2 text-ellipsis whitespace-nowrap text-sm text-gray-500'>
+                        <CalendarIcon className='h-4 w-4 shrink-0' />
+                        <span>{event.date ? format(new Date(event.date), 'MMM dd, yyyy') : 'No date set'}</span>
+                        <span>•</span>
+                        <span className='truncate'>{event.location}</span>
+                      </div>
                     </div>
                   </Link>
                 );

@@ -26,6 +26,7 @@
   "packageManager": "pnpm@9.7.1",
   "dependencies": {
     "@clerk/nextjs": "^6.10.3",
+    "@googlemaps/google-maps-services-js": "^3.4.1",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.6",
@@ -55,6 +56,7 @@
     "class-variance-authority": "^0.7.1",
     "client-only": "^0.0.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.4",

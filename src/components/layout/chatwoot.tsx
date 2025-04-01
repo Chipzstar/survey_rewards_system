@@ -13,7 +13,7 @@ const ChatwootWidget: React.FC<Props> = ({ token }: Props) => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (user) {
+    if (user && window.$chatwoot) {
       (window as any).$chatwoot.setUser(user.id, {
         name: user.fullName, // Name of the user
         avatar_url: user.imageUrl, // Avatar URL
