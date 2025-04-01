@@ -5,7 +5,7 @@ import { CreateEventDialog } from '~/components/modals/create-event-dialog';
 import { CreateSurveyDialog } from '~/components/modals/create-survey-dialog';
 import { Card, CardContent } from '~/components/ui/card';
 import { CalendarIcon } from 'lucide-react';
-import { format, isSameDay } from 'date-fns';
+import { format, isAfter, isSameDay } from 'date-fns';
 import { Badge } from '~/components/ui/badge';
 
 export default async function Dashboard() {
@@ -13,7 +13,7 @@ export default async function Dashboard() {
 
   // Calculate KPIs
   const activeEvents = events.filter(event => new Date(event.date!) > new Date()).length;
-  const completedEvents = events.filter(event => new Date(event.date!) <= new Date()).length;
+  const completedEvents = events.filter(event => isAfter(event.date!, new Date())).length;
   const totalEvents = events.length;
 
   return (

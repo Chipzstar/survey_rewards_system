@@ -1,6 +1,6 @@
 // src/app/(app)/survey/layout.tsx
 import { PropsWithChildren } from 'react';
-import { SidebarProvider } from '~/components/ui/sidebar';
+import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/layout/app-sidebar';
 import { DashboardHeader } from '~/components/layout/nav-header';
 import { currentUser } from '@clerk/nextjs/server';
