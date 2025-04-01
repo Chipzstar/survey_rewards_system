@@ -1,8 +1,20 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
+import { Ellipsis } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarTrigger
+} from '~/components/ui/menubar';
+import { useState } from 'react';
+import { trpc } from '~/trpc/client';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -46,10 +58,30 @@ export const columns: ColumnDef<SurveyData>[] = [
     accessorKey: 'action',
     header: 'Action',
     cell: ({ row }) => {
+      const [isDialogOpen, setDialogOpen] = useState(false);
+      const { mutate } = trpc.survey.delete.useMutation();
+      const handleDelete = () => {
+        // Code to delete the survey
+        mutate({ id: row.original.id }); // Example delete function
+        setDialogOpen(false); // Close dialog after delete
+      };
       return (
-        <button className='btn btn-primary' onClick={() => alert('Action clicked!')}>
-          Action
-        </button>
+        <Menubar className='w-fit border-none'>
+          <MenubarMenu>
+            <MenubarTrigger>
+              <Ellipsis size={18} color='black' strokeWidth={2} />
+            </MenubarTrigger>
+            <MenubarContent>
+              <Link href={`/survey/${row.original.id}/edit`} passHref>
+                <MenubarItem>Edit Survey</MenubarItem>
+              </Link>
+              <Link href={`/survey/${row.original.id}/edit`} passHref>
+                <MenubarItem>Edit Reward</MenubarItem>
+              </Link>
+              <MenubarItem onClick={() => setDialogOpen(true)}>Delete</MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
       );
     }
   }

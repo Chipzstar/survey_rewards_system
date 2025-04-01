@@ -95,7 +95,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
         className='grid h-full grid-cols-1 place-content-evenly gap-8 lg:grid-cols-2'
       >
         <section className='flex grow flex-col space-y-6'>
-          <h3 className='text-lg font-medium text-white'>Survey Details</h3>
+          <h3 className='text-lg font-medium'>Survey Details</h3>
           <div className='flex flex-col justify-between space-y-4 rounded-lg border border-white/20 p-4'>
             <FormField
               control={form.control}
@@ -156,12 +156,12 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
         </section>
         <section className='flex grow flex-col space-y-6 lg:h-[calc(100vh-16rem)] lg:overflow-hidden'>
           <div className='flex items-center justify-between'>
-            <h3 className='text-lg font-medium text-white'>Reward Details</h3>
+            <h3 className='text-lg font-medium'>Reward Details</h3>
             <Button
               type='button'
               variant='outline'
               size='sm'
-              className='border-white text-white hover:bg-white/20'
+              className='border-white hover:bg-white/20'
               onClick={() => append({ id: undefined, name: '', cta_text: '', link: '', limit: 1000, thumbnail: null })}
             >
               <Plus className='mr-2 h-4 w-4' />
@@ -175,7 +175,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                   type='button'
                   variant='ghost'
                   size='icon'
-                  className='absolute right-2 top-2 text-white hover:bg-white/20'
+                  className='absolute right-2 top-2 hover:bg-white/20'
                   onClick={() => remove(index)}
                 >
                   <Trash2 className='h-4 w-4' />
@@ -217,7 +217,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Info className='h-4 w-4 cursor-help text-white/70' />
+                                <Info className='cursor-help/70 h-4 w-4' />
                               </TooltipTrigger>
                               <TooltipContent className='max-w-xs bg-white text-gray-900'>
                                 <p>

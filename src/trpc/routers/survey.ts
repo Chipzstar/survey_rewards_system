@@ -208,6 +208,18 @@ export const surveyRouter = createTRPCRouter({
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
     }
   }),
+  delete: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+    try {
+      await getUser(ctx.db, ctx.session);
+      const survey = await getSurvey(ctx, input.id);
+      // Delete survey from the database
+      await ctx.db.delete(surveyTable).where(eq(surveyTable.id, input.id));
+      return survey;
+    } catch (error) {
+      console.error(error);
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
+    }
+  }),
   addReferrals: publicProcedure
     .input(z.object({ surveyId: z.number(), userId: z.string(), names: z.array(z.string()) }))
     .mutation(async ({ ctx, input }) => {
