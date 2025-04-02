@@ -16,7 +16,7 @@ export default async function EditSurveyPage({ params }: { params: { id: string 
 
   return (
     <HydrateClient>
-      <div className='mx-auto w-full max-w-4xl'>
+      <div className='mx-auto w-full p-6'>
         <EditSurveyForm survey={survey} />
       </div>
     </HydrateClient>

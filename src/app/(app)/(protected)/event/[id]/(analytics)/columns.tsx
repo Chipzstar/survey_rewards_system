@@ -48,15 +48,10 @@ export const columns: ColumnDef<SurveyData>[] = [
   },
   {
     accessorKey: 'action',
-    header: 'Action',
-    cell: ({ row }) => {
+    header: 'Action'
+    /*cell: ({ row }) => {
       const [isDialogOpen, setDialogOpen] = useState(false);
-      const { mutate } = trpc.survey.delete.useMutation();
-      const handleDelete = () => {
-        // Code to delete the survey
-        mutate({ id: row.original.id }); // Example delete function
-        setDialogOpen(false); // Close dialog after delete
-      };
+
       return (
         <Menubar className='w-fit border-none'>
           <MenubarMenu>
@@ -70,11 +65,11 @@ export const columns: ColumnDef<SurveyData>[] = [
               <Link href={`/survey/${row.original.id}/edit`} passHref>
                 <MenubarItem>Edit Reward</MenubarItem>
               </Link>
-              <MenubarItem onClick={() => setDialogOpen(true)}>Delete</MenubarItem>
+              <MenubarItem onClick={row.}>Delete</MenubarItem>
             </MenubarContent>
           </MenubarMenu>
         </Menubar>
       );
-    }
+    }*/
   }
 ];

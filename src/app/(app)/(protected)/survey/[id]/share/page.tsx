@@ -31,7 +31,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
             </div>
           </section>
 
-          <section className='flex flex-col items-center space-y-4 rounded-2xl bg-white px-8 py-6'>
+          <section className='flex w-full flex-col items-center space-y-4 rounded-2xl bg-white px-8 py-6'>
             <Image src='/icon/scan.svg' alt='Genus Logo' width={30} height={30} className='rounded-lg' />
             <h2 className='text-semi-dark text-balance text-center text-xl font-medium'>Scan this QR Code</h2>
             <p className='pb-6 text-gray-500'>Scan this QR code to begin and get a reward! 🎁</p>
