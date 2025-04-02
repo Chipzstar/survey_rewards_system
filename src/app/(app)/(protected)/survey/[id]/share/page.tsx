@@ -11,21 +11,34 @@ export default async function EventSharePage({ params }: { params: { id: string 
 
   return (
     <HydrateClient>
-      <div className='mx-auto max-w-3xl overflow-x-hidden py-12 text-white md:my-auto'>
-        <div
-          className={cn('grid grid-cols-1 place-items-center', {
-            'lg:grid-cols-2 lg:gap-x-24': thumbnails.length
-          })}
-        >
-          <section className={cn(thumbnails[0] ? 'block items-center' : 'hidden')}>
-            <Image src={thumbnails[0]} alt='thumbnail' width={300} height={300} />
+      <main className='flex w-full flex-col p-6'>
+        <div className='mb-6 flex flex-col space-y-4'>
+          <h2 className='text-2xl'>Share QR</h2>
+        </div>
+        <div className='mx-auto w-full max-w-2xl overflow-x-hidden rounded-2xl bg-sidebar px-12 py-10 md:my-auto'>
+          <section
+            className={cn('mb-6 flex items-center', {
+              'justify-center': !thumbnails.length,
+              'justify-between': thumbnails.length
+            })}
+          >
+            <div className='flex items-center gap-x-3'>
+              <Image src='/icon/heart.svg' alt='Genus Logo' width={30} height={30} className='rounded-lg' />
+              <h2 className='text-xl font-medium'>Share QR</h2>
+            </div>
+            <div className={cn(thumbnails[0] ? 'block items-center' : 'hidden')}>
+              <Image src={thumbnails[0]} alt='thumbnail' width={300} height={300} />
+            </div>
           </section>
-          <section className='flex flex-col items-center space-y-6'>
-            <h2 className='text-balance text-center text-xl font-semibold text-[#6F42FF]'>🎉 Scan NOW!!! 🏆</h2>
+
+          <section className='flex flex-col items-center space-y-4 rounded-2xl bg-white px-8 py-6'>
+            <Image src='/icon/scan.svg' alt='Genus Logo' width={30} height={30} className='rounded-lg' />
+            <h2 className='text-semi-dark text-balance text-center text-xl font-medium'>Scan this QR Code</h2>
+            <p className='pb-6 text-gray-500'>Scan this QR code to begin and get a reward! 🎁</p>
             <SurveyLink surveyId={survey.id} surveyLink={survey.link} />
           </section>
         </div>
-      </div>
+      </main>
     </HydrateClient>
   );
 }

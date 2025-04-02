@@ -80,6 +80,7 @@ export default withUt({
           '800': '#92400E',
           '900': '#78350F'
         },
+        'semi-dark': '#353639',
         sub: '#7E8085',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

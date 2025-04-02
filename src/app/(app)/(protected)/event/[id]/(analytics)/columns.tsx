@@ -4,15 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger
-} from '~/components/ui/menubar';
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '~/components/ui/menubar';
 import { useState } from 'react';
 import { trpc } from '~/trpc/client';
 
