@@ -26,9 +26,11 @@ export default async function EventSharePage({ params }: { params: { id: string 
               <Image src='/icon/heart.svg' alt='Genus Logo' width={30} height={30} className='rounded-lg' />
               <h2 className='text-xl font-medium'>Share QR</h2>
             </div>
-            <div className={cn(thumbnails[0] ? 'block items-center' : 'hidden')}>
-              <Image src={thumbnails[0]} alt='thumbnail' width={300} height={300} />
-            </div>
+            {thumbnails[0] && (
+              <div className='block items-center'>
+                <Image src={thumbnails[0]} alt='thumbnail' width={300} height={300} placeholder='blur' />
+              </div>
+            )}
           </section>
 
           <section className='flex w-full flex-col items-center space-y-4 rounded-2xl bg-white px-8 py-6'>

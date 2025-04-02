@@ -7,6 +7,7 @@ import { Card, CardContent } from '~/components/ui/card';
 import { CalendarIcon } from 'lucide-react';
 import { format, isAfter, isSameDay } from 'date-fns';
 import { Badge } from '~/components/ui/badge';
+import Container from '~/components/layout/Container';
 
 export default async function Dashboard() {
   const events = await trpc.event.fromUser();
@@ -18,7 +19,7 @@ export default async function Dashboard() {
 
   return (
     <HydrateClient>
-      <main className='flex grow flex-col p-6 pb-12 sm:h-full lg:px-12 lg:py-6 xl:px-12 xl:pb-12 2xl:px-24'>
+      <Container>
         {events.length === 0 ? (
           <div className='flex flex-1 flex-col items-center justify-center gap-4'>
             <Image src='/document-text.svg' alt='No Events or Surveys Yet' width={120} height={120} />
@@ -99,7 +100,7 @@ export default async function Dashboard() {
             </section>
           </div>
         )}
-      </main>
+      </Container>
     </HydrateClient>
   );
 }

@@ -3,6 +3,7 @@ import { differenceInMinutes } from 'date-fns';
 import { Card, CardContent } from '~/components/ui/card';
 import { DataTable } from './data-table';
 import { columns, SurveyData } from './columns';
+import Container from '~/components/layout/Container';
 
 export default async function EventAnalytics({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -36,7 +37,7 @@ export default async function EventAnalytics({ params }: { params: { id: string 
 
   return (
     <HydrateClient>
-      <div className='mx-auto flex w-full flex-col p-6'>
+      <Container>
         {/* Overview Section */}
         <section>
           <div className='mb-6 flex flex-col space-y-4'>
@@ -75,7 +76,7 @@ export default async function EventAnalytics({ params }: { params: { id: string 
             <DataTable columns={columns} data={analytics} />
           </div>
         </Card>
-      </div>
+      </Container>
     </HydrateClient>
   );
 }

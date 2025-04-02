@@ -13,15 +13,16 @@ import {
   SidebarMenuItem
 } from '~/components/ui/sidebar';
 import { useAuth } from '@clerk/nextjs';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export function AppSidebar() {
   const { signOut } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
   return (
     <Sidebar className='py-6'>
       <SidebarHeader>
-        <div className='flex items-center gap-3 px-4 pb-6'>
+        <div className='flex items-center gap-3 px-4 pb-6' role='button' onClick={() => router.push('/')}>
           <Image src='/logo.png' alt='Genus Logo' width={40} height={40} className='rounded-lg' />
           <div className='flex flex-col'>
             <span className='text-xl font-semibold'>Genus</span>
