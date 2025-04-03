@@ -41,7 +41,6 @@ async function handleFormResponse(event: FormEvent) {
       passcode,
       started_at,
       completed_at,
-      points_earned: survey[0].points,
       is_completed: true
     })
     .returning();

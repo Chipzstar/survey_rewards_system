@@ -44,7 +44,7 @@ const formSchema = z.object({
 
 export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVariant }) {
   const router = useRouter();
-  const [predictions, setPredictions] = useState<{ label: string; value: string }[]>([], 1000);
+  const [predictions, setPredictions] = useState<{ label: string; value: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,8 +56,6 @@ export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVar
       date: new Date()
     }
   });
-
-  const formState = form.watch();
 
   const { mutate: createEvent } = trpc.event.create.useMutation({
     onMutate: () => {

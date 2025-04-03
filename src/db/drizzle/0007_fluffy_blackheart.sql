@@ -1,0 +1,1 @@
+ALTER TABLE "reward" ADD COLUMN "thumbnail" varchar(255);

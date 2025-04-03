@@ -13,7 +13,6 @@ export default async function EventAnalytics({ params }: { params: { id: string 
   // Statistics
   const analytics = surveys.map(survey => {
     const surveys_completed = survey.responses.filter(response => response.is_completed);
-    const completion_rate = ((surveys_completed.length / survey.responses.length) * 100).toFixed(1);
     const total_completion_time = surveys_completed.reduce((acc, response) => {
       const diff = differenceInMinutes(new Date(response.completed_at), new Date(response.started_at));
       // console.log(format(response.started_at, 'hh:mm:ss'));

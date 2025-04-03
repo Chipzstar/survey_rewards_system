@@ -22,7 +22,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     columns,
     getCoreRowModel: getCoreRowModel()
   });
-  const { mutate } = trpc.survey.delete.useMutation();
+  const { mutate } = trpc.reward.delete.useMutation();
 
   const handleDelete = useCallback(() => {
     if (!rowId) return;

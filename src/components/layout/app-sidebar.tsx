@@ -43,7 +43,7 @@ export function AppSidebar() {
 
           <SidebarMenuItem>
             <Link href='/rewards' passHref legacyBehavior>
-              <SidebarMenuButton tooltip='Rewards'>
+              <SidebarMenuButton tooltip='Rewards' isActive={pathname === '/rewards'}>
                 <Gift className='h-4 w-4' />
                 <span className='text-base'>Rewards</span>
               </SidebarMenuButton>

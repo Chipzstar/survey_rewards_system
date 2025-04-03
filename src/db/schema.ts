@@ -51,11 +51,13 @@ export const surveyResponseTable = pgTable('survey_response', {
   survey_id: integer()
     .references(() => surveyTable.id)
     .notNull(),
+  reward_id: integer().references(() => rewardTable.id),
   user_id: varchar({ length: 255 }).default('1001').notNull(),
   response_id: varchar({ length: 255 }).notNull(),
   started_at: timestamp({ mode: 'string' }).notNull(),
   completed_at: timestamp({ mode: 'string' }).defaultNow().notNull(),
   is_completed: boolean().default(false),
+  reward_claimed: boolean().default(false),
   points_earned: integer().default(0).notNull(),
   survey_code: varchar({ length: 255 }).notNull(),
   passcode: varchar({ length: 255 }),

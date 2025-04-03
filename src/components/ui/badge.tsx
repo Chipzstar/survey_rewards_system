@@ -17,7 +17,8 @@ const badgeVariants = cva(
         outline: 'text-neutral-950 dark:text-neutral-50',
         active: 'bg-success-50 text-success-700 dark:bg-green-900 dark:text-green-300 border-success-200',
         completed: 'bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-300',
-        upcoming: 'bg-warning-50 text-warning-600 dark:bg-orange-900 dark:text-orange-300 border-warning-200'
+        upcoming: 'bg-warning-50 text-warning-600 dark:bg-orange-900 dark:text-orange-300 border-warning-200',
+        error: 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300 border-red-200'
       },
       radius: {
         none: 'rounded-none',
