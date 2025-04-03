@@ -25,6 +25,11 @@ export default async function RewardsPage() {
       };
     }) ?? [];
 
+  const rewardsEarned = rewards.reduce((acc, reward) => {
+    const claimed = reward.responses.filter(response => response.reward_claimed).length;
+    return acc + claimed;
+  }, 0);
+
   return (
     <HydrateClient>
       <Container>
@@ -38,13 +43,13 @@ export default async function RewardsPage() {
             <Card>
               <CardContent className='flex flex-col space-y-6 p-6'>
                 <span className='text-sm text-gray-500'>Total Rewards</span>
-                <span className='text-3xl font-medium'>0</span>
+                <span className='text-3xl font-medium'>{rewards.length}</span>
               </CardContent>
             </Card>
             <Card>
               <CardContent className='flex flex-col space-y-6 p-6'>
                 <span className='text-sm text-gray-500'>Rewards Earned</span>
-                <span className='text-3xl font-medium'>0</span>
+                <span className='text-3xl font-medium'>{rewardsEarned}</span>
               </CardContent>
             </Card>
           </div>
