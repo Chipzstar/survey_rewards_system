@@ -6,6 +6,7 @@ import { UTApi } from 'uploadthing/server';
 import { TContext } from '~/trpc/init';
 import { rewardSchema } from '~/lib/validators';
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 
 type InsertReward = z.infer<typeof rewardSchema>;
 
@@ -13,8 +14,9 @@ type UpdateReward = InsertReward & { id: number };
 
 export const utapi = new UTApi();
 
-export async function handleExistingReward(ctx: TContext, reward: UpdateReward) {
+export async function updateReward(ctx: TContext, reward: UpdateReward) {
   const [existingReward] = await ctx.db.select().from(rewardTable).where(eq(rewardTable.id, reward.id));
+  if (!existingReward) throw new TRPCError({ code: 'NOT_FOUND', message: 'Reward not found' });
 
   if (reward.thumbnail === null && existingReward?.thumbnail) {
     // Remove the existing thumbnail from storage if it's being cleared
@@ -22,11 +24,17 @@ export async function handleExistingReward(ctx: TContext, reward: UpdateReward) 
     await deleteThumbnail(key!);
   }
 
+  if (reward.link === null && existingReward?.link) {
+    // Remove the existing link from storage if it's being cleared
+    const key = existingReward.link.split('/').pop();
+    await deleteThumbnail(key!);
+  }
+
   await ctx.db
     .update(rewardTable)
     .set({
       name: reward.name,
-      cta_text: reward.cta_text,
+      cta_text: reward.ctaText,
       link: reward.link,
       thumbnail: reward.thumbnail
     })
@@ -35,19 +43,26 @@ export async function handleExistingReward(ctx: TContext, reward: UpdateReward) 
 
 export async function insertNewReward(
   ctx: TContext,
-  surveyId: number,
-  reward: Omit<InsertReward, 'reward_id' | 'survey_id'>
+  reward: Omit<InsertReward, 'reward_id'>,
+  logging: boolean = false
 ) {
   const reward_id = parseInt(genRewardId(6), 10);
-  await ctx.db.insert(rewardTable).values({
-    survey_id: surveyId,
-    reward_id,
-    name: reward.name,
-    cta_text: reward.cta_text,
-    link: reward.link,
-    limit: reward.limit,
-    thumbnail: reward.thumbnail
-  });
+  const [result] = await ctx.db
+    .insert(rewardTable)
+    .values({
+      reward_id,
+      survey_id: reward.surveyId,
+      name: reward.name,
+      cta_text: reward.ctaText,
+      link: reward.link,
+      limit: reward.limit,
+      thumbnail: reward.thumbnail
+    })
+    .returning();
+  if (logging) {
+    console.log('INSERTED REWARD', result);
+  }
+  return result;
 }
 
 export async function deleteThumbnail(key: string) {

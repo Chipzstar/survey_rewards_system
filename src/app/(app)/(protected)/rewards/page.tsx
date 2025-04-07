@@ -5,7 +5,7 @@ import { Card, CardContent } from '~/components/ui/card';
 import { CreateRewardDialog } from '~/components/modals/create-reward-dialog';
 import { columns } from './columns';
 import { format, isBefore } from 'date-fns';
-import { DataTable } from './data-table';
+import { RewardTable } from './reward-table';
 
 export default async function RewardsPage({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
   const rewards = await trpc.reward.all();
@@ -64,7 +64,7 @@ export default async function RewardsPage({ searchParams }: { searchParams: { [k
         <Card className='mt-5 flex flex-col px-4 py-6'>
           <h2 className='mb-4 text-2xl md:mb-8'>Recent Rewards</h2>
           <div className='w-full overflow-x-auto'>
-            <DataTable columns={columns} data={data} />
+            <RewardTable columns={columns} data={data} />
           </div>
         </Card>
       </Container>

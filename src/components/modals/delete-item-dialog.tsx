@@ -13,16 +13,17 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onDelete: () => void;
+  itemText?: string;
 }
 
-const DeleteSurveyDialog: FC<Props> = ({ open, onClose, onDelete }) => {
+const DeleteItemDialog: FC<Props> = ({ open, itemText = 'survey', onClose, onDelete }) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Confirm Delete</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this survey? This action is irreversible.
+            Are you sure you want to delete this {itemText}? This action is irreversible.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -38,4 +39,4 @@ const DeleteSurveyDialog: FC<Props> = ({ open, onClose, onDelete }) => {
   );
 };
 
-export default DeleteSurveyDialog;
+export default DeleteItemDialog;

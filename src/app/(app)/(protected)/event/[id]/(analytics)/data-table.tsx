@@ -3,7 +3,7 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
-import DeleteSurveyDialog from '~/components/modals/delete-survey-dialog';
+import DeleteItemDialog from '~/components/modals/delete-item-dialog';
 import { useCallback, useState } from 'react';
 import { trpc } from '~/trpc/client';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '~/components/ui/menubar';
@@ -32,7 +32,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <div className='rounded-md border'>
-      <DeleteSurveyDialog open={!!rowId} onClose={() => setRowId(null)} onDelete={handleDelete} />
+      <DeleteItemDialog open={!!rowId} onClose={() => setRowId(null)} onDelete={handleDelete} />
       <Table>
         <TableHeader className='bg-neutral-100/50 dark:bg-neutral-800/50'>
           {table.getHeaderGroups().map(headerGroup => (

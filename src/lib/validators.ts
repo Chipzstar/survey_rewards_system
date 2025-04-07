@@ -1,8 +1,7 @@
 import * as z from 'zod';
 
 export const rewardSchema = z.object({
-  id: z.number().optional(),
-  surveyId: z.number().min(1, 'Survey ID must be greater than 0'),
+  surveyId: z.union([z.string().transform(val => Number(val)), z.number()]),
   name: z.string().min(3, 'Reward name must be at least 3 characters'),
   ctaText: z.string().min(1, 'Call to action text is required'),
   link: z.string().url('Must be a valid URL'),

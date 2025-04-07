@@ -3,36 +3,44 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
-import DeleteSurveyDialog from '~/components/modals/delete-survey-dialog';
-import { useCallback, useState } from 'react';
+import DeleteItemDialog from '~/components/modals/delete-item-dialog';
+import React, { useCallback, useState } from 'react';
 import { trpc } from '~/trpc/client';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '~/components/ui/menubar';
 import { Ellipsis } from 'lucide-react';
 import Link from 'next/link';
+import { CreateRewardDialog } from '~/components/modals/create-reward-dialog';
+import { RewardData } from '~/app/(app)/(protected)/rewards/columns';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
-  const [rowId, setRowId] = useState<number | null>(null);
+export function RewardTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+  const [selectedRow, setSelectedRow] = useState<{ edit: number; delete: number } | null>(null);
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel()
   });
-  const { mutate } = trpc.reward.delete.useMutation();
+  const { mutate: deleteReward } = trpc.reward.delete.useMutation();
 
   const handleDelete = useCallback(() => {
-    if (!rowId) return;
-    mutate({ id: rowId }); // Example delete function
-    setRowId(null); // Close dialog after delete
-  }, [rowId]);
+    if (!selectedRow?.delete) return;
+    deleteReward({ id: selectedRow.delete }); // Example delete function
+    setSelectedRow(null); // Close dialog after delete
+  }, [selectedRow]);
 
   return (
     <div className='rounded-md border'>
-      <DeleteSurveyDialog open={!!rowId} onClose={() => setRowId(null)} onDelete={handleDelete} />
+      <CreateRewardDialog id={selectedRow?.edit} open={!!selectedRow?.edit} onClose={() => setSelectedRow(null)} />
+      <DeleteItemDialog
+        open={!!selectedRow?.delete}
+        itemText='reward'
+        onClose={() => setSelectedRow(null)}
+        onDelete={handleDelete}
+      />
       <Table>
         <TableHeader className='bg-neutral-100/50 dark:bg-neutral-800/50'>
           {table.getHeaderGroups().map(headerGroup => (
@@ -53,7 +61,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                 {row.getVisibleCells().map(cell => {
                   if (cell.column.id === 'action') {
-                    const _row = cell.row.original;
+                    const _row = cell.row.original as RewardData;
                     return (
                       <TableCell key={cell.id} className='flex gap-x-2'>
                         <Menubar className='w-fit border-none bg-transparent'>
@@ -65,10 +73,12 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                               <Link href={`/survey/${_row.surveyId}/edit`} passHref>
                                 <MenubarItem>Edit Survey</MenubarItem>
                               </Link>
-                              <Link href={`/survey/${_row.surveyId}/edit`} passHref>
-                                <MenubarItem>Edit Reward</MenubarItem>
-                              </Link>
-                              <MenubarItem onClick={() => setRowId(_row.id)}>Delete</MenubarItem>
+                              <MenubarItem onClick={() => setSelectedRow({ edit: _row.id, delete: 0 })}>
+                                Edit Reward
+                              </MenubarItem>
+                              <MenubarItem onClick={() => setSelectedRow({ edit: 0, delete: _row.id })}>
+                                Delete
+                              </MenubarItem>
                             </MenubarContent>
                           </MenubarMenu>
                         </Menubar>

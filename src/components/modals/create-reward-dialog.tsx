@@ -18,14 +18,19 @@ import { ScrollArea } from '~/components/ui/scroll-area';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { rewardSchema } from '~/lib/validators';
 import { z } from 'zod';
+import { useLoading } from '../providers/loading-provider';
+import { toast } from 'sonner';
 
-type Props = {
+interface Props {
+  id?: number;
+  open?: boolean;
+  onClose?: () => void;
   variant?: ButtonVariant;
-};
+}
 
 type FormData = z.infer<typeof rewardSchema>;
 
-export const CreateRewardDialog: FC<Props> = ({ variant = 'default' }) => {
+export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant = 'default' }) => {
   const [activeTab, setActiveTab] = useState<TabState>('upload');
   const form = useForm<FormData>({
     defaultValues: {
@@ -37,20 +42,64 @@ export const CreateRewardDialog: FC<Props> = ({ variant = 'default' }) => {
     },
     resolver: zodResolver(rewardSchema)
   });
+  const utils = trpc.useUtils();
+  const { setLoading } = useLoading();
   const { data: surveys } = trpc.survey.fromUser.useQuery();
+  const { mutate: createReward } = trpc.reward.create.useMutation({
+    onMutate() {
+      setLoading(true);
+    },
+    onSuccess() {
+      void utils.reward.all.invalidate();
+      if (onClose) {
+        onClose();
+      }
+      toast.success('Reward created successfully');
+    },
+    onError: error => {
+      toast.error('Failed to create reward', { description: error.message });
+    },
+    onSettled: () => {
+      setLoading(false);
+    }
+  });
+  const { mutate: updateReward } = trpc.reward.update.useMutation({
+    onMutate() {
+      setLoading(true);
+    },
+    onSuccess() {
+      void utils.reward.all.invalidate();
+      if (onClose) {
+        onClose();
+      }
+      toast.success('Reward updated successfully');
+    },
+    onError: error => {
+      toast.error('Failed to update reward', { description: error.message });
+    },
+    onSettled: () => {
+      setLoading(false);
+    }
+  });
 
   const onSubmit = (data: FormData) => {
-    console.log(data);
+    if (id) {
+      void updateReward({ id, ...data });
+    } else {
+      void createReward(data);
+    }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Button variant={variant} radius='xl'>
-          <CirclePlus className='mr-2 h-4 w-4' />
-          Add Reward
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={() => (onClose ? onClose() : undefined)}>
+      {open === undefined && (
+        <DialogTrigger>
+          <Button variant={variant} radius='xl'>
+            <CirclePlus className='mr-2 h-4 w-4' />
+            Add Reward
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className='sm:max-w-3xl'>
         <DialogTitle className='text-2xl font-medium'>Create Reward</DialogTitle>
         <DialogDescription>Give attendees something to look forward to!</DialogDescription>

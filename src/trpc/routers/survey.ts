@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { editSurveyFormSchema } from '~/lib/validators';
-import { deleteThumbnail, genRewardId, handleExistingReward, increment, insertNewReward } from '~/trpc/routers/utils';
+import { deleteThumbnail, genRewardId, updateReward, increment, insertNewReward } from '~/trpc/routers/utils';
 import { getSurvey, getUser } from '~/db/helpers';
 import { prettyPrint } from '~/lib/utils';
 
