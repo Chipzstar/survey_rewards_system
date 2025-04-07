@@ -44,7 +44,7 @@ const ChatwootWidget: React.FC<Props> = ({ token }: Props) => {
       s.parentNode.insertBefore(g, s);
       g.onload = function () {
         (window as any).chatwootSDK.run({
-          websiteToken: 'yVrEf2uZ5rY3i139wsVU4Xyw',
+          websiteToken: token,
           baseUrl: BASE_URL
         });
       };
