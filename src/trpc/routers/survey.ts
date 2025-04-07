@@ -172,7 +172,7 @@ export const surveyRouter = createTRPCRouter({
       // Update survey details
       await updateSurveyDetails(ctx, input, survey);
 
-      // Fetch existing rewards for the survey
+      /*// Fetch existing rewards for the survey
       const existingRewards = await ctx.db.select().from(rewardTable).where(eq(rewardTable.survey_id, input.id));
 
       // Collect IDs from input rewards
@@ -201,7 +201,7 @@ export const surveyRouter = createTRPCRouter({
             await insertNewReward(ctx, input.id, reward);
           }
         }
-      }
+      }*/
       return survey;
     } catch (error) {
       console.error(error);

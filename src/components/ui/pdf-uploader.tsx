@@ -5,10 +5,12 @@ import { generateClientDropzoneAccept, generatePermittedFileTypes } from 'upload
 import { useUploadThing } from '~/lib/uploadthing';
 import { CopyIcon, Upload, XCircle } from 'lucide-react';
 import { useLoading } from '~/components/providers/loading-provider';
+import { cn } from '~/lib/utils';
 
 interface Props {
   rewardLink: string;
   setRewardLink: (url: string) => void;
+  className?: string;
 }
 
 export const PdfUploader: FC<Props> = props => {
@@ -94,7 +96,10 @@ export const PdfUploader: FC<Props> = props => {
       ) : (
         <div
           role='button'
-          className='flex min-w-full transform cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dotted border-gray-300 bg-background p-6 shadow-md transition-transform hover:scale-105'
+          className={cn(
+            'mx-auto flex scale-95 transform cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-background p-6 shadow-md transition-transform hover:scale-100',
+            props.className
+          )}
         >
           <div className='mb-2 flex items-center justify-center p-2'>
             <Upload size={30} />

@@ -20,8 +20,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/comp
 import { PdfUploader } from '~/components/ui/pdf-uploader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { ImageUploader } from '~/components/ui/image-uploader';
-
-type TabState = 'upload' | 'link';
+import { TabState } from '~/lib/types';
 
 export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalytics'] }> = ({ survey }) => {
   const router = useRouter();

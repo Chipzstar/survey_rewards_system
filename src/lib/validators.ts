@@ -2,8 +2,9 @@ import * as z from 'zod';
 
 export const rewardSchema = z.object({
   id: z.number().optional(),
+  surveyId: z.number().min(1, 'Survey ID must be greater than 0'),
   name: z.string().min(3, 'Reward name must be at least 3 characters'),
-  cta_text: z.string().min(1, 'Call to action text is required'),
+  ctaText: z.string().min(1, 'Call to action text is required'),
   link: z.string().url('Must be a valid URL'),
   thumbnail: z.string().url('Must be a valid URL').nullable(),
   limit: z
@@ -21,6 +22,5 @@ export const editSurveyFormSchema = z.object({
   deadline: z.union([
     z.date().min(new Date(), 'Deadline must be in the future'),
     z.string().min(1, 'Deadline must be in the future')
-  ]),
-  rewards: z.array(rewardSchema)
+  ])
 });
