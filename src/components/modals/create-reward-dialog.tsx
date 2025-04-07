@@ -7,7 +7,7 @@ import { Input } from '~/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { trpc } from '~/trpc/client';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { CirclePlus, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
@@ -21,17 +21,18 @@ import { z } from 'zod';
 import { useLoading } from '../providers/loading-provider';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { RewardData } from '~/app/(app)/(protected)/rewards/columns';
 
 interface Props {
-  id?: number;
   open?: boolean;
   onClose?: () => void;
   variant?: ButtonVariant;
+  reward?: RewardData;
 }
 
 type FormData = z.infer<typeof rewardSchema>;
 
-export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant = 'default' }) => {
+export const CreateRewardDialog: FC<Props> = ({ open, onClose, variant = 'default', reward }) => {
   const [activeTab, setActiveTab] = useState<TabState>('upload');
   const router = useRouter();
   const utils = trpc.useUtils();
@@ -72,17 +73,33 @@ export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant =
 
   const form = useForm<FormData>({
     defaultValues: {
-      name: undefined,
-      surveyId: undefined,
-      ctaText: undefined,
-      thumbnail: null,
-      link: undefined
+      name: reward?.name,
+      surveyId: reward?.surveyId ?? 0,
+      ctaText: reward?.ctaText ?? '',
+      thumbnail: reward?.thumbnail ?? '',
+      link: reward?.link ?? ''
     },
     resolver: zodResolver(rewardSchema)
   });
+
+  useEffect(() => {
+    if (reward) {
+      form.reset({
+        name: reward.name,
+        surveyId: reward.surveyId,
+        ctaText: reward.ctaText,
+        thumbnail: reward.thumbnail ?? null,
+        link: reward.link
+      });
+    }
+  }, [reward, form]); // Ensure form.reset() runs when reward changes
+
   const onSubmit = (data: FormData) => {
-    if (id) {
-      void updateReward({ id, ...data });
+    if (reward) {
+      void updateReward({
+        id: reward.id,
+        ...data
+      });
     } else {
       void createReward(data);
     }
@@ -99,7 +116,7 @@ export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant =
         </DialogTrigger>
       )}
       <DialogContent className='sm:max-w-3xl'>
-        <DialogTitle>Create Reward</DialogTitle>
+        <DialogTitle>{reward ? 'Edit Reward' : 'Create Reward'}</DialogTitle>
         <DialogDescription>Give attendees something to look forward to!</DialogDescription>
         <ScrollArea className='max-h-[calc(100vh-20rem)] overflow-y-auto'>
           <Form {...form}>
@@ -139,7 +156,7 @@ export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant =
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel required>Survey Name</FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select defaultValue={String(reward?.surveyId)} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder='Choose Survey' />

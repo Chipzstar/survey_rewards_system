@@ -11,6 +11,9 @@ export type RewardData = {
   surveyId: number;
   surveyName: string;
   totalClaimed: number;
+  ctaText: string;
+  thumbnail: string | null;
+  link: string;
   status: string;
   date: string;
 };

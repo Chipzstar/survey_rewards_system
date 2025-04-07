@@ -4,7 +4,7 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
 import DeleteItemDialog from '~/components/modals/delete-item-dialog';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { trpc } from '~/trpc/client';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '~/components/ui/menubar';
 import { Ellipsis } from 'lucide-react';
@@ -17,8 +17,9 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function RewardTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function RewardTable<_, TValue>({ columns, data }: DataTableProps<RewardData, TValue>) {
   const [selectedRow, setSelectedRow] = useState<{ edit: number; delete: number } | null>(null);
+  const [selectedReward, setSelectedReward] = useState<RewardData | undefined>(undefined);
   const table = useReactTable({
     data,
     columns,
@@ -34,7 +35,11 @@ export function RewardTable<TData, TValue>({ columns, data }: DataTableProps<TDa
 
   return (
     <div className='rounded-md border'>
-      <CreateRewardDialog id={selectedRow?.edit} open={!!selectedRow?.edit} onClose={() => setSelectedRow(null)} />
+      <CreateRewardDialog
+        open={!!selectedReward}
+        onClose={() => setSelectedReward(undefined)}
+        reward={selectedReward}
+      />
       <DeleteItemDialog
         open={!!selectedRow?.delete}
         itemText='reward'
@@ -61,7 +66,7 @@ export function RewardTable<TData, TValue>({ columns, data }: DataTableProps<TDa
               <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                 {row.getVisibleCells().map(cell => {
                   if (cell.column.id === 'action') {
-                    const _row = cell.row.original as RewardData;
+                    const _row = row.original;
                     return (
                       <TableCell key={cell.id} className='flex gap-x-2'>
                         <Menubar className='w-fit border-none bg-transparent'>
@@ -73,9 +78,7 @@ export function RewardTable<TData, TValue>({ columns, data }: DataTableProps<TDa
                               <Link href={`/survey/${_row.surveyId}/edit`} passHref>
                                 <MenubarItem>Edit Survey</MenubarItem>
                               </Link>
-                              <MenubarItem onClick={() => setSelectedRow({ edit: _row.id, delete: 0 })}>
-                                Edit Reward
-                              </MenubarItem>
+                              <MenubarItem onClick={() => setSelectedReward(_row)}>Edit Reward</MenubarItem>
                               <MenubarItem onClick={() => setSelectedRow({ edit: 0, delete: _row.id })}>
                                 Delete
                               </MenubarItem>

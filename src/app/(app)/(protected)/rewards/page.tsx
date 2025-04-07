@@ -3,14 +3,14 @@ import Container from '~/components/layout/Container';
 import { HydrateClient, trpc } from '~/trpc/server';
 import { Card, CardContent } from '~/components/ui/card';
 import { CreateRewardDialog } from '~/components/modals/create-reward-dialog';
-import { columns } from './columns';
+import { columns, RewardData } from './columns';
 import { format, isBefore } from 'date-fns';
 import { RewardTable } from './reward-table';
 
 export default async function RewardsPage({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
   const rewards = await trpc.reward.all();
 
-  const data =
+  const data: RewardData[] =
     rewards
       .filter(r => {
         const query = searchParams?.query;
@@ -28,6 +28,9 @@ export default async function RewardsPage({ searchParams }: { searchParams: { [k
           surveyName: reward.survey.name,
           totalClaimed,
           status,
+          ctaText: reward.cta_text,
+          thumbnail: reward.thumbnail,
+          link: reward.link,
           date: format(reward.created_at, 'dd MMM yyyy')
         };
       }) ?? [];
