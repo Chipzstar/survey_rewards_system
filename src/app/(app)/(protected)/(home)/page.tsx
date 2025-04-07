@@ -8,14 +8,27 @@ import { CalendarIcon } from 'lucide-react';
 import { format, isAfter, isSameDay } from 'date-fns';
 import { Badge } from '~/components/ui/badge';
 import Container from '~/components/layout/Container';
+import { useSearchParams } from 'next/navigation';
 
-export default async function Dashboard() {
+export default async function Dashboard({
+  params,
+  searchParams
+}: {
+  params: { id: string };
+  searchParams: { [key: string]: string | undefined };
+}) {
   const events = await trpc.event.fromUser();
 
   // Calculate KPIs
   const activeEvents = events.filter(event => new Date(event.date!) > new Date()).length;
   const completedEvents = events.filter(event => isAfter(event.date!, new Date())).length;
   const totalEvents = events.length;
+
+  const filteredEvents = events.filter(event => {
+    const query = searchParams?.query;
+    if (!query || query.length === 0) return true;
+    return event.name.toLowerCase().includes(query.toLowerCase());
+  });
 
   return (
     <HydrateClient>
@@ -31,9 +44,9 @@ export default async function Dashboard() {
             </div>
           </div>
         ) : (
-          <div className='grid h-full grid-cols-1 gap-y-8'>
+          <div className='flex h-full flex-col gap-y-8'>
             {/* Overview Section */}
-            <section>
+            <section className='shrink'>
               <div className='mb-6 flex flex-col justify-between space-y-4 md:flex-row md:items-center md:space-y-0'>
                 <h2 className='text-2xl'>Overview</h2>
                 <div className='flex gap-4'>
@@ -63,9 +76,9 @@ export default async function Dashboard() {
               </div>
             </section>
             {/* Events Section */}
-            <section className='flex flex-col space-y-4'>
+            <section className='flex grow flex-col justify-start space-y-4'>
               <h2 className='text-2xl'>Your Events</h2>
-              {events.map(event => {
+              {filteredEvents.map(event => {
                 const eventDate = new Date(event.date!);
                 const isActive = isSameDay(eventDate, new Date());
                 const isCompleted = eventDate <= new Date();

@@ -7,6 +7,9 @@ import { FC } from 'react';
 import { useIsMobile } from '~/hooks/use-mobile';
 import { Menu, Search } from 'lucide-react';
 import { SidebarTrigger } from '~/components/ui/sidebar';
+import Link from 'next/link';
+import { useSearch } from '~/hooks/useSearch';
+import { useSearchParams } from 'next/navigation';
 
 interface Props {
   userId: string;
@@ -16,10 +19,12 @@ interface Props {
 const BrandHeader: FC = () => {
   return (
     <div className='flex items-center justify-between px-6 pt-2'>
-      <div className='flex items-center space-x-2'>
-        <img src='/logo.png' alt='Genus Logo' className='h-8 w-8' /> {/* Update with your logo path */}
-        <span className='text-lg font-bold'>Genus</span>
-      </div>
+      <Link href='/'>
+        <div className='flex items-center space-x-2' role='button'>
+          <img src='/logo.png' alt='Genus Logo' className='h-8 w-8' /> {/* Update with your logo path */}
+          <span className='text-lg font-semibold'>Genus</span>
+        </div>
+      </Link>
       <SidebarTrigger>
         <Menu size={24} color='black' strokeWidth={1} className='cursor-pointer' />
       </SidebarTrigger>
@@ -28,7 +33,9 @@ const BrandHeader: FC = () => {
 };
 
 export const DashboardHeader: FC<Props> = props => {
+  const searchParams = useSearchParams();
   const isMobile = useIsMobile();
+  const { isSearching, searchText, setSearchText, onChangeText } = useSearch();
   return (
     <nav>
       {isMobile && <BrandHeader />}
@@ -43,7 +50,13 @@ export const DashboardHeader: FC<Props> = props => {
           {isMobile ? (
             <Search size={24} color='black' strokeWidth={1} />
           ) : (
-            <Input type='search' placeholder='Search' className='max-w-64 sm:w-64' />
+            <Input
+              type='search'
+              placeholder='Search'
+              className='max-w-64 sm:w-64'
+              defaultValue={searchParams.get('query')?.toString()}
+              onChange={e => onChangeText(e.target.value)}
+            />
           )}
           <UserButton />
         </div>

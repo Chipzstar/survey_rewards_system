@@ -9,6 +9,7 @@ import { Badge } from '~/components/ui/badge';
 export type RewardData = {
   id: number;
   name: string;
+  surveyId: number;
   surveyName: string;
   totalClaimed: number;
   status: string;

@@ -62,10 +62,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                               <Ellipsis size={18} className='text-foreground' strokeWidth={2} />
                             </MenubarTrigger>
                             <MenubarContent>
-                              <Link href={`/survey/${_row.id}/edit`} passHref>
+                              <Link href={`/survey/${_row.surveyId}/edit`} passHref>
                                 <MenubarItem>Edit Survey</MenubarItem>
                               </Link>
-                              <Link href={`/survey/${_row.id}/edit`} passHref>
+                              <Link href={`/survey/${_row.surveyId}/edit`} passHref>
                                 <MenubarItem>Edit Reward</MenubarItem>
                               </Link>
                               <MenubarItem onClick={() => setRowId(_row.id)}>Delete</MenubarItem>

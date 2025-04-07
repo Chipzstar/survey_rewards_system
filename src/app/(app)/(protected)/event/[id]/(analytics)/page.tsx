@@ -5,7 +5,13 @@ import { DataTable } from './data-table';
 import { columns, SurveyData } from './columns';
 import Container from '~/components/layout/Container';
 
-export default async function EventAnalytics({ params }: { params: { id: string } }) {
+export default async function EventAnalytics({
+  params,
+  searchParams
+}: {
+  params: { id: string };
+  searchParams: { [key: string]: string | undefined };
+}) {
   const { id } = params;
 
   const surveys = await trpc.survey.byEventId({ eventId: Number(id) });
@@ -33,6 +39,12 @@ export default async function EventAnalytics({ params }: { params: { id: string 
   const averageTimeTaken = Number(analytics.reduce((acc, survey) => acc + survey.time, 0) / analytics.length).toFixed(
     1
   );
+
+  const filteredSurveys = analytics.filter(survey => {
+    const query = searchParams?.query;
+    if (!query || query.length === 0) return true;
+    return survey.name.toLowerCase().includes(query.toLowerCase());
+  });
 
   return (
     <HydrateClient>
@@ -72,7 +84,7 @@ export default async function EventAnalytics({ params }: { params: { id: string 
         <Card className='mt-5 flex flex-col px-4 py-6'>
           <h2 className='mb-4 text-2xl md:mb-8'>Survey Performance details</h2>
           <div className='w-full overflow-x-auto'>
-            <DataTable columns={columns} data={analytics} />
+            <DataTable columns={columns} data={filteredSurveys} />
           </div>
         </Card>
       </Container>
