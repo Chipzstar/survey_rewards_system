@@ -20,6 +20,7 @@ import { rewardSchema } from '~/lib/validators';
 import { z } from 'zod';
 import { useLoading } from '../providers/loading-provider';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   id?: number;
@@ -32,16 +33,7 @@ type FormData = z.infer<typeof rewardSchema>;
 
 export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant = 'default' }) => {
   const [activeTab, setActiveTab] = useState<TabState>('upload');
-  const form = useForm<FormData>({
-    defaultValues: {
-      name: undefined,
-      surveyId: undefined,
-      ctaText: undefined,
-      thumbnail: null,
-      link: undefined
-    },
-    resolver: zodResolver(rewardSchema)
-  });
+  const router = useRouter();
   const utils = trpc.useUtils();
   const { setLoading } = useLoading();
   const { data: surveys } = trpc.survey.fromUser.useQuery();
@@ -50,11 +42,9 @@ export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant =
       setLoading(true);
     },
     onSuccess() {
-      void utils.reward.all.invalidate();
-      if (onClose) {
-        onClose();
-      }
       toast.success('Reward created successfully');
+      void utils.reward.all.invalidate();
+      router.refresh();
     },
     onError: error => {
       toast.error('Failed to create reward', { description: error.message });
@@ -68,11 +58,9 @@ export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant =
       setLoading(true);
     },
     onSuccess() {
-      void utils.reward.all.invalidate();
-      if (onClose) {
-        onClose();
-      }
       toast.success('Reward updated successfully');
+      void utils.reward.all.invalidate();
+      router.refresh();
     },
     onError: error => {
       toast.error('Failed to update reward', { description: error.message });
@@ -82,6 +70,16 @@ export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant =
     }
   });
 
+  const form = useForm<FormData>({
+    defaultValues: {
+      name: undefined,
+      surveyId: undefined,
+      ctaText: undefined,
+      thumbnail: null,
+      link: undefined
+    },
+    resolver: zodResolver(rewardSchema)
+  });
   const onSubmit = (data: FormData) => {
     if (id) {
       void updateReward({ id, ...data });
@@ -101,7 +99,7 @@ export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant =
         </DialogTrigger>
       )}
       <DialogContent className='sm:max-w-3xl'>
-        <DialogTitle className='text-2xl font-medium'>Create Reward</DialogTitle>
+        <DialogTitle>Create Reward</DialogTitle>
         <DialogDescription>Give attendees something to look forward to!</DialogDescription>
         <ScrollArea className='max-h-[calc(100vh-20rem)] overflow-y-auto'>
           <Form {...form}>
@@ -191,7 +189,7 @@ export const CreateRewardDialog: FC<Props> = ({ id = 0, open, onClose, variant =
                             <Info className='cursor-help/70 h-4 w-4' />
                           </TooltipTrigger>
                           <TooltipContent className='max-w-xs bg-white text-gray-900'>
-                            <p>The URL where attendees can claim or download their reward (e.g. pdf resources, etc)</p>
+                            <p>The URL where attendees can claim or download their reward (e.g. a pdf resource)</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>

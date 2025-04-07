@@ -95,10 +95,14 @@ export const ImageUploader: FC<Props> = props => {
           )}
         >
           <div className='mb-2 flex items-center justify-center p-2'>
-            <Upload size={30} />
+            <Image src='/icon/upload.svg' alt='upload' width={30} height={30} />
           </div>
-          <p className='mb-2 text-lg font-medium'>Drag & drop image here to upload</p>
-          {isUploading ? <p className='text-sm'>Uploading...</p> : <p className='text-sm'>or click to select files</p>}
+          <p className='mb-2 text-lg'>Click to Upload File or drag and drop</p>
+          {isUploading ? (
+            <p className='text-caption text-sm'>Uploading...</p>
+          ) : (
+            <p className='text-caption text-sm'>Maximum file size: 8mb</p>
+          )}
         </div>
       )}
     </div>

@@ -82,6 +82,7 @@ export default withUt({
         },
         'semi-dark': '#353639',
         sub: '#7E8085',
+        caption: '#6F7176',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         destructive: {
