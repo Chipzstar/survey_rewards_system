@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Button } from '~/components/ui/button';
+import { Button, ButtonVariant } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -17,12 +17,23 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { DateTimePicker } from '~/components/ui/date-time-picker';
-import { Plus } from 'lucide-react';
+import { CirclePlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '~/trpc/client';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useLoading } from '~/components/providers/loading-provider';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator
+} from '~/components/ui/command';
+import { getPredictions } from '~/lib/google';
+import { useDebouncedValue } from '~/hooks/use-debounced-value';
+import { useDebouncedCallback } from '~/hooks/use-debounced-callback';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Event name must be at least 2 characters'),
@@ -31,8 +42,9 @@ const formSchema = z.object({
   date: z.union([z.date(), z.string()]).optional()
 });
 
-export function CreateEventDialog() {
+export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVariant }) {
   const router = useRouter();
+  const [predictions, setPredictions] = useState<{ label: string; value: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -67,11 +79,15 @@ export function CreateEventDialog() {
     createEvent(values);
   }
 
+  const autocomplete = useDebouncedCallback(async (query: string) => {
+    setPredictions(await getPredictions(query));
+  }, 400);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className='mr-2 h-4 w-4' />
+        <Button variant={variant} radius='xl'>
+          <CirclePlus className='mr-2 h-4 w-4' />
           Create Event
         </Button>
       </DialogTrigger>
@@ -115,7 +131,33 @@ export function CreateEventDialog() {
                 <FormItem>
                   <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Command>
+                      <CommandInput
+                        placeholder=''
+                        onValueChange={val => {
+                          field.onChange(val);
+                          autocomplete(val);
+                        }}
+                        value={field.value}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No results found.</CommandEmpty>
+                        <CommandGroup heading='Suggestions'>
+                          {predictions.map((p, index) => (
+                            <CommandItem
+                              key={p.value}
+                              onSelect={val => {
+                                field.onChange(val);
+                                autocomplete.flush();
+                              }}
+                            >
+                              {p.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                        <CommandSeparator />
+                      </CommandList>
+                    </Command>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -83,14 +83,7 @@ const FormLabel = React.forwardRef<
   const path = usePathname();
 
   return (
-    <Label
-      ref={ref}
-      className={cn(error && 'text-destructive', className, {
-        'text-white': path.includes('/survey')
-      })}
-      htmlFor={formItemId}
-      {...props}
-    >
+    <Label ref={ref} className={cn(error && 'text-destructive', className)} htmlFor={formItemId} {...props}>
       {props.children}
       {required && <span className='text-destructive'> *</span>}
     </Label>

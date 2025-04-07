@@ -41,10 +41,10 @@ export const SurveyLink: FC<Props> = props => {
           viewBox={`0 0 256 256`}
         />
       </div>
-      <div className='flex flex-col flex-wrap items-center md:hidden'>
+      <div className='flex w-full flex-col items-center md:hidden'>
         <h2 className='mb-4 text-2xl font-bold'>Link</h2>
-        <Link href={surveyHref} className='text-wrap break-words text-white underline' target='_blank'>
-          {props.surveyLink}
+        <Link href={surveyHref} target='_blank'>
+          <span className='text-ellipsis whitespace-nowrap text-wrap underline'>{props.surveyLink}</span>
         </Link>
       </div>
     </>

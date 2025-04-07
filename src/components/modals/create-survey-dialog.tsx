@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Button } from '~/components/ui/button';
+import { Button, ButtonVariant } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { DateTimePicker } from '~/components/ui/date-time-picker';
-import { Plus } from 'lucide-react';
+import { CirclePlus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '~/trpc/client';
 import { useRouter } from 'next/navigation';
@@ -37,7 +37,13 @@ const formSchema = z.object({
     .transform(val => (typeof val === 'string' ? parseInt(val, 10) : val))
 });
 
-export function CreateSurveyDialog({ events }: { events: RouterOutput['event']['fromUser'] }) {
+export function CreateSurveyDialog({
+  events,
+  variant = 'default'
+}: {
+  events: RouterOutput['event']['fromUser'];
+  variant?: ButtonVariant;
+}) {
   const router = useRouter();
   const [opened, setOpened] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -81,8 +87,8 @@ export function CreateSurveyDialog({ events }: { events: RouterOutput['event']['
   return (
     <Dialog open={opened} onOpenChange={setOpened}>
       <DialogTrigger asChild disabled={!events.length}>
-        <Button>
-          <Plus className='mr-2 h-4 w-4' />
+        <Button variant={variant} radius='xl'>
+          <CirclePlus className='mr-2 h-4 w-4' />
           Create Survey
         </Button>
       </DialogTrigger>
