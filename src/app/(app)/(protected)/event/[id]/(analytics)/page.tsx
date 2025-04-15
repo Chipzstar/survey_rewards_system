@@ -7,6 +7,7 @@ import Container from '~/components/layout/Container';
 import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import RequestInsightReport from './_request-insight-report';
+import { capitalize } from '~/lib/utils';
 
 interface WordCloudStyle {
   bg: string;
@@ -56,7 +57,7 @@ export default async function EventAnalytics({
   surveys.forEach(survey => {
     survey.responses.forEach(response => {
       if (response.top_words) {
-        const words = response.top_words.split(',').map(word => word.trim());
+        const words = response.top_words.split(',').map(word => capitalize(word.trim()));
         words.forEach(word => {
           wordFrequencyMap.set(word, (wordFrequencyMap.get(word) || 0) + 1);
         });

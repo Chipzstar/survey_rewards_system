@@ -9,7 +9,7 @@ const RequestInsightReport: FC<{ event: RouterOutput['event']['byId'] }> = ({ ev
   };
 
   return (
-    <span className='text-3xl font-medium text-primary underline' onClick={requestInsightReport}>
+    <span role='button' className='text-3xl font-medium text-primary underline' onClick={requestInsightReport}>
       Request
     </span>
   );

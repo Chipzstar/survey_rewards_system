@@ -17,6 +17,8 @@ export const prettyPrint = (val: any, character: string = '-', newLine: boolean 
   console.log(`${border}\n`);
 };
 
+export const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
 export const genUserId = customAlphabet('1234567890', 4);
 
 export const genPasscode = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
