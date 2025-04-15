@@ -33,7 +33,14 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
   const handleDownload = async () => {
     if (contentRef.current) {
       const canvas = await html2canvas(contentRef.current, {
-        backgroundColor: '#ffffff'
+        backgroundColor: null,
+        useCORS: true,
+        onclone: (clonedDoc) => {
+          const element = clonedDoc.querySelector('[data-capture-background]');
+          if (element) {
+            element.className = 'space-y-8 p-6 bg-gradient-to-b from-primary-200/50 via-white to-secondary-200/50';
+          }
+        }
       });
       const image = canvas.toDataURL('image/png');
       const link = document.createElement('a');
@@ -65,26 +72,27 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
           </div>
         </DialogHeader>
         <ScrollArea className='h-[80vh]'>
-          <div ref={contentRef} className='relative space-y-8 p-6'>
-            <div
-              className="pointer-events-none absolute inset-0 bg-[url('/share-decorations.png')] bg-contain bg-no-repeat opacity-50"
-              style={{ backgroundSize: '100% 100%' }}
-            />
-            <div className='space-y-4 text-center'>
-              <h2 className='tracking-loose text-4xl font-medium'>It's a Wrap 🎉</h2>
-              <p className='text-balance text-xl font-light text-[#6F7176]'>
-                Thanks for coming to the event, we hope you enjoyed it as much as we did!
-              </p>
-            </div>
+          <div ref={contentRef} className='space-y-8 p-6' data-capture-background>
+            <section className='relative'>
+              <div className='space-y-4 text-center'>
+                <div
+                  className="scale-120 mx-12 pointer-events-none absolute inset-0 bg-[url('/share-decorations.png')] bg-contain bg-no-repeat opacity-50"
+                  style={{ backgroundSize: '100% 100%' }}
+                />
+                <h2 className='tracking-loose text-4xl font-medium'>It's a Wrap 🎉</h2>
+                <p className='text-balance text-xl font-light text-[#6F7176]'>
+                  Thanks for coming to the event, we hope you enjoyed it as much as we did!
+                </p>
+              </div>
 
-            <div className='flex justify-center space-x-4'>
-              {/* Sample avatars - replace src with actual avatar images */}
-              {[1, 2, 3, 4].map((_, i) => (
-                <div key={i} className='h-16 w-16 rounded-full bg-gray-200' />
-              ))}
-            </div>
-
-            <div className='grid grid-cols-2 gap-8'>
+              <div className='pt-8 flex justify-center space-x-4'>
+                {/* Sample avatars - replace src with actual avatar images */}
+                {[1, 2, 3, 4].map((_, i) => (
+                  <div key={i} className='h-16 w-16 rounded-full bg-gray-200' />
+                ))}
+              </div>
+            
+            <div className='pt-8 grid grid-cols-2 gap-8'>
               <div className='rounded-lg bg-purple-50 p-6'>
                 <p className='text-gray-600'>Attendees</p>
                 <p className='text-4xl font-semibold'>{attendees}</p>
@@ -94,6 +102,7 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
                 <p className='text-4xl font-semibold'>{speakers}</p>
               </div>
             </div>
+          </section>
 
             <div>
               <h3 className='mb-4 text-lg font-medium'>Top Words Used to Describe Event</h3>
