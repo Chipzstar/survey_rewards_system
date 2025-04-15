@@ -78,7 +78,7 @@ FormItem.displayName = 'FormItem';
 const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & { required?: boolean } // Extend props with required
->(({ className, required, ...props }, ref) => {
+>(({ className = 'text-semi-dark, dark:text-foreground font-normal', required, ...props }, ref) => {
   const { error, formItemId } = useFormField();
   const path = usePathname();
 

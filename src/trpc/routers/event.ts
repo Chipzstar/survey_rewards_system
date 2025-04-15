@@ -8,6 +8,11 @@ export const eventRouter = createTRPCRouter({
   all: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.select().from(eventTable);
   }),
+  byId: protectedProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
+    const event = await ctx.db.select().from(eventTable).where(eq(eventTable.id, input.id));
+    if (!event[0]) throw new TRPCError({ code: 'NOT_FOUND', message: 'No Event found with that ID' });
+    return event[0];
+  }),
   fromUser: protectedProcedure.query(async ({ ctx, input }) => {
     // Fetch survey data from a database or API
     const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));

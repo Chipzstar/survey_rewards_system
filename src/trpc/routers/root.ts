@@ -1,7 +1,6 @@
 import { baseProcedure, createTRPCRouter } from '../init';
 import { eventRouter } from './event';
 import { surveyRouter } from './survey';
-import { winnerRouter } from './winner';
 import { responseRouter } from './response';
 import { rewardRouter } from './reward';
 // export type definition of API
@@ -12,7 +11,6 @@ import { auth } from '@clerk/nextjs/server';
 export const appRouter = createTRPCRouter({
   event: eventRouter,
   survey: surveyRouter,
-  winner: winnerRouter,
   response: responseRouter,
   reward: rewardRouter
 });

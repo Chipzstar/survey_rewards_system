@@ -1,11 +1,9 @@
 import { relations } from 'drizzle-orm';
 import {
   eventTable,
-  giftCardTable,
   referralTable,
   surveyResponseTable,
   surveyTable,
-  surveyWinnerTable,
   usersTable,
   rewardTable,
   genBotResponseTable
@@ -14,8 +12,7 @@ import {
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
   createdEvents: many(eventTable),
   createdSurveys: many(surveyTable),
-  surveyResponses: many(surveyResponseTable),
-  surveyWins: many(surveyWinnerTable)
+  surveyResponses: many(surveyResponseTable)
 }));
 
 export const eventRelations = relations(eventTable, ({ one, many }) => ({
@@ -37,7 +34,6 @@ export const surveyRelations = relations(surveyTable, ({ one, many }) => ({
   }),
   responses: many(surveyResponseTable),
   referrals: many(referralTable),
-  winners: many(surveyWinnerTable),
   rewards: many(rewardTable),
   genBotResponses: many(genBotResponseTable)
 }));
@@ -73,28 +69,6 @@ export const referralRelations = relations(referralTable, ({ one }) => ({
     fields: [referralTable.referee_id],
     references: [usersTable.id]
   })*/
-}));
-
-export const surveyWinnerRelations = relations(surveyWinnerTable, ({ one }) => ({
-  survey: one(surveyTable, {
-    fields: [surveyWinnerTable.survey_id],
-    references: [surveyTable.id]
-  }),
-  user: one(usersTable, {
-    fields: [surveyWinnerTable.user_id],
-    references: [usersTable.id]
-  }),
-  giftCard: one(giftCardTable, {
-    fields: [surveyWinnerTable.gift_card_id],
-    references: [giftCardTable.id]
-  })
-}));
-
-export const giftCardRelations = relations(giftCardTable, ({ one }) => ({
-  survey: one(surveyTable, {
-    fields: [giftCardTable.survey_id],
-    references: [surveyTable.id]
-  })
 }));
 
 export const rewardRelations = relations(rewardTable, ({ one, many }) => ({

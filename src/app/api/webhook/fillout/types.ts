@@ -67,7 +67,7 @@ interface Calculation {
   id: string;
   name: string;
   type: string;
-  value: number;
+  value: number | string;
 }
 
 interface UrlParameter {

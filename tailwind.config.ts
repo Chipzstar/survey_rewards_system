@@ -23,6 +23,10 @@ export default withUt({
       colors: {
         primary: {
           DEFAULT: '#2AA6B7',
+          '50': '#EAF6F8',
+          '100': '#D4EDF1',
+          '200': '#BFE4E9',
+          '300': '#AADBE2',
           foreground: '#ffffff'
         },
         secondary: {
@@ -140,11 +144,22 @@ export default withUt({
           to: {
             height: '0'
           }
+        },
+        'bounce-slow': {
+          '0%, 100%': {
+            transform: 'translateY(-5%)',
+            animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)'
+          },
+          '50%': {
+            transform: 'translateY(0)',
+            animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)'
+          }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out'
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'bounce-slow': 'bounce-slow 2s infinite'
       },
       borderRadius: {
         lg: 'var(--radius)',

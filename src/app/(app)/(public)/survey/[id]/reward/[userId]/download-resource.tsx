@@ -20,11 +20,11 @@ const DownloadResource: React.FC<DownloadResourceProps> = ({ reward }) => {
 
   return (
     <Button
-      className='rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700'
+      className='rounded-lg bg-[#5BB5C1] px-8 py-3 font-medium text-white transition-colors hover:bg-[#4A9BA6]'
       onClick={handleDownload}
       type='button'
     >
-      Download Reward
+      Download Resource
     </Button>
   );
 };

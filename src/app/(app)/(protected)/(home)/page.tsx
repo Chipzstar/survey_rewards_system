@@ -35,7 +35,7 @@ export default async function Dashboard({
       <Container>
         {events.length === 0 ? (
           <div className='flex flex-1 flex-col items-center justify-center gap-4'>
-            <Image src='/document-text.svg' alt='No Events or Surveys Yet' width={120} height={120} />
+            <Image src='/image/document-text.svg' alt='No Events or Surveys Yet' width={120} height={120} />
             <h2 className='text-2xl font-medium text-sub dark:text-white'>No Events or Surveys Yet</h2>
             <p className='text-gray-500 dark:text-white'>Get started by creating your first event or survey!</p>
             <div className='mt-4 flex gap-4'>

@@ -30,6 +30,21 @@ async function handleFormResponse(event: FormEvent) {
   const completed_at = new Date(event.submission.submissionTime).toISOString();
   const started_at = new Date(Number(start_timestamp)).toISOString();
 
+  // check if the survey rating is recorded
+  const rating = Number(event.submission.calculations.find(c => {
+    ['rating', 'score'].includes(c.name)
+  })?.value ?? 0)
+
+  // check if the two words are recorded
+  const top_words = String(event.submission.calculations.find(c => {
+    c.name === 'top_words'
+  })?.value ?? '')
+
+  // check if the testimonial is recorded
+  const testimonial = String(event.submission.calculations.find(c => {
+    c.name === 'testimonial'
+  })?.value ?? '')
+
   // create survey response record
   const surveyResponse = await db
     .insert(surveyResponseTable)
@@ -41,7 +56,10 @@ async function handleFormResponse(event: FormEvent) {
       passcode,
       started_at,
       completed_at,
-      is_completed: true
+      is_completed: true,
+      rating,
+      top_words,
+      testimonial,
     })
     .returning();
 

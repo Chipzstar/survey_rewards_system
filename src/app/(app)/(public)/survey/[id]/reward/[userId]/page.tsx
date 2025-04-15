@@ -1,39 +1,59 @@
 import React from 'react';
 import { HydrateClient, trpc } from '~/trpc/server';
 import Image from 'next/image';
-import DownloadResource from '~/app/(app)/(public)/survey/[id]/reward/[userId]/download-resource';
+import DownloadResource from './download-resource';
 
 export default async function ThankYouPage({ params }: { params: { id: string; userId: string } }) {
   const survey = await trpc.survey.byIdWithResults({ id: Number(params.id) });
   if (!survey.event) throw new Error('Event not found');
 
-  const response =
-    survey.responses.find(r => r.user_id === params.userId) ||
-    survey.genBotResponses.find(r => r.user_id === params.userId);
-  console.log(response);
+  const response = survey.responses.find(r => r.user_id === params.userId);
   if (!response) throw new Error(`No response found for user ID:  ${params.userId}`);
 
   // choose a reward at random
   const selectedReward = survey.rewards[Math.floor(Math.random() * survey.rewards.length)];
   if (!selectedReward) throw new Error('No reward found');
-  // const referrals = await trpc.referral.getReferrals({ surveyId: Number(params.id), userId: params.userId });
 
   return (
     <HydrateClient>
-      <main className='flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-primary to-secondary p-4 text-white md:p-24'>
-        <div className='flex max-w-3xl flex-col items-center space-y-12 rounded-lg bg-white/10 p-6 text-center shadow-lg'>
-          <h2 className='mb-4 text-3xl font-bold drop-shadow-md md:text-4xl'>Congratulations!🤩</h2>
+      <main className='flex min-h-screen flex-col bg-gradient-to-b from-primary to-[#DDFBFF] p-4'>
+        <div className='mt-8 px-4'>
+          <h1 className='text-2xl font-medium text-white'>Download</h1>
+        </div>
 
-          <p className='mb-6 text-pretty text-2xl'>{selectedReward.cta_text}</p>
-          {/*<p className='mb-4 text-balance text-center text-xl md:w-2/3'>
-                <span className='font-bold'>BOOST</span> your position further and get&nbsp;
-                <span className='font-bold'>DOUBLE</span> points by sharing your event connections!
-              </p>*/}
-          <DownloadResource reward={selectedReward} />
-          {/*<AddReferralForm surveyId={survey.id} userId={response.user_id} />*/}
+        <div className='flex flex-1 flex-col items-center justify-center px-4'>
+          <div className='w-full max-w-md rounded-2xl bg-white/95 p-8 shadow-lg'>
+            <div className='flex flex-col items-center space-y-6'>
+              <div className='relative h-[200px] w-[200px]'>
+                <Image
+                  src='/confetti.png'
+                  alt='Confetti'
+                  width={200}
+                  height={200}
+                  className='absolute inset-0'
+                  priority
+                />
+                <div className='absolute inset-0 flex items-center justify-center'>
+                  <Image
+                    src='/gift-box.svg'
+                    alt='Gift Box'
+                    width={140}
+                    height={140}
+                    className='animate-bounce-slow'
+                    priority
+                  />
+                </div>
+              </div>
+              
+              <h2 className='text-2xl font-medium text-gray-900'>Congratulations!!</h2>
+              
+              <p className='text-center text-gray-600'>
+                Unlock your exclusive resource pack here
+              </p>
 
-          <p className='mb-10 text-pretty text-xl'>{survey.event.name}</p>
-          <Image src='/powered-by-genus.png' alt='Mount Motherland 2025' width={200} height={100} />
+              <DownloadResource reward={selectedReward} />
+            </div>
+          </div>
         </div>
       </main>
     </HydrateClient>

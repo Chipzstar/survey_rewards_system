@@ -9,6 +9,7 @@ import { trpc } from '~/trpc/client';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '~/components/ui/menubar';
 import { Ellipsis } from 'lucide-react';
 import Link from 'next/link';
+import { SurveyData } from './columns';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -53,7 +54,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                 {row.getVisibleCells().map(cell => {
                   if (cell.column.id === 'action') {
-                    const _row = cell.row.original;
+                    const _row = cell.row.original as SurveyData;
                     return (
                       <TableCell key={cell.id} className='flex gap-x-2'>
                         <Menubar className='w-fit border-none bg-transparent'>
@@ -63,10 +64,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                             </MenubarTrigger>
                             <MenubarContent>
                               <Link href={`/survey/${_row.id}/edit`} passHref>
-                                <MenubarItem>Edit Survey</MenubarItem>
-                              </Link>
-                              <Link href={`/survey/${_row.id}/edit`} passHref>
-                                <MenubarItem>Edit Reward</MenubarItem>
+                                <MenubarItem>Edit</MenubarItem>
                               </Link>
                               <MenubarItem onClick={() => setRowId(_row.id)}>Delete</MenubarItem>
                             </MenubarContent>

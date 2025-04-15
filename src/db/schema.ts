@@ -1,8 +1,6 @@
 import { boolean, integer, pgTable, timestamp, varchar, pgEnum } from 'drizzle-orm/pg-core';
 import { timestamps } from './column.helpers';
 
-// const roleEnum = pgEnum('role', ['admin', 'user', 'guest']);
-
 export const usersTable = pgTable('user', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   clerk_id: varchar({ length: 255 }).notNull().unique(),
@@ -24,6 +22,8 @@ export const eventTable = pgTable('event', {
   description: varchar({ length: 255 }),
   location: varchar({ length: 255 }),
   date: timestamp(),
+  num_attendees: integer().default(100).notNull(),
+  num_speakers: integer().default(20).notNull(),
   created_by: integer()
     .references(() => usersTable.id)
     .notNull(),
@@ -62,6 +62,9 @@ export const surveyResponseTable = pgTable('survey_response', {
   survey_code: varchar({ length: 255 }).notNull(),
   passcode: varchar({ length: 255 }),
   referrals: integer().default(0).notNull(),
+  rating: integer().default(0).notNull(),
+  top_words: varchar({ length: 255 }).default('').notNull(),
+  testimonial: varchar({ length: 255 }).default('').notNull(),
   ...timestamps
 });
 
@@ -93,21 +96,6 @@ export const rewardTable = pgTable('reward', {
   ...timestamps
 });
 
-export const giftCardTable = pgTable('gift_card', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  survey_id: integer()
-    .references(() => surveyTable.id)
-    .notNull(),
-  priority: integer().notNull(),
-  brand: varchar({ length: 255 }).notNull(),
-  name: varchar({ length: 255 }).notNull(),
-  code: varchar({ length: 255 }).notNull().unique(),
-  expiry_date: timestamp({ mode: 'string' }).notNull(),
-  value: integer().notNull(), // Store value in cents
-  is_redeemed: boolean().default(false),
-  ...timestamps
-});
-
 export const genBotResponseTable = pgTable('gen_bot_response', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   survey_id: integer()
@@ -117,19 +105,5 @@ export const genBotResponseTable = pgTable('gen_bot_response', {
   response_id: varchar({ length: 255 }).notNull(),
   question: varchar({ length: 255 }).notNull(),
   attendance_reason: varchar({ length: 255 }).notNull(),
-  ...timestamps
-});
-
-export const surveyWinnerTable = pgTable('survey_winner', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  survey_id: integer()
-    .references(() => surveyTable.id)
-    .notNull(),
-  user_id: varchar({ length: 255 }).notNull(),
-  gift_card_id: integer()
-    .references(() => giftCardTable.id)
-    .notNull(),
-  rank: integer().notNull(),
-  total_points: integer().notNull(),
   ...timestamps
 });

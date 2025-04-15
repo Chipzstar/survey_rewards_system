@@ -4,6 +4,20 @@ import { Card, CardContent } from '~/components/ui/card';
 import { DataTable } from './data-table';
 import { columns, SurveyData } from './columns';
 import Container from '~/components/layout/Container';
+import { Button } from '~/components/ui/button';
+
+interface WordCloudStyle {
+  bg: string;
+  text: string;
+}
+
+const WORD_CLOUD_COLORS: WordCloudStyle[] = [
+  { bg: 'bg-purple-100', text: 'text-purple-700' },
+  { bg: 'bg-cyan-100', text: 'text-cyan-700' },
+  { bg: 'bg-blue-100', text: 'text-blue-700' },
+  { bg: 'bg-orange-100', text: 'text-orange-700' },
+  { bg: 'bg-teal-100', text: 'text-teal-700' }
+];
 
 export default async function EventAnalytics({
   params,
@@ -13,7 +27,7 @@ export default async function EventAnalytics({
   searchParams: { [key: string]: string | undefined };
 }) {
   const { id } = params;
-
+  const event = await trpc.event.byId({ id: Number(id) });
   const surveys = await trpc.survey.byEventId({ eventId: Number(id) });
 
   // Statistics
@@ -34,6 +48,25 @@ export default async function EventAnalytics({
       time: avg_completion_time
     } satisfies SurveyData;
   });
+
+  // Aggregate top words from all survey responses
+  const wordFrequencyMap = new Map<string, number>();
+  surveys.forEach(survey => {
+    survey.responses.forEach(response => {
+      if (response.top_words) {
+        const words = response.top_words.split(',').map(word => word.trim());
+        words.forEach(word => {
+          wordFrequencyMap.set(word, (wordFrequencyMap.get(word) || 0) + 1);
+        });
+      }
+    });
+  });
+
+  // Get top 5 words
+  const topWords = Array.from(wordFrequencyMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([word]) => word);
 
   const totalResponses = analytics.reduce((acc, survey) => acc + survey.responses, 0);
   const averageTimeTaken = Number(analytics.reduce((acc, survey) => acc + survey.time, 0) / analytics.length).toFixed(
@@ -87,6 +120,79 @@ export default async function EventAnalytics({
             <DataTable columns={columns} data={filteredSurveys} />
           </div>
         </Card>
+
+        {/* Event Marketing Post Section */}
+        <div className='mt-8 flex items-center justify-between'>
+          <h2 className='text-2xl'>Event Marketing Post</h2>
+          <Button variant='outline' className='flex items-center gap-2 text-primary'>
+            <svg className='h-5 w-5' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+              <path
+                d='M8.684 13.342C8.886 13.524 9 13.786 9 14.06V18h4v-3.938c0-.274.114-.526.316-.708C14.686 12.186 19 8.368 19 6.5 19 3.916 16.084 1 13.5 1S8 3.916 8 6.5c0 1.868 4.314 5.686 5.684 6.842zM18.375 13C19.824 13 21 14.176 21 15.625v4.75c0 1.449-1.176 2.625-2.625 2.625h-4.75C12.176 23 11 21.824 11 20.375v-4.75c0-1.449 1.176-2.625 2.625-2.625h4.75z'
+                fill='currentColor'
+              />
+            </svg>
+            Share Event Stats
+          </Button>
+        </div>
+
+        <div className='mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2'>
+          {/* Attendee Stats */}
+          <Card className='p-6'>
+            <h3 className='mb-6 text-xl'>Attendee Feedback</h3>
+            <div className='grid grid-cols-2 gap-12'>
+              <div>
+                <p className='text-sm text-gray-500'>Attendees</p>
+                <p className='text-5xl font-medium'>{event.num_attendees}</p>
+              </div>
+              <div>
+                <p className='text-sm text-gray-500'>Speakers</p>
+                <p className='text-5xl font-medium'>{event.num_speakers}</p>
+              </div>
+            </div>
+          </Card>
+
+          {/* Word Cloud */}
+          <Card className='p-6'>
+            <h3 className='mb-6 text-xl'>Top Words Used to Describe Event</h3>
+            <div className='flex flex-wrap gap-2'>
+              {topWords.map((word, index) => {
+                const colorStyle = WORD_CLOUD_COLORS[index % WORD_CLOUD_COLORS.length];
+                return (
+                  <span key={word} className={`rounded-full px-4 py-1 ${colorStyle.bg} ${colorStyle.text}`}>
+                    {word}
+                  </span>
+                );
+              })}
+            </div>
+          </Card>
+
+          {/* Testimonials */}
+          <div className='grid gap-4 lg:col-span-2'>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+              {surveys.flatMap(survey =>
+                survey.responses
+                  .filter(response => response.is_completed && response.testimonial) // Only show completed responses with testimonials
+                  .slice(0, 4) // Limit to 4 testimonials
+                  .map((response, i) => (
+                    <Card key={response.id} className='relative overflow-hidden p-6 shadow-lg'>
+                      <div
+                        className={`absolute inset-y-0 left-0 w-1 ${
+                          ['bg-teal-500', 'bg-blue-500', 'bg-purple-500', 'bg-blue-500'][i]
+                        }`}
+                      />
+                      <div className='space-y-4'>
+                        <p className='text-gray-600'>"{response.testimonial}"</p>
+                        <div>
+                          <p className='font-medium'>Anonymous</p>
+                          <div className='flex text-yellow-400'>{'★'.repeat(response.rating || 5)}</div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+              )}
+            </div>
+          </div>
+        </div>
       </Container>
     </HydrateClient>
   );
