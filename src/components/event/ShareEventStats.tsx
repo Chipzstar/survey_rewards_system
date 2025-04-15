@@ -6,6 +6,7 @@ import { ShareIcon, Download } from 'lucide-react';
 import { useRef } from 'react';
 import { toPng } from 'html-to-image';
 import { ScrollArea } from '../ui/scroll-area';
+import { isMobile } from 'react-device-detect';
 
 interface ShareEventStatsProps {
   eventName?: string;
@@ -40,7 +41,7 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
             background: 'linear-gradient(to bottom, #BFE4E980, white, #ECE0F880)'
           }
         });
-        
+
         const link = document.createElement('a');
         link.href = dataUrl;
         link.download = `${eventName || 'event'}-stats.png`;
@@ -54,9 +55,14 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='outline' className='flex items-center gap-2 text-primary'>
-          <ShareIcon className='h-5 w-5' />
-          Share Event Stats
+        <Button
+          size={isMobile ? 'sm' : 'default'}
+          variant='outline'
+          radius='xl'
+          className='flex items-center gap-2 text-primary md:text-base'
+        >
+          <ShareIcon className='h-4 w-4 md:h-5 md:w-5' />
+          {isMobile ? 'Share' : 'Share Event Stats'}
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -77,7 +83,7 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
             <section className='relative'>
               <div className='space-y-4 text-center'>
                 <div
-                  className="scale-120 mx-12 pointer-events-none absolute inset-0 bg-[url('/share-decorations.png')] bg-contain bg-no-repeat opacity-50"
+                  className="scale-120 pointer-events-none absolute inset-0 mx-12 bg-[url('/share-decorations.png')] bg-contain bg-no-repeat opacity-50"
                   style={{ backgroundSize: '100% 100%' }}
                 />
                 <h2 className='tracking-loose text-4xl font-medium'>It's a Wrap 🎉</h2>
@@ -86,24 +92,24 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
                 </p>
               </div>
 
-              <div className='pt-8 flex justify-center space-x-4'>
+              <div className='flex justify-center space-x-4 pt-8'>
                 {/* Sample avatars - replace src with actual avatar images */}
                 {[1, 2, 3, 4].map((_, i) => (
                   <div key={i} className='h-16 w-16 rounded-full bg-gray-200' />
                 ))}
               </div>
-            
-            <div className='pt-8 grid grid-cols-2 gap-8'>
-              <div className='rounded-lg bg-purple-50 p-6'>
-                <p className='text-gray-600'>Attendees</p>
-                <p className='text-4xl font-semibold'>{attendees}</p>
+
+              <div className='grid grid-cols-2 gap-8 pt-8'>
+                <div className='rounded-lg bg-purple-50 p-6'>
+                  <p className='text-gray-600'>Attendees</p>
+                  <p className='text-4xl font-semibold'>{attendees}</p>
+                </div>
+                <div className='rounded-lg bg-blue-50 p-6'>
+                  <p className='text-gray-600'>Speakers</p>
+                  <p className='text-4xl font-semibold'>{speakers}</p>
+                </div>
               </div>
-              <div className='rounded-lg bg-blue-50 p-6'>
-                <p className='text-gray-600'>Speakers</p>
-                <p className='text-4xl font-semibold'>{speakers}</p>
-              </div>
-            </div>
-          </section>
+            </section>
 
             <div>
               <h3 className='mb-4 text-lg font-medium'>Top Words Used to Describe Event</h3>

@@ -154,7 +154,7 @@ export default async function EventAnalytics({
         </Card>
         {/* Event Marketing Post Section */}
         <div className='mt-8 flex items-center justify-between'>
-          <h2 className='text-2xl'>Event Marketing Post</h2>
+          <h2 className='text-lg md:text-2xl'>Event Marketing Post</h2>
           <ShareEventStats
             eventName={event.name}
             attendees={event.num_attendees}
@@ -170,11 +170,11 @@ export default async function EventAnalytics({
             <div className='grid grid-cols-2 gap-12'>
               <div>
                 <p className='text-sm text-gray-500'>Attendees</p>
-                <p className='text-5xl font-medium'>{event.num_attendees}</p>
+                <p className='text-2xl font-medium md:text-5xl'>{event.num_attendees}</p>
               </div>
               <div>
                 <p className='text-sm text-gray-500'>Speakers</p>
-                <p className='text-5xl font-medium'>{event.num_speakers}</p>
+                <p className='text-2xl font-medium md:text-5xl'>{event.num_speakers}</p>
               </div>
             </div>
           </Card>

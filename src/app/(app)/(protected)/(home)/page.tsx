@@ -108,7 +108,7 @@ export default async function Dashboard({
                         </div>
                       </div>
                     </Link>
-                    <div className='absolute bottom-4 right-4'>
+                    <div className='absolute right-4 top-4 md:bottom-4'>
                       <DeleteEventDialog eventId={event.id} eventName={event.name} />
                     </div>
                   </div>
