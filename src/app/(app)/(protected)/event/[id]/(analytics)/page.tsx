@@ -5,6 +5,8 @@ import { DataTable } from './data-table';
 import { columns, SurveyData } from './columns';
 import Container from '~/components/layout/Container';
 import { Button } from '~/components/ui/button';
+import Link from 'next/link';
+import RequestInsightReport from './_request-insight-report';
 
 interface WordCloudStyle {
   bg: string;
@@ -109,7 +111,18 @@ export default async function EventAnalytics({
             <Card>
               <CardContent className='flex flex-col space-y-6 p-6'>
                 <span className='text-sm text-gray-500'>Report and Data Cube</span>
-                <span className='text-3xl font-medium text-primary underline'>View</span>
+                {event.insight_report ? (
+                  <Link
+                    href={event.insight_report}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='text-3xl font-medium text-primary underline'
+                  >
+                    View
+                  </Link>
+                ) : (
+                  <RequestInsightReport event={event} />
+                )}
               </CardContent>
             </Card>
           </div>

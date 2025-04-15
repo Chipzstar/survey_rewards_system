@@ -24,6 +24,7 @@ export const eventTable = pgTable('event', {
   date: timestamp(),
   num_attendees: integer().default(100).notNull(),
   num_speakers: integer().default(20).notNull(),
+  insight_report: varchar({ length: 255 }),
   created_by: integer()
     .references(() => usersTable.id)
     .notNull(),
