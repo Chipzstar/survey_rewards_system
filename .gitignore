@@ -167,5 +167,7 @@ yarn-error.log*
 next-env.d.ts
 
 #misc
+.xata
 .idea
-
+.thing
+fillout
