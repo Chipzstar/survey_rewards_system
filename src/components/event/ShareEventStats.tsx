@@ -4,7 +4,7 @@ import { Button } from '~/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog';
 import { ShareIcon, Download } from 'lucide-react';
 import { useRef } from 'react';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import { ScrollArea } from '../ui/scroll-area';
 
 interface ShareEventStatsProps {
@@ -32,21 +32,22 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
 
   const handleDownload = async () => {
     if (contentRef.current) {
-      const canvas = await html2canvas(contentRef.current, {
-        backgroundColor: null,
-        useCORS: true,
-        onclone: (clonedDoc) => {
-          const element = clonedDoc.querySelector('[data-capture-background]');
-          if (element) {
-            element.className = 'space-y-8 p-6 bg-gradient-to-b from-primary-200/50 via-white to-secondary-200/50';
+      try {
+        const dataUrl = await toPng(contentRef.current, {
+          quality: 1.0,
+          backgroundColor: 'white',
+          style: {
+            background: 'linear-gradient(to bottom, #BFE4E980, white, #ECE0F880)'
           }
-        }
-      });
-      const image = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = image;
-      link.download = `${eventName || 'event'}-stats.png`;
-      link.click();
+        });
+        
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `${eventName || 'event'}-stats.png`;
+        link.click();
+      } catch (error) {
+        console.error('Error generating image:', error);
+      }
     }
   };
 
