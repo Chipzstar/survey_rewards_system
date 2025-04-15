@@ -8,6 +8,8 @@ import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import RequestInsightReport from './_request-insight-report';
 import { capitalize } from '~/lib/utils';
+import { ShareIcon } from 'lucide-react';
+import { ShareEventStats } from '~/components/event/ShareEventStats';
 
 interface WordCloudStyle {
   bg: string;
@@ -52,6 +54,17 @@ export default async function EventAnalytics({
     } satisfies SurveyData;
   });
 
+  const totalResponses = analytics.reduce((acc, survey) => acc + survey.responses, 0);
+  const averageTimeTaken = Number(analytics.reduce((acc, survey) => acc + survey.time, 0) / analytics.length).toFixed(
+    1
+  );
+
+  const filteredSurveys = analytics.filter(survey => {
+    const query = searchParams?.query;
+    if (!query || query.length === 0) return true;
+    return survey.name.toLowerCase().includes(query.toLowerCase());
+  });
+
   // Aggregate top words from all survey responses
   const wordFrequencyMap = new Map<string, number>();
   surveys.forEach(survey => {
@@ -71,15 +84,14 @@ export default async function EventAnalytics({
     .slice(0, 5)
     .map(([word]) => word);
 
-  const totalResponses = analytics.reduce((acc, survey) => acc + survey.responses, 0);
-  const averageTimeTaken = Number(analytics.reduce((acc, survey) => acc + survey.time, 0) / analytics.length).toFixed(
-    1
-  );
-
-  const filteredSurveys = analytics.filter(survey => {
-    const query = searchParams?.query;
-    if (!query || query.length === 0) return true;
-    return survey.name.toLowerCase().includes(query.toLowerCase());
+  // get testimonials
+  const testimonials = surveys.flatMap(survey => {
+    return survey.responses
+      .filter(response => response.is_completed && response.testimonial)
+      .map(response => ({
+        text: response.testimonial,
+        rating: response.rating
+      }));
   });
 
   return (
@@ -138,15 +150,13 @@ export default async function EventAnalytics({
         {/* Event Marketing Post Section */}
         <div className='mt-8 flex items-center justify-between'>
           <h2 className='text-2xl'>Event Marketing Post</h2>
-          <Button variant='outline' className='flex items-center gap-2 text-primary'>
-            <svg className='h-5 w-5' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-              <path
-                d='M8.684 13.342C8.886 13.524 9 13.786 9 14.06V18h4v-3.938c0-.274.114-.526.316-.708C14.686 12.186 19 8.368 19 6.5 19 3.916 16.084 1 13.5 1S8 3.916 8 6.5c0 1.868 4.314 5.686 5.684 6.842zM18.375 13C19.824 13 21 14.176 21 15.625v4.75c0 1.449-1.176 2.625-2.625 2.625h-4.75C12.176 23 11 21.824 11 20.375v-4.75c0-1.449 1.176-2.625 2.625-2.625h4.75z'
-                fill='currentColor'
-              />
-            </svg>
-            Share Event Stats
-          </Button>
+          <ShareEventStats
+            eventName={event.name}
+            attendees={event.num_attendees}
+            speakers={event.num_speakers}
+            topWords={topWords}
+            testimonials={testimonials}
+          />
         </div>
 
         <div className='mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2'>
@@ -183,27 +193,24 @@ export default async function EventAnalytics({
           {/* Testimonials */}
           <div className='grid gap-4 lg:col-span-2'>
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              {surveys.flatMap(survey =>
-                survey.responses
-                  .filter(response => response.is_completed && response.testimonial) // Only show completed responses with testimonials
-                  .slice(0, 4) // Limit to 4 testimonials
-                  .map((response, i) => (
-                    <Card key={response.id} className='relative overflow-hidden p-6 shadow-lg'>
-                      <div
-                        className={`absolute inset-y-0 left-0 w-1 ${
-                          ['bg-teal-500', 'bg-blue-500', 'bg-purple-500', 'bg-blue-500'][i]
-                        }`}
-                      />
-                      <div className='space-y-4'>
-                        <p className='text-gray-600'>"{response.testimonial}"</p>
-                        <div>
-                          <p className='font-medium'>Anonymous</p>
-                          <div className='flex text-yellow-400'>{'★'.repeat(response.rating || 5)}</div>
-                        </div>
+              {testimonials
+                .slice(0, 4) // Limit to 4 testimonials
+                .map((response, i) => (
+                  <Card key={i} className='relative overflow-hidden p-6 shadow-lg'>
+                    <div
+                      className={`absolute inset-y-0 left-0 w-1 ${
+                        ['bg-teal-500', 'bg-blue-500', 'bg-purple-500', 'bg-blue-500'][i]
+                      }`}
+                    />
+                    <div className='space-y-4'>
+                      <p className='text-gray-600'>"{response.text}"</p>
+                      <div>
+                        <p className='font-medium'>Anonymous</p>
+                        <div className='flex text-yellow-400'>{'★'.repeat(response.rating || 5)}</div>
                       </div>
-                    </Card>
-                  ))
-              )}
+                    </div>
+                  </Card>
+                ))}
             </div>
           </div>
         </div>
