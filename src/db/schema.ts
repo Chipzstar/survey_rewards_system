@@ -1,5 +1,6 @@
-import { boolean, integer, pgTable, timestamp, varchar, pgEnum } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgTable, timestamp, varchar, pgEnum, text } from 'drizzle-orm/pg-core';
 import { timestamps } from './column.helpers';
+import { sql } from 'drizzle-orm';
 
 export const usersTable = pgTable('user', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -25,6 +26,10 @@ export const eventTable = pgTable('event', {
   num_attendees: integer().default(100).notNull(),
   num_speakers: integer().default(20).notNull(),
   insight_report: varchar({ length: 255 }),
+  speaker_posts: text('speaker_posts')
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
   created_by: integer()
     .references(() => usersTable.id)
     .notNull(),
@@ -85,6 +90,10 @@ export const referralTable = pgTable('referral', {
 
 export const rewardTable = pgTable('reward', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  user_id: integer()
+    .references(() => usersTable.id)
+    .default(69)
+    .notNull(),
   reward_id: integer().notNull(),
   survey_id: integer()
     .references(() => surveyTable.id)

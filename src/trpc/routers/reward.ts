@@ -5,10 +5,24 @@ import { z } from 'zod';
 import { deleteThumbnail, insertNewReward, updateReward } from '~/trpc/routers/utils';
 import { rewardSchema } from '~/lib/validators';
 import { TRPCError } from '@trpc/server';
+import { getUser } from '~/db/helpers';
 
 export const rewardRouter = createTRPCRouter({
   all: protectedProcedure.query(async ({ ctx }) => {
     const rewards = await ctx.db.query.rewardTable.findMany({
+      orderBy: desc(rewardTable.created_at),
+      with: {
+        survey: true,
+        responses: true
+      }
+    });
+    console.log(rewards);
+    return rewards;
+  }),
+  fromUser: protectedProcedure.query(async ({ ctx }) => {
+    const dbUser = await getUser(ctx.db, ctx.session);
+    const rewards = await ctx.db.query.rewardTable.findMany({
+      where: eq(rewardTable.user_id, dbUser.id),
       orderBy: desc(rewardTable.created_at),
       with: {
         survey: true,

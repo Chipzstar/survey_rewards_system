@@ -18,7 +18,8 @@
     "db:migrate:prod": "doppler run -p survey-rewards-system -c prd -- drizzle-kit migrate",
     "db:push:prod": "doppler run -p survey-rewards-system -c prd -- drizzle-kit push",
     "db:studio:prod": "doppler run -p survey-rewards-system -c prd -- drizzle-kit studio",
-    "db:drop": "pnpm drizzle-kit drop"
+    "db:drop": "pnpm drizzle-kit drop",
+    "db:export": "pnpm drizzle-kit export"
   },
   "engines": {
     "node": ">=20.16.0"
@@ -64,7 +65,6 @@
     "drizzle-orm": "^0.38.4",
     "eslint-plugin-prettier": "2.7.0",
     "html-to-image": "^1.11.13",
-    "html2canvas": "^1.4.1",
     "jiti": "^2.4.2",
     "lucide-react": "^0.471.2",
     "micro": "^10.0.1",

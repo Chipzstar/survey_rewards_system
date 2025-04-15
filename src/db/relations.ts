@@ -12,7 +12,8 @@ import {
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
   createdEvents: many(eventTable),
   createdSurveys: many(surveyTable),
-  surveyResponses: many(surveyResponseTable)
+  surveyResponses: many(surveyResponseTable),
+  rewards: many(rewardTable)
 }));
 
 export const eventRelations = relations(eventTable, ({ one, many }) => ({
@@ -75,6 +76,10 @@ export const rewardRelations = relations(rewardTable, ({ one, many }) => ({
   survey: one(surveyTable, {
     fields: [rewardTable.survey_id],
     references: [surveyTable.id]
+  }),
+  creator: one(usersTable, {
+    fields: [rewardTable.user_id],
+    references: [usersTable.id]
   }),
   responses: many(surveyResponseTable)
 }));

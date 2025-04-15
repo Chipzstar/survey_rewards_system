@@ -8,7 +8,7 @@ import { format, isBefore } from 'date-fns';
 import { RewardTable } from './reward-table';
 
 export default async function RewardsPage({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
-  const rewards = await trpc.reward.all();
+  const rewards = await trpc.reward.fromUser();
 
   const data: RewardData[] =
     rewards
