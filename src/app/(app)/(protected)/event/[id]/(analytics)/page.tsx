@@ -4,12 +4,11 @@ import { Card, CardContent } from '~/components/ui/card';
 import { DataTable } from './data-table';
 import { columns, SurveyData } from './columns';
 import Container from '~/components/layout/Container';
-import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import RequestInsightReport from './_request-insight-report';
 import { capitalize } from '~/lib/utils';
-import { ShareIcon } from 'lucide-react';
 import { ShareEventStats } from '~/components/event/ShareEventStats';
+import { CreateSurveyDialog } from '~/components/modals/create-survey-dialog';
 
 interface WordCloudStyle {
   bg: string;
@@ -143,10 +142,16 @@ export default async function EventAnalytics({
         <Card className='mt-5 flex flex-col px-4 py-6'>
           <h2 className='mb-4 text-2xl md:mb-8'>Survey Performance details</h2>
           <div className='w-full overflow-x-auto'>
-            <DataTable columns={columns} data={filteredSurveys} />
+            {filteredSurveys.length === 0 ? (
+              <div className='flex flex-col items-center justify-center py-12 text-center'>
+                <p className='mb-4 text-gray-500'>No surveys found for this event</p>
+                <CreateSurveyDialog events={[event]} variant='default' defaultEventId={Number(id)} readonly={true} />
+              </div>
+            ) : (
+              <DataTable columns={columns} data={filteredSurveys} />
+            )}
           </div>
         </Card>
-
         {/* Event Marketing Post Section */}
         <div className='mt-8 flex items-center justify-between'>
           <h2 className='text-2xl'>Event Marketing Post</h2>
@@ -158,7 +163,6 @@ export default async function EventAnalytics({
             testimonials={testimonials}
           />
         </div>
-
         <div className='mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2'>
           {/* Attendee Stats */}
           <Card className='p-6'>

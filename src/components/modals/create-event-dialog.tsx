@@ -39,7 +39,9 @@ const formSchema = z.object({
   name: z.string().min(2, 'Event name must be at least 2 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   location: z.string().min(2, 'Location must be at least 2 characters'),
-  date: z.union([z.date(), z.string()]).optional()
+  date: z.union([z.date(), z.string()]).optional(),
+  num_attendees: z.number().min(0),
+  num_speakers: z.number().min(0)
 });
 
 export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVariant }) {
@@ -53,7 +55,9 @@ export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVar
       name: '',
       description: '',
       location: '',
-      date: new Date()
+      date: new Date(),
+      num_attendees: 100,
+      num_speakers: 20
     }
   });
 
@@ -176,6 +180,34 @@ export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVar
                 </FormItem>
               )}
             />
+            <div className='grid grid-cols-2 gap-4'>
+              <FormField
+                control={form.control}
+                name='num_attendees'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number of Attendees</FormLabel>
+                    <FormControl>
+                      <Input type='number' min={0} {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='num_speakers'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number of Speakers</FormLabel>
+                    <FormControl>
+                      <Input type='number' min={0} {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <DialogFooter>
               <Button type='submit' isLoading={loading}>
                 Create Event

@@ -51,7 +51,10 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
           Share Event Stats
         </Button>
       </DialogTrigger>
-      <DialogContent className='max-w-3xl' withClose={false}>
+      <DialogContent
+        className='max-w-3xl bg-gradient-to-b from-primary-200/50 via-white to-secondary-200/50'
+        withClose={false}
+      >
         <DialogHeader>
           <div className='flex items-center justify-between'>
             <DialogTitle>Event Stats</DialogTitle>
@@ -62,10 +65,14 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
           </div>
         </DialogHeader>
         <ScrollArea className='h-[80vh]'>
-          <div ref={contentRef} className='space-y-8 bg-white p-6'>
+          <div ref={contentRef} className='relative space-y-8 p-6'>
+            <div
+              className="pointer-events-none absolute inset-0 bg-[url('/share-decorations.png')] bg-contain bg-no-repeat opacity-50"
+              style={{ backgroundSize: '100% 100%' }}
+            />
             <div className='space-y-4 text-center'>
-              <h2 className='text-4xl font-semibold'>It's a Wrap 🎉</h2>
-              <p className='text-xl text-gray-600'>
+              <h2 className='tracking-loose text-4xl font-medium'>It's a Wrap 🎉</h2>
+              <p className='text-balance text-xl font-light text-[#6F7176]'>
                 Thanks for coming to the event, we hope you enjoyed it as much as we did!
               </p>
             </div>
@@ -94,7 +101,7 @@ export function ShareEventStats({ eventName, attendees, speakers, topWords, test
                 {topWords.map((word, index) => {
                   const style = WORD_CLOUD_COLORS[index % WORD_CLOUD_COLORS.length];
                   return (
-                    <span key={word} className={`rounded-full px-4 py-1 ${style.bg} ${style.text}`}>
+                    <span key={word} className={`rounded-full px-4 py-1 ${style?.bg} ${style?.text}`}>
                       {word}
                     </span>
                   );

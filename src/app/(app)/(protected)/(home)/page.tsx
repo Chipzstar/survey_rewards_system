@@ -8,7 +8,7 @@ import { CalendarIcon } from 'lucide-react';
 import { format, isAfter, isSameDay } from 'date-fns';
 import { Badge } from '~/components/ui/badge';
 import Container from '~/components/layout/Container';
-import { useSearchParams } from 'next/navigation';
+import { DeleteEventDialog } from '~/components/modals/delete-event-dialog';
 
 export default async function Dashboard({
   params,
@@ -83,31 +83,35 @@ export default async function Dashboard({
                 const isActive = isSameDay(eventDate, new Date());
                 const isCompleted = eventDate <= new Date();
                 return (
-                  <Link
+                  <div
                     key={event.id}
-                    href={`/event/${event.id}`}
-                    className='mb-4 block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-primary dark:border-gray-700 dark:bg-gray-800'
+                    className='relative flex-1 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-primary dark:border-gray-700 dark:bg-gray-800'
                   >
-                    <div className='relative flex w-full flex-col items-start'>
-                      <h3 className='text-lg font-medium'>{event.name}</h3>
-                      <div className='mt-1 md:absolute md:right-0 md:top-0 md:mt-0'>
-                        <Badge
-                          className=''
-                          radius='lg'
-                          variant={isActive ? 'active' : isCompleted ? 'completed' : 'upcoming'}
-                        >
-                          {isActive ? 'Active' : isCompleted ? 'Completed' : 'Upcoming'}
-                        </Badge>
+                    <Link href={`/event/${event.id}`}>
+                      <div className='flex w-full flex-col items-start'>
+                        <h3 className='text-lg font-medium'>{event.name}</h3>
+                        <div className='mt-1 flex items-center gap-x-1 md:absolute md:right-4 md:top-4 md:mt-0'>
+                          <Badge
+                            className=''
+                            radius='lg'
+                            variant={isActive ? 'active' : isCompleted ? 'completed' : 'upcoming'}
+                          >
+                            {isActive ? 'Active' : isCompleted ? 'Completed' : 'Upcoming'}
+                          </Badge>
+                        </div>
+                        <p className='mt-2 text-sm text-gray-500'>{event.description}</p>
+                        <div className='mt-2 flex w-full items-center gap-2 text-ellipsis whitespace-nowrap text-sm text-gray-500'>
+                          <CalendarIcon className='h-4 w-4 shrink-0' />
+                          <span>{event.date ? format(new Date(event.date), 'MMM dd, yyyy') : 'No date set'}</span>
+                          <span>•</span>
+                          <span className='truncate'>{event.location}</span>
+                        </div>
                       </div>
-                      <p className='mt-2 text-sm text-gray-500'>{event.description}</p>
-                      <div className='mt-2 flex w-full items-center gap-2 text-ellipsis whitespace-nowrap text-sm text-gray-500'>
-                        <CalendarIcon className='h-4 w-4 shrink-0' />
-                        <span>{event.date ? format(new Date(event.date), 'MMM dd, yyyy') : 'No date set'}</span>
-                        <span>•</span>
-                        <span className='truncate'>{event.location}</span>
-                      </div>
+                    </Link>
+                    <div className='absolute bottom-4 right-4'>
+                      <DeleteEventDialog eventId={event.id} eventName={event.name} />
                     </div>
-                  </Link>
+                  </div>
                 );
               })}
             </section>

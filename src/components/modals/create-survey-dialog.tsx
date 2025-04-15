@@ -39,10 +39,14 @@ const formSchema = z.object({
 
 export function CreateSurveyDialog({
   events,
-  variant = 'default'
+  variant = 'default',
+  defaultEventId,
+  readonly = false
 }: {
   events: RouterOutput['event']['fromUser'];
   variant?: ButtonVariant;
+  defaultEventId?: number;
+  readonly?: boolean;
 }) {
   const router = useRouter();
   const [opened, setOpened] = useState(false);
@@ -50,7 +54,7 @@ export function CreateSurveyDialog({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      eventId: undefined,
+      eventId: defaultEventId || undefined,
       name: '',
       description: null,
       link: '',
@@ -106,10 +110,9 @@ export function CreateSurveyDialog({
                 <FormItem>
                   <FormLabel>Event</FormLabel>
                   <Select
-                    onValueChange={val => {
-                      console.log(val);
-                      field.onChange(val);
-                    }}
+                    onValueChange={val => field.onChange(val)}
+                    disabled={readonly}
+                    defaultValue={defaultEventId?.toString()}
                   >
                     <FormControl>
                       <SelectTrigger>
