@@ -25,6 +25,15 @@ async function handleFormResponse(event: FormEvent) {
   console.log('--------------------------------');
   console.log(event.submission.calculations);
   console.log('--------------------------------');
+  console.log(event.submission.calculations[0]);
+  console.log(event.submission.calculations[1]);
+  console.log(event.submission.calculations[2]);
+  console.log('--------------------------------');
+  console.log(event.submission.calculations.find(c => c.name === 'rating'));
+  console.log(event.submission.calculations.find(c => c.name === 'score'));
+  console.log(event.submission.calculations.find(c => c.name === 'top_words'));
+  console.log(event.submission.calculations.find(c => c.name === 'testimonial'));
+  console.log('--------------------------------');
 
   // fetch the survey using the survey_id
   const survey = await db.select().from(surveyTable).where(eq(surveyTable.id, survey_id));
@@ -34,21 +43,19 @@ async function handleFormResponse(event: FormEvent) {
   const started_at = new Date(Number(start_timestamp)).toISOString();
 
   // check if the survey rating is recorded
-  const rating = Number(event.submission.calculations.find(c => {
+  const rating = event.submission.calculations.find(c => {
     ['rating', 'score'].includes(c.name)
-  })?.value ?? 0)
+  })?.value
 
   // check if the two words are recorded
-  const top_words = String(event.submission.calculations.find(c => {
+  const top_words = event.submission.calculations.find(c => {
     c.name === 'top_words'
-  })?.value ?? '')
+  })?.value
 
   // check if the testimonial is recorded
-  const testimonial = String(event.submission.calculations.find(c => {
+  const testimonial = event.submission.calculations.find(c => {
     c.name === 'testimonial'
-  })?.value ?? '')
-
-  console.log({ rating, top_words, testimonial });
+  })?.value
 
   // create survey response record
   const surveyResponse = await db
@@ -62,9 +69,9 @@ async function handleFormResponse(event: FormEvent) {
       started_at,
       completed_at,
       is_completed: true,
-      rating,
-      top_words,
-      testimonial,
+      rating: Number(rating),
+      top_words: String(top_words),
+      testimonial: String(testimonial),
     })
     .returning();
 
