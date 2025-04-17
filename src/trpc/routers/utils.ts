@@ -37,7 +37,8 @@ export async function updateReward(ctx: TContext, reward: UpdateReward) {
       name: reward.name,
       cta_text: reward.ctaText,
       link: reward.link,
-      thumbnail: reward.thumbnail
+      thumbnail: reward.thumbnail,
+      survey_id: reward.surveyId
     })
     .where(eq(rewardTable.id, reward.id));
 }
