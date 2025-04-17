@@ -26,7 +26,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { useState } from 'react';
 
 const formSchema = z.object({
-  eventId: z.string().transform(val => Number(val)),
+  eventId: z.union([z.number(),z.string().transform(val => Number(val))]),
   name: z.string().min(2, 'Survey name must be at least 2 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters').nullable().optional(),
   link: z.string().url('Must be a valid URL'),
