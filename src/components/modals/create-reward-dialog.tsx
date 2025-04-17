@@ -28,11 +28,12 @@ interface Props {
   onClose?: () => void;
   variant?: ButtonVariant;
   reward?: RewardData;
+  surveyId?: number;
 }
 
 type FormData = z.infer<typeof rewardSchema>;
 
-export const CreateRewardDialog: FC<Props> = ({ open, onClose, variant = 'default', reward }) => {
+export const CreateRewardDialog: FC<Props> = ({ open, onClose, variant = 'default', reward, surveyId }) => {
   const [activeTab, setActiveTab] = useState<TabState>('upload');
   const router = useRouter();
   const utils = trpc.useUtils();
@@ -73,10 +74,10 @@ export const CreateRewardDialog: FC<Props> = ({ open, onClose, variant = 'defaul
 
   const form = useForm<FormData>({
     defaultValues: {
-      name: reward?.name,
-      surveyId: reward?.surveyId ?? 0,
+      name: reward?.name ?? '',
+      surveyId: reward?.surveyId ?? surveyId ?? 0,
       ctaText: reward?.ctaText ?? '',
-      thumbnail: reward?.thumbnail ?? '',
+      thumbnail: reward?.thumbnail ?? undefined,
       link: reward?.link ?? ''
     },
     resolver: zodResolver(rewardSchema)
@@ -183,7 +184,7 @@ export const CreateRewardDialog: FC<Props> = ({ open, onClose, variant = 'defaul
                     <FormLabel>Reward Thumbnail</FormLabel>
                     <FormControl>
                       <ImageUploader
-                        thumbnail={field.value}
+                        thumbnail={field.value ?? null}
                         setThumbnail={val => form.setValue('thumbnail', val)}
                         className='sm:max-w-xl'
                       />

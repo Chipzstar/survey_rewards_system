@@ -10,12 +10,13 @@ import { trpc } from '~/trpc/client';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type SurveyData = {
+export interface SurveyData {
   id: number;
   name: string;
   responses: number;
   time: number;
-};
+  has_reward?: boolean;
+}
 
 export const columns: ColumnDef<SurveyData>[] = [
   {

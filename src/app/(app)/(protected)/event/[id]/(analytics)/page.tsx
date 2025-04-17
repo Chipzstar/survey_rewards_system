@@ -32,7 +32,7 @@ export default async function EventAnalytics({
 }) {
   const { id } = params;
   const event = await trpc.event.byId({ id: Number(id) });
-  const surveys = await trpc.survey.byEventId({ eventId: Number(id) });
+  const surveys = await trpc.survey.byEventIdWithRewards({ eventId: Number(id) });
 
   // Statistics
   const analytics = surveys.map(survey => {
@@ -49,7 +49,8 @@ export default async function EventAnalytics({
       id: survey.id,
       name: survey.name,
       responses: survey.responses.length,
-      time: avg_completion_time
+      time: avg_completion_time,
+      has_reward: survey.rewards.length > 0
     } satisfies SurveyData;
   });
 

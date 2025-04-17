@@ -70,6 +70,18 @@ export const surveyRouter = createTRPCRouter({
     console.log(JSON.stringify(surveys, null, 2));
     return surveys;
   }),
+  byEventIdWithRewards: protectedProcedure.input(z.object({ eventId: z.number() })).query(async ({ ctx, input }) => {
+    // Fetch a specific survey by ID from the database or API
+    const surveys = await ctx.db.query.surveyTable.findMany({
+      with: {
+        event: true,
+        responses: true,
+        rewards: true
+      },
+      where: eq(surveyTable.event_id, input.eventId)
+    });
+    return surveys;
+  }),
   byIdWithResults: publicProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
     // Fetch a specific survey by ID with associated responses from the database or API
     const [survey] = await ctx.db.query.surveyTable.findMany({
