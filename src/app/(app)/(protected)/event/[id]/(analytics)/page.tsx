@@ -58,7 +58,12 @@ export default async function EventAnalytics({
   const averageTimeTaken = Number(analytics.reduce((acc, survey) => acc + survey.time, 0) / analytics.length).toFixed(
     1
   );
-
+  const averageScore = Number(
+    surveys.flatMap(survey => {
+      return survey.responses.map(response => response.rating);
+    }).reduce((acc, rating) => acc + rating, 0) / totalResponses
+  ).toFixed(1);
+  
   const filteredSurveys = analytics.filter(survey => {
     const query = searchParams?.query;
     if (!query || query.length === 0) return true;
@@ -112,7 +117,7 @@ export default async function EventAnalytics({
             <Card>
               <CardContent className='flex flex-col space-y-6 p-6'>
                 <span className='text-sm text-gray-500'>Average Score</span>
-                <span className='text-3xl font-medium'>4.5</span>
+                <span className='text-3xl font-medium'>{averageScore}</span>
               </CardContent>
             </Card>
             <Card>
