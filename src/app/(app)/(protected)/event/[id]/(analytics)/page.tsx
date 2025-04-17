@@ -146,7 +146,10 @@ export default async function EventAnalytics({
           </div>
         </section>
         <Card className='mt-5 flex flex-col px-4 py-6'>
-          <h2 className='mb-4 text-2xl md:mb-8'>Survey Performance details</h2>
+          <div className='mb-4 flex flex-row items-center justify-between md:mb-6'>
+            <h2 className='text-2xl'>Survey Performance details</h2>
+            <CreateSurveyDialog events={[event]} variant='default' defaultEventId={Number(id)} readonly={true} />
+          </div>
           <div className='w-full overflow-x-auto'>
             {filteredSurveys.length === 0 ? (
               <div className='flex flex-col items-center justify-center py-12 text-center'>
