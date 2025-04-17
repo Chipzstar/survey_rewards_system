@@ -25,15 +25,6 @@ async function handleFormResponse(event: FormEvent) {
   console.log('--------------------------------');
   console.log(event.submission.calculations);
   console.log('--------------------------------');
-  console.log(event.submission.calculations[0]);
-  console.log(event.submission.calculations[1]);
-  console.log(event.submission.calculations[2]);
-  console.log('--------------------------------');
-  console.log(event.submission.calculations.find(c => c.name === 'rating'));
-  console.log(event.submission.calculations.find(c => c.name === 'score'));
-  console.log(event.submission.calculations.find(c => c.name === 'top_words'));
-  console.log(event.submission.calculations.find(c => c.name === 'testimonial'));
-  console.log('--------------------------------');
 
   // fetch the survey using the survey_id
   const survey = await db.select().from(surveyTable).where(eq(surveyTable.id, survey_id));
@@ -43,19 +34,13 @@ async function handleFormResponse(event: FormEvent) {
   const started_at = new Date(Number(start_timestamp)).toISOString();
 
   // check if the survey rating is recorded
-  const rating = event.submission.calculations.find(c => {
-    ['rating', 'score'].includes(c.name)
-  })?.value
+  const rating = event.submission.calculations.find(c => c.name === 'rating')?.value
 
   // check if the two words are recorded
-  const top_words = event.submission.calculations.find(c => {
-    c.name === 'top_words'
-  })?.value
+  const top_words = event.submission.calculations.find(c => c.name === 'top_words')?.value
 
   // check if the testimonial is recorded
-  const testimonial = event.submission.calculations.find(c => {
-    c.name === 'testimonial'
-  })?.value
+  const testimonial = event.submission.calculations.find(c => c.name === 'testimonial')?.value
 
   // create survey response record
   const surveyResponse = await db
@@ -97,14 +82,6 @@ export async function POST(req: Request) {
       );
     }*/
     let data;
-    /*switch (event.formId) {
-      case FILLOUT_FORM_ID_DAY_1:
-      case FILLOUT_FORM_ID_DAY_2:
-        data = await handleFormResponse(event);
-        break;
-      default:
-        break;
-    }*/
     data = await handleFormResponse(event);
 
     prettyPrint(data);
