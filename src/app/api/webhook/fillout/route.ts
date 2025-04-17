@@ -45,6 +45,8 @@ async function handleFormResponse(event: FormEvent) {
     c.name === 'testimonial'
   })?.value ?? '')
 
+  console.log({ rating, top_words, testimonial });
+
   // create survey response record
   const surveyResponse = await db
     .insert(surveyResponseTable)
