@@ -7,6 +7,7 @@ import { TContext } from '~/trpc/init';
 import { rewardSchema } from '~/lib/validators';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { getUser } from '~/db/helpers';
 
 type InsertReward = z.infer<typeof rewardSchema>;
 
@@ -43,6 +44,7 @@ export async function updateReward(ctx: TContext, reward: UpdateReward) {
 
 export async function insertNewReward(
   ctx: TContext,
+  userId: number,
   reward: Omit<InsertReward, 'reward_id'>,
   logging: boolean = false
 ) {
@@ -51,6 +53,7 @@ export async function insertNewReward(
     .insert(rewardTable)
     .values({
       reward_id,
+      user_id: userId,
       survey_id: reward.surveyId,
       name: reward.name,
       cta_text: reward.ctaText,

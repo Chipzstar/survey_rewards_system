@@ -1,12 +1,11 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure, TContext } from '../init';
-import { referralTable, rewardTable, surveyResponseTable, surveyTable, usersTable } from '~/db/schema';
-import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { and, desc, eq, inArray } from 'drizzle-orm';
-import { editSurveyFormSchema } from '~/lib/validators';
-import { deleteThumbnail, genRewardId, updateReward, increment, insertNewReward } from '~/trpc/routers/utils';
+import { z } from 'zod';
 import { getSurvey, getUser } from '~/db/helpers';
-import { prettyPrint } from '~/lib/utils';
+import { referralTable, surveyResponseTable, surveyTable, usersTable } from '~/db/schema';
+import { editSurveyFormSchema } from '~/lib/validators';
+import { increment } from '~/trpc/routers/utils';
+import { createTRPCRouter, protectedProcedure, publicProcedure, TContext } from '../init';
 
 type Survey = typeof surveyTable.$inferSelect;
 
@@ -183,37 +182,6 @@ export const surveyRouter = createTRPCRouter({
       const survey = await getSurvey(ctx, input.id);
       // Update survey details
       await updateSurveyDetails(ctx, input, survey);
-
-      /*// Fetch existing rewards for the survey
-      const existingRewards = await ctx.db.select().from(rewardTable).where(eq(rewardTable.survey_id, input.id));
-
-      // Collect IDs from input rewards
-      const inputRewardIds = input.rewards.map(reward => reward.id).filter(id => id !== undefined);
-
-      // Delete rewards that are not in the input
-      for (const reward of existingRewards) {
-        if (!inputRewardIds.includes(reward.id)) {
-          prettyPrint(`DELETING REWARD ${reward.id}`, '*', true);
-          // Delete reward from the database
-          await ctx.db.delete(rewardTable).where(eq(rewardTable.id, reward.id));
-          // Handle thumbnail deletion if needed
-          if (reward.thumbnail) {
-            const key = reward.thumbnail.split('/').pop();
-            void deleteThumbnail(key!);
-          }
-        }
-      }
-
-      // Update rewards details
-      if (input.rewards.length) {
-        for (const reward of input.rewards) {
-          if (reward.id) {
-            await handleExistingReward(ctx, reward);
-          } else {
-            await insertNewReward(ctx, input.id, reward);
-          }
-        }
-      }*/
       return survey;
     } catch (error) {
       console.error(error);

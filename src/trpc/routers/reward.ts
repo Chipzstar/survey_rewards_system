@@ -34,7 +34,8 @@ export const rewardRouter = createTRPCRouter({
   }),
   create: protectedProcedure.input(rewardSchema).mutation(async ({ ctx, input }) => {
     try {
-      return await insertNewReward(ctx, input, true);
+      const dbUser = await getUser(ctx.db, ctx.session);
+      return await insertNewReward(ctx, dbUser.id, input, true);
     } catch (error) {
       console.error(error);
       throw new TRPCError({
