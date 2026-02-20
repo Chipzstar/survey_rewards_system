@@ -28,7 +28,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
             </div>
             {thumbnails[0] && (
               <div className='block items-center'>
-                <Image src={thumbnails[0]} alt='thumbnail' width={300} height={300} placeholder='blur' />
+                <Image src={thumbnails[0]} alt='thumbnail' width={300} height={300} placeholder='blur' blurDataURL={thumbnails[0]} />
               </div>
             )}
           </section>

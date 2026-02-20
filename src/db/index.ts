@@ -1,15 +1,10 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { getXataClient } from './xata'; // Generated client
-import { Client } from 'pg';
-import * as schema from './schema';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 import * as relations from './relations';
+import * as schema from './schema';
+import { config } from 'dotenv';
 
-const apiKey = String(process.env.XATA_API_KEY);
-const branch = String(process.env.XATA_BRANCH);
+config({ path: ".env.local" });
 
-const xata = getXataClient({ apiKey, branch });
-const client = new Client({ connectionString: xata.sql.connectionString });
-await client.connect();
-const db = drizzle(client, { schema: { ...schema, ...relations } });
-
-export { db };
+const sql = neon(process.env.DATABASE_URL!);
+export const db = drizzle(sql, { schema: { ...schema, ...relations } });
