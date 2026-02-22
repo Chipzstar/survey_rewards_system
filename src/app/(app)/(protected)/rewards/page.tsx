@@ -8,7 +8,10 @@ import { format, isBefore } from 'date-fns';
 import { RewardTable } from './reward-table';
 
 export default async function RewardsPage({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
-  const rewards = await trpc.reward.fromUser();
+  const [rewards, surveys] = await Promise.all([
+    trpc.reward.fromUser(),
+    trpc.survey.fromUser()
+  ]);
 
   const data: RewardData[] =
     rewards
@@ -67,7 +70,7 @@ export default async function RewardsPage({ searchParams }: { searchParams: { [k
         <Card className='mt-5 flex flex-col px-4 py-6'>
           <h2 className='mb-4 text-2xl md:mb-8'>Recent Rewards</h2>
           <div className='w-full overflow-x-auto'>
-            <RewardTable columns={columns} data={data} />
+            <RewardTable columns={columns} data={data} surveys={surveys} />
           </div>
         </Card>
       </Container>

@@ -10,14 +10,19 @@ import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } fro
 import { Ellipsis } from 'lucide-react';
 import Link from 'next/link';
 import { CreateRewardDialog } from '~/components/modals/create-reward-dialog';
+import { AssignRewardToSurveyDropdown } from '~/components/assign-reward-to-survey-dropdown';
 import { RewardData } from '~/app/(app)/(protected)/rewards/columns';
+import type { RouterOutput } from '~/lib/trpc';
+
+type SurveyFromUser = RouterOutput['survey']['fromUser'][number];
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  surveys: SurveyFromUser[];
 }
 
-export function RewardTable<_, TValue>({ columns, data }: DataTableProps<RewardData, TValue>) {
+export function RewardTable<_, TValue>({ columns, data, surveys }: DataTableProps<RewardData, TValue>) {
   const [selectedRow, setSelectedRow] = useState<{ edit: number; delete: number } | null>(null);
   const [selectedReward, setSelectedReward] = useState<RewardData | undefined>(undefined);
   const table = useReactTable({
@@ -68,7 +73,14 @@ export function RewardTable<_, TValue>({ columns, data }: DataTableProps<RewardD
                   if (cell.column.id === 'action') {
                     const _row = row.original;
                     return (
-                      <TableCell key={cell.id} className='flex gap-x-2'>
+                      <TableCell key={cell.id} className='flex items-center'>
+                        {surveys.filter(s => s.id !== _row.surveyId).length > 0 && (
+                          <AssignRewardToSurveyDropdown
+                            rewardId={_row.id}
+                            currentSurveyId={_row.surveyId}
+                            otherSurveys={surveys.filter(s => s.id !== _row.surveyId)}
+                          />
+                        )}
                         <Menubar className='w-fit border-none bg-transparent'>
                           <MenubarMenu>
                             <MenubarTrigger>

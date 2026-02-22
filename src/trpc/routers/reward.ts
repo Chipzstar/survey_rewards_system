@@ -44,6 +44,34 @@ export const rewardRouter = createTRPCRouter({
       });
     }
   }),
+  duplicateToSurvey: protectedProcedure
+    .input(z.object({ rewardId: z.number(), surveyId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const dbUser = await getUser(ctx.db, ctx.session);
+      const [source] = await ctx.db
+        .select()
+        .from(rewardTable)
+        .where(eq(rewardTable.id, input.rewardId));
+
+      if (!source) throw new TRPCError({ code: 'NOT_FOUND', message: 'Reward not found' });
+      if (source.user_id !== dbUser.id) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only duplicate your own rewards' });
+      }
+
+      return await insertNewReward(
+        ctx,
+        dbUser.id,
+        {
+          surveyId: input.surveyId,
+          name: source.name,
+          ctaText: source.cta_text,
+          link: source.link,
+          thumbnail: source.thumbnail ?? undefined,
+          limit: source.limit
+        },
+        true
+      );
+    }),
   update: protectedProcedure.input(rewardSchema.extend({ id: z.number() })).mutation(async ({ ctx, input }) => {
     try {
       return await updateReward(ctx, input);
