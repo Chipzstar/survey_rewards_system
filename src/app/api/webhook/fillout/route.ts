@@ -8,7 +8,7 @@ import { prettyPrint } from '~/lib/utils';
 import { eq } from 'drizzle-orm';
 import { posthog } from '~/lib/posthog';
 
-const { NODE_ENV, FILLOUT_FORM_ID_DAY_1, FILLOUT_FORM_ID_DAY_2 } = env;
+const { NODE_ENV } = env;
 
 async function handleFormResponse(event: FormEvent) {
   if (NODE_ENV === 'development') await writeToFile(event);

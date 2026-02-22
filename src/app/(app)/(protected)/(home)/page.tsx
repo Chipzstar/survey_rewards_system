@@ -1,14 +1,11 @@
-import Link from 'next/link';
 import { HydrateClient, trpc } from '~/trpc/server';
 import Image from 'next/image';
 import { CreateEventDialog } from '~/components/modals/create-event-dialog';
 import { CreateSurveyDialog } from '~/components/modals/create-survey-dialog';
 import { Card, CardContent } from '~/components/ui/card';
-import { CalendarIcon } from 'lucide-react';
-import { format, isAfter, isSameDay } from 'date-fns';
-import { Badge } from '~/components/ui/badge';
+import { isAfter } from 'date-fns';
 import Container from '~/components/layout/Container';
-import { DeleteEventDialog } from '~/components/modals/delete-event-dialog';
+import { EventsList } from '~/app/(app)/(protected)/(home)/events-list';
 
 export default async function Dashboard({
   params,
@@ -76,45 +73,7 @@ export default async function Dashboard({
               </div>
             </section>
             {/* Events Section */}
-            <section className='flex grow flex-col justify-start space-y-4'>
-              <h2 className='text-2xl'>Your Events</h2>
-              {filteredEvents.map(event => {
-                const eventDate = new Date(event.date!);
-                const isActive = isSameDay(eventDate, new Date());
-                const isCompleted = eventDate <= new Date();
-                return (
-                  <div
-                    key={event.id}
-                    className='relative flex-1 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-primary dark:border-gray-700 dark:bg-gray-800'
-                  >
-                    <Link href={`/event/${event.id}`}>
-                      <div className='flex w-full flex-col items-start'>
-                        <h3 className='text-lg font-medium'>{event.name}</h3>
-                        <div className='mt-1 flex items-center gap-x-1 md:absolute md:right-4 md:top-4 md:mt-0'>
-                          <Badge
-                            className=''
-                            radius='lg'
-                            variant={isActive ? 'active' : isCompleted ? 'completed' : 'upcoming'}
-                          >
-                            {isActive ? 'Active' : isCompleted ? 'Completed' : 'Upcoming'}
-                          </Badge>
-                        </div>
-                        <p className='mt-2 text-sm text-gray-500'>{event.description}</p>
-                        <div className='mt-2 flex w-full items-center gap-2 text-ellipsis whitespace-nowrap text-sm text-gray-500'>
-                          <CalendarIcon className='h-4 w-4 shrink-0' />
-                          <span>{event.date ? format(new Date(event.date), 'MMM dd, yyyy') : 'No date set'}</span>
-                          <span>•</span>
-                          <span className='truncate'>{event.location}</span>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className='absolute right-4 top-4 md:bottom-2 md:top-auto'>
-                      <DeleteEventDialog eventId={event.id} eventName={event.name} />
-                    </div>
-                  </div>
-                );
-              })}
-            </section>
+            <EventsList events={filteredEvents} />
           </div>
         )}
       </Container>

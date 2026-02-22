@@ -62,6 +62,56 @@ export const eventRouter = createTRPCRouter({
 
       return event[0];
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(2),
+        description: z.string().min(10),
+        location: z.string().min(2),
+        date: z.union([z.date(), z.string()]).optional(),
+        num_attendees: z.number().min(0),
+        num_speakers: z.number().min(0)
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
+      if (!dbUser) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+
+      const [existing] = await ctx.db
+        .select()
+        .from(eventTable)
+        .where(eq(eventTable.id, input.id));
+
+      if (!existing) throw new TRPCError({ code: 'NOT_FOUND', message: 'Event not found' });
+      if (existing.deleted_at) throw new TRPCError({ code: 'NOT_FOUND', message: 'Event not found' });
+
+      const isAdmin = dbUser.role === 'admin';
+      const isOwner = existing.created_by === dbUser.id;
+      if (!isAdmin && !isOwner) throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only edit your own events' });
+
+      const eventDate = existing.date ? new Date(existing.date) : null;
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      if (eventDate && eventDate < todayStart) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'You can only edit upcoming or active (today) events' });
+      }
+
+      const [updated] = await ctx.db
+        .update(eventTable)
+        .set({
+          name: input.name,
+          description: input.description,
+          location: input.location,
+          date: input.date ? new Date(input.date) : null,
+          num_attendees: input.num_attendees,
+          num_speakers: input.num_speakers
+        })
+        .where(eq(eventTable.id, input.id))
+        .returning();
+
+      return updated!;
+    }),
   delete: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
     const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
 

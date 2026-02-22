@@ -34,6 +34,7 @@ import {
 import { getPredictions } from '~/lib/google';
 import { useDebouncedValue } from '~/hooks/use-debounced-value';
 import { useDebouncedCallback } from '~/hooks/use-debounced-callback';
+import type { RouterOutput } from '~/lib/trpc';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Event name must be at least 2 characters'),
@@ -44,11 +45,31 @@ const formSchema = z.object({
   num_speakers: z.number().min(0)
 });
 
-export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVariant }) {
+type EventForDuplicate = Pick<
+  RouterOutput['event']['fromUser'][number],
+  'name' | 'description' | 'location' | 'date' | 'num_attendees' | 'num_speakers'
+>;
+
+interface CreateEventDialogProps {
+  variant?: ButtonVariant;
+  /** When provided with open/onOpenChange, opens with form pre-filled. If eventId is also set, submit updates the event (edit mode). */
+  defaultEvent?: EventForDuplicate | null;
+  /** When set with defaultEvent, dialog is in edit mode (update mutation). */
+  eventId?: number | null;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function CreateEventDialog({ variant = 'outline', defaultEvent, eventId, open: controlledOpen, onOpenChange }: CreateEventDialogProps) {
   const router = useRouter();
   const [predictions, setPredictions] = useState<{ label: string; value: string }[]>([]);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled = controlledOpen !== undefined && onOpenChange !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? onOpenChange! : setInternalOpen;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,44 +82,82 @@ export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVar
     }
   });
 
+  useEffect(() => {
+    if (open && defaultEvent) {
+      form.reset({
+        name: defaultEvent.name,
+        description: defaultEvent.description ?? '',
+        location: defaultEvent.location ?? '',
+        date: defaultEvent.date ? new Date(defaultEvent.date) : new Date(),
+        num_attendees: defaultEvent.num_attendees ?? 100,
+        num_speakers: defaultEvent.num_speakers ?? 20
+      });
+    }
+    // Only run when dialog opens with an event to duplicate
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- form is stable
+  }, [open, defaultEvent]);
+
   const { mutate: createEvent } = trpc.event.create.useMutation({
-    onMutate: () => {
-      setLoading(true);
-    },
+    onMutate: () => setLoading(true),
     onSuccess: () => {
       toast.success('Event created successfully');
       setOpen(false);
       form.reset();
       router.refresh();
     },
-    onError: error => {
-      toast.error('Failed to create event', { description: error.message });
-    },
-    onSettled: () => {
-      setLoading(false);
-    }
+    onError: error => toast.error('Failed to create event', { description: error.message }),
+    onSettled: () => setLoading(false)
   });
 
+  const { mutate: updateEvent } = trpc.event.update.useMutation({
+    onMutate: () => setLoading(true),
+    onSuccess: () => {
+      toast.success('Event updated successfully');
+      setOpen(false);
+      form.reset();
+      router.refresh();
+    },
+    onError: error => toast.error('Failed to update event', { description: error.message }),
+    onSettled: () => setLoading(false)
+  });
+
+  const isEditMode = Boolean(eventId);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    createEvent(values);
+    if (isEditMode && eventId) {
+      updateEvent({ id: eventId, ...values });
+    } else {
+      createEvent(values);
+    }
   }
 
   const autocomplete = useDebouncedCallback(async (query: string) => {
     setPredictions(await getPredictions(query));
   }, 400);
 
+  const isDuplicateMode = Boolean(defaultEvent && !eventId);
+  const isEditModeTitle = Boolean(defaultEvent && eventId);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant={variant} radius='xl'>
-          <CirclePlus className='mr-2 h-4 w-4' />
-          Create Event
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button variant={variant} radius='xl'>
+            <CirclePlus className='mr-2 h-4 w-4' />
+            Create Event
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className='sm:max-w-3xl'>
         <DialogHeader>
-          <DialogTitle>Create Event</DialogTitle>
-          <DialogDescription>Create a new event to manage surveys and rewards.</DialogDescription>
+          <DialogTitle>{isEditModeTitle ? 'Edit Event' : isDuplicateMode ? 'Duplicate Event' : 'Create Event'}</DialogTitle>
+          <DialogDescription>
+            {isEditModeTitle
+              ? 'Update the event details below.'
+              : isDuplicateMode
+                ? 'Edit the details below to create a copy of this event.'
+                : 'Create a new event to manage surveys and rewards.'}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
@@ -210,7 +269,7 @@ export function CreateEventDialog({ variant = 'outline' }: { variant?: ButtonVar
             </div>
             <DialogFooter>
               <Button type='submit' isLoading={loading}>
-                Create Event
+                {isEditMode ? 'Save changes' : 'Create Event'}
               </Button>
             </DialogFooter>
           </form>

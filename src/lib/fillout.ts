@@ -2,7 +2,7 @@ import { Submission } from '~/app/api/webhook/fillout/types';
 import { promises as fs } from 'node:fs';
 import { env } from '~/env';
 
-const { NODE_ENV, FILLOUT_FORM_ID, FILLOUT_WEBHOOK_SECRET: secret } = env;
+const { NODE_ENV, FILLOUT_WEBHOOK_SECRET: secret } = env;
 
 export const getUserDetails = (form: Submission) => {
   let email, name;
