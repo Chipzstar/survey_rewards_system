@@ -59,6 +59,7 @@ export const EditSurveyForm: FC<{ survey: RouterOutput['survey']['byIdWithAnalyt
         ...values
       });
       router.refresh();
+      router.back();
     } catch (error) {
       toast.error(error.message);
     } finally {

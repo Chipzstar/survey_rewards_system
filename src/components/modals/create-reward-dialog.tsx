@@ -93,7 +93,14 @@ export const CreateRewardDialog: FC<Props> = ({ open, onClose, variant = 'defaul
         link: reward.link
       });
     }
-  }, [reward, form]); // Ensure form.reset() runs when reward changes
+  }, [reward, form]);
+
+  // Pre-fill Survey Name when opened with surveyId (e.g. from "Add Reward" in data-table)
+  useEffect(() => {
+    if (open && surveyId != null && surveyId !== 0 && !reward) {
+      form.setValue('surveyId', surveyId);
+    }
+  }, [open, surveyId, reward, form]);
 
   const onSubmit = (data: FormData) => {
     if (reward) {
@@ -157,7 +164,10 @@ export const CreateRewardDialog: FC<Props> = ({ open, onClose, variant = 'defaul
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel required>Survey Name</FormLabel>
-                    <Select defaultValue={String(reward?.surveyId)} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value ? String(field.value) : ''}
+                      onValueChange={val => field.onChange(val ? Number(val) : 0)}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder='Choose Survey' />

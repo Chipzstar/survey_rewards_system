@@ -9,6 +9,7 @@ import RequestInsightReport from './_request-insight-report';
 import { capitalize } from '~/lib/utils';
 import { ShareEventStats } from '~/components/event/ShareEventStats';
 import { CreateSurveyDialog } from '~/components/modals/create-survey-dialog';
+import { DuplicateSurveyDropdown } from '~/components/duplicate-survey-dropdown';
 
 interface WordCloudStyle {
   bg: string;
@@ -31,8 +32,13 @@ export default async function EventAnalytics({
   searchParams: { [key: string]: string | undefined };
 }) {
   const { id } = params;
-  const event = await trpc.event.byId({ id: Number(id) });
-  const surveys = await trpc.survey.byEventIdWithRewards({ eventId: Number(id) });
+  const eventId = Number(id);
+  const event = await trpc.event.byId({ id: eventId });
+  const surveys = await trpc.survey.byEventIdWithRewards({ eventId });
+  const allUserSurveys = await trpc.survey.fromUser();
+  const surveysFromOtherEvents = allUserSurveys.filter(
+    s => s.event_id != null && s.event_id !== eventId
+  );
 
   // Statistics
   const analytics = surveys.map(survey => {
@@ -146,15 +152,29 @@ export default async function EventAnalytics({
           </div>
         </section>
         <Card className='mt-5 flex flex-col px-4 py-6'>
-          <div className='mb-4 flex flex-row items-center justify-between md:mb-6'>
+          <div className='mb-4 flex flex-row flex-wrap items-center justify-between gap-2 md:mb-6'>
             <h2 className='text-2xl'>Survey Performance details</h2>
-            <CreateSurveyDialog events={[event]} variant='default' defaultEventId={Number(id)} readonly={true} />
+            <div className='flex flex-wrap gap-2'>
+              <CreateSurveyDialog events={[event]} variant='default' defaultEventId={eventId} readonly={true} />
+              <DuplicateSurveyDropdown
+                currentEventId={eventId}
+                surveysFromOtherEvents={surveysFromOtherEvents}
+                variant='outline'
+              />
+            </div>
           </div>
           <div className='w-full overflow-x-auto'>
             {filteredSurveys.length === 0 ? (
               <div className='flex flex-col items-center justify-center py-12 text-center'>
                 <p className='mb-4 text-gray-500'>No surveys found for this event</p>
-                <CreateSurveyDialog events={[event]} variant='default' defaultEventId={Number(id)} readonly={true} />
+                <div className='flex flex-wrap justify-center gap-2'>
+                  <CreateSurveyDialog events={[event]} variant='default' defaultEventId={eventId} readonly={true} />
+                  <DuplicateSurveyDropdown
+                    currentEventId={eventId}
+                    surveysFromOtherEvents={surveysFromOtherEvents}
+                    variant='outline'
+                  />
+                </div>
               </div>
             ) : (
               <DataTable columns={columns} data={filteredSurveys} />
@@ -193,7 +213,11 @@ export default async function EventAnalytics({
             <h3 className='mb-6 text-xl'>Top Words Used to Describe Event</h3>
             <div className='flex flex-wrap gap-2'>
               {topWords.map((word, index) => {
-                const colorStyle = WORD_CLOUD_COLORS[index % WORD_CLOUD_COLORS.length];
+                const colorStyle: WordCloudStyle =
+                  WORD_CLOUD_COLORS[index % WORD_CLOUD_COLORS.length] ?? WORD_CLOUD_COLORS[0] ?? {
+                    bg: 'bg-gray-100',
+                    text: 'text-gray-700'
+                  };
                 return (
                   <span key={word} className={`rounded-full px-4 py-1 ${colorStyle.bg} ${colorStyle.text}`}>
                     {word}

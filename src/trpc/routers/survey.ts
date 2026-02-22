@@ -176,6 +176,43 @@ export const surveyRouter = createTRPCRouter({
         });
       }
     }),
+  duplicateToEvent: protectedProcedure
+    .input(z.object({ surveyId: z.number(), eventId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const [dbUser] = await ctx.db.select().from(usersTable).where(eq(usersTable.clerk_id, ctx.session.userId));
+      if (!dbUser) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+
+      const [sourceSurvey] = await ctx.db
+        .select()
+        .from(surveyTable)
+        .where(eq(surveyTable.id, input.surveyId));
+
+      if (!sourceSurvey) throw new TRPCError({ code: 'NOT_FOUND', message: 'Survey not found' });
+      if (sourceSurvey.created_by !== dbUser.id && dbUser.role !== 'admin') {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only duplicate your own surveys' });
+      }
+
+      const now = new Date();
+      const endDate = new Date(now);
+      endDate.setDate(endDate.getDate() + 30);
+
+      const [newSurvey] = await ctx.db
+        .insert(surveyTable)
+        .values({
+          name: sourceSurvey.name,
+          description: sourceSurvey.description,
+          link: sourceSurvey.link,
+          start_date: now.toISOString(),
+          end_date: endDate.toISOString(),
+          number_of_winners: sourceSurvey.number_of_winners,
+          event_id: input.eventId,
+          created_by: dbUser.id
+        })
+        .returning();
+
+      if (!newSurvey) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to duplicate survey' });
+      return newSurvey;
+    }),
   update: protectedProcedure.input(editSurveyFormSchema.extend({ id: z.number() })).mutation(async ({ ctx, input }) => {
     try {
       await getUser(ctx.db, ctx.session);
