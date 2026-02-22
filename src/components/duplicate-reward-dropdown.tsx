@@ -57,9 +57,9 @@ export function DuplicateRewardDropdown({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant={variant} size={size} radius='xl' disabled={rewardsFromOtherSurveys.length === 0} className={className}>
+        <Button variant={variant} size={size} disabled={rewardsFromOtherSurveys.length === 0} className={className}>
           <Copy className='mr-2 h-4 w-4' />
-          Duplicate from existing
+          Choose existing
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-[var(--radix-popover-trigger-width)] p-0' align='end'>

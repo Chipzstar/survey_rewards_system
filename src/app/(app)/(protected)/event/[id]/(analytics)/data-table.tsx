@@ -7,7 +7,7 @@ import DeleteItemDialog from '~/components/modals/delete-item-dialog';
 import { useCallback, useState } from 'react';
 import { trpc } from '~/trpc/client';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '~/components/ui/menubar';
-import { Ellipsis, Info } from 'lucide-react';
+import { Ellipsis, Info, CirclePlus } from 'lucide-react';
 import Link from 'next/link';
 import { SurveyData } from './columns';
 import {
@@ -18,13 +18,18 @@ import {
 } from "~/components/ui/tooltip";
 import { Button } from '~/components/ui/button';
 import { CreateRewardDialog } from '~/components/modals/create-reward-dialog';
+import { DuplicateRewardDropdown } from '~/components/duplicate-reward-dropdown';
+import type { RouterOutput } from '~/lib/trpc';
+
+type RewardFromUser = RouterOutput['reward']['fromUser'][number];
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  rewardsFromUser?: RewardFromUser[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, rewardsFromUser = [] }: DataTableProps<TData, TValue>) {
   const [rowId, setRowId] = useState<number | null>(null);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [selectedSurveyId, setSelectedSurveyId] = useState<number | null>(null);
@@ -98,13 +103,23 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                                 </TooltipTrigger>
                                 <TooltipContent side="top" className="flex flex-col gap-2 p-4">
                                   <p className="text-sm text-gray-500">This survey has no reward configured.</p>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleAddReward(survey.id)}
-                                    className="w-full"
-                                  >
-                                    Add Reward
-                                  </Button>
+                                  <div className="flex flex-col gap-2">
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleAddReward(survey.id)}
+                                      className="w-full"
+                                    >
+                                      <CirclePlus className='h-4 w-4 mr-2' />
+                                      Add Reward
+                                    </Button>
+                                    <DuplicateRewardDropdown
+                                      targetSurveyId={survey.id}
+                                      rewardsFromOtherSurveys={rewardsFromUser.filter(r => r.survey.id !== survey.id)}
+                                      variant="default"
+                                      size="sm"
+                                      className="w-full"
+                                    />
+                                  </div>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>

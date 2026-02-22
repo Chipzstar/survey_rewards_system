@@ -33,9 +33,12 @@ export default async function EventAnalytics({
 }) {
   const { id } = params;
   const eventId = Number(id);
-  const event = await trpc.event.byId({ id: eventId });
-  const surveys = await trpc.survey.byEventIdWithRewards({ eventId });
-  const allUserSurveys = await trpc.survey.fromUser();
+  const [event, surveys, allUserSurveys, allUserRewards] = await Promise.all([
+    trpc.event.byId({ id: eventId }),
+    trpc.survey.byEventIdWithRewards({ eventId }),
+    trpc.survey.fromUser(),
+    trpc.reward.fromUser()
+  ]);
   const surveysFromOtherEvents = allUserSurveys.filter(
     s => s.event_id != null && s.event_id !== eventId
   );
@@ -177,7 +180,7 @@ export default async function EventAnalytics({
                 </div>
               </div>
             ) : (
-              <DataTable columns={columns} data={filteredSurveys} />
+              <DataTable columns={columns} data={filteredSurveys} rewardsFromUser={allUserRewards} />
             )}
           </div>
         </Card>
