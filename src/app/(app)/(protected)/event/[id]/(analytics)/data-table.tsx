@@ -33,6 +33,10 @@ export function DataTable<TData, TValue>({ columns, data, rewardsFromUser = [] }
   const [rowId, setRowId] = useState<number | null>(null);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [selectedSurveyId, setSelectedSurveyId] = useState<number | null>(null);
+  /** Which survey's tooltip is open from hover (so we can keep it open while dropdown is open) */
+  const [tooltipSurveyId, setTooltipSurveyId] = useState<number | null>(null);
+  /** Which survey's duplicate dropdown is open; tooltip stays open while this is set */
+  const [dropdownSurveyId, setDropdownSurveyId] = useState<number | null>(null);
 
   const table = useReactTable({
     data,
@@ -91,7 +95,11 @@ export function DataTable<TData, TValue>({ columns, data, rewardsFromUser = [] }
                         <TableCell key={cell.id} className='flex items-center gap-x-2'>
                           {!survey.has_reward && (
                             <TooltipProvider>
-                              <Tooltip delayDuration={100}>
+                              <Tooltip
+                                delayDuration={100}
+                                open={tooltipSurveyId === survey.id || dropdownSurveyId === survey.id}
+                                onOpenChange={open => setTooltipSurveyId(open ? survey.id : null)}
+                              >
                                 <TooltipTrigger asChild>
                                   <Button
                                     variant="ghost"
@@ -118,6 +126,7 @@ export function DataTable<TData, TValue>({ columns, data, rewardsFromUser = [] }
                                       variant="default"
                                       size="sm"
                                       className="w-full"
+                                      onOpenChange={open => setDropdownSurveyId(open ? survey.id : null)}
                                     />
                                   </div>
                                 </TooltipContent>

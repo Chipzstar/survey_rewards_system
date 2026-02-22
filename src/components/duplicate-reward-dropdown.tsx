@@ -27,6 +27,8 @@ interface DuplicateRewardDropdownProps {
   variant?: 'default' | 'outline' | 'ghost' | 'link' | 'destructive' | 'neutral';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
+  /** Notify parent when popover opens/closes (e.g. so a parent tooltip can stay open) */
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function DuplicateRewardDropdown({
@@ -34,10 +36,16 @@ export function DuplicateRewardDropdown({
   rewardsFromOtherSurveys,
   variant = 'outline',
   size = 'sm',
-  className
+  className,
+  onOpenChange: onOpenChangeProp
 }: DuplicateRewardDropdownProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  function handleOpenChange(next: boolean) {
+    setOpen(next);
+    onOpenChangeProp?.(next);
+  }
 
   const { mutate: duplicateToSurvey, isPending } = trpc.reward.duplicateToSurvey.useMutation({
     onSuccess: () => {
@@ -55,7 +63,7 @@ export function DuplicateRewardDropdown({
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button variant={variant} size={size} disabled={rewardsFromOtherSurveys.length === 0} className={className}>
           <Copy className='mr-2 h-4 w-4' />
