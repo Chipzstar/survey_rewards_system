@@ -38,7 +38,7 @@ async function handleFormResponse(event: FormEvent) {
   const rating = event.submission.calculations.find(c => c.name === 'rating')?.value
 
   // check if the two words are recorded
-  const top_words = event.submission.calculations.find(c => c.name === 'top_words')?.value
+  const top_words = event.submission.calculations.find(c => c.name === 'top-words')?.value
 
   // check if the testimonial is recorded
   const testimonial = event.submission.calculations.find(c => c.name === 'testimonial')?.value
