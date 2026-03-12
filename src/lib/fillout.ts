@@ -15,7 +15,7 @@ export const getUserDetails = (form: Submission) => {
 
 export async function writeToFile(data: any) {
   const submissionId = data.submission.submissionId as string;
-  const filePath = `${process.cwd()}/fillout/submissions/${submissionId}.json`;
+  const filePath = `${process.cwd()}/.thing/hooks/fillout/${submissionId}.json`;
   await fs.writeFile(filePath, JSON.stringify(data, null, 2));
 }
 

@@ -12,6 +12,7 @@ const { NODE_ENV } = env;
 
 async function handleFormResponse(event: FormEvent) {
   if (NODE_ENV === 'development') await writeToFile(event);
+  console.log(JSON.stringify(event, null, 2));
   const start_timestamp = event.submission.urlParameters.find(param => param.name === 'start_time')?.value;
   const survey_id = Number(event.submission.urlParameters.find(param => param.name === 'id')?.value);
   const user_id = event.submission.urlParameters.find(param => param.name === 'user_id')?.value;

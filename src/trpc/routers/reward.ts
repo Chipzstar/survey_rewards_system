@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from '~/trpc/init';
-import { rewardTable } from '~/db/schema';
+import { rewardTable, rewardSurveyTable } from '~/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { deleteThumbnail, insertNewReward, updateReward } from '~/trpc/routers/utils';
@@ -12,7 +12,7 @@ export const rewardRouter = createTRPCRouter({
     const rewards = await ctx.db.query.rewardTable.findMany({
       orderBy: desc(rewardTable.created_at),
       with: {
-        survey: true,
+        rewardSurveys: { with: { survey: true } },
         responses: true
       }
     });
@@ -25,7 +25,7 @@ export const rewardRouter = createTRPCRouter({
       where: eq(rewardTable.user_id, dbUser.id),
       orderBy: desc(rewardTable.created_at),
       with: {
-        survey: true,
+        rewardSurveys: { with: { survey: true } },
         responses: true
       }
     });
@@ -44,6 +44,7 @@ export const rewardRouter = createTRPCRouter({
       });
     }
   }),
+  /** Assign an existing reward to another survey (no duplicate row; 1:N). */
   duplicateToSurvey: protectedProcedure
     .input(z.object({ rewardId: z.number(), surveyId: z.number() }))
     .mutation(async ({ ctx, input }) => {
@@ -55,22 +56,14 @@ export const rewardRouter = createTRPCRouter({
 
       if (!source) throw new TRPCError({ code: 'NOT_FOUND', message: 'Reward not found' });
       if (source.user_id !== dbUser.id) {
-        throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only duplicate your own rewards' });
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only assign your own rewards' });
       }
 
-      return await insertNewReward(
-        ctx,
-        dbUser.id,
-        {
-          surveyId: input.surveyId,
-          name: source.name,
-          ctaText: source.cta_text,
-          link: source.link,
-          thumbnail: source.thumbnail ?? undefined,
-          limit: source.limit
-        },
-        true
-      );
+      await ctx.db
+        .insert(rewardSurveyTable)
+        .values({ reward_id: input.rewardId, survey_id: input.surveyId })
+        .onConflictDoNothing();
+      return source;
     }),
   update: protectedProcedure.input(rewardSchema.extend({ id: z.number() })).mutation(async ({ ctx, input }) => {
     try {

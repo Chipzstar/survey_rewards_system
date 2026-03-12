@@ -35,14 +35,14 @@ export const surveyRouter = createTRPCRouter({
     if (dbUser.role === 'admin') {
       return await ctx.db.query.surveyTable.findMany({
         with: {
-          rewards: true
+          rewardSurveys: { with: { reward: true } }
         },
         orderBy: desc(surveyTable.created_at)
       });
     }
     const surveys = await ctx.db.query.surveyTable.findMany({
       with: {
-        rewards: true
+        rewardSurveys: { with: { reward: true } }
       },
       where: eq(surveyTable.created_by, dbUser.id),
       orderBy: desc(surveyTable.created_at)
@@ -75,7 +75,7 @@ export const surveyRouter = createTRPCRouter({
       with: {
         event: true,
         responses: true,
-        rewards: true
+        rewardSurveys: { with: { reward: true } }
       },
       where: eq(surveyTable.event_id, input.eventId)
     });
@@ -86,7 +86,7 @@ export const surveyRouter = createTRPCRouter({
     const [survey] = await ctx.db.query.surveyTable.findMany({
       with: {
         event: true,
-        rewards: true,
+        rewardSurveys: { with: { reward: true } },
         responses: true,
         genBotResponses: true
       },
@@ -106,7 +106,7 @@ export const surveyRouter = createTRPCRouter({
         referrals: {
           where: (referrals, { eq }) => eq(referrals.is_completed, true)
         },
-        rewards: true
+        rewardSurveys: { with: { reward: true } }
       },
       where: eq(surveyTable.id, input.id)
     });
@@ -120,7 +120,7 @@ export const surveyRouter = createTRPCRouter({
     const survey = await ctx.db.query.surveyTable.findMany({
       with: {
         event: true,
-        rewards: true
+        rewardSurveys: { with: { reward: true } }
       },
       where: eq(surveyTable.id, input.id)
     });

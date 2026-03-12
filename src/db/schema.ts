@@ -95,9 +95,6 @@ export const rewardTable = pgTable('reward', {
     .default(69)
     .notNull(),
   reward_id: integer().notNull(),
-  survey_id: integer()
-    .references(() => surveyTable.id)
-    .notNull(),
   name: varchar({ length: 255 }).notNull(),
   cta_text: varchar({ length: 255 }).notNull(),
   link: varchar({ length: 255 }).notNull(),
@@ -105,6 +102,20 @@ export const rewardTable = pgTable('reward', {
   limit: integer().notNull(),
   ...timestamps
 });
+
+/** Junction: a reward can be assigned to many surveys (1:N). */
+export const rewardSurveyTable = pgTable(
+  'reward_survey',
+  {
+    reward_id: integer()
+      .references(() => rewardTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    survey_id: integer()
+      .references(() => surveyTable.id, { onDelete: 'cascade' })
+      .notNull()
+  },
+  t => [{ primaryKey: { columns: [t.reward_id, t.survey_id] } }]
+);
 
 export const genBotResponseTable = pgTable('gen_bot_response', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

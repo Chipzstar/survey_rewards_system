@@ -7,7 +7,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
   const { id } = params;
 
   const survey = await trpc.survey.byIdWithRewards({ id: Number(id) });
-  const thumbnails = survey.rewards.filter(r => r.thumbnail).map(r => r.thumbnail) as string[];
+  const thumbnails = (survey.rewardSurveys?.map(rs => rs.reward).filter(r => r.thumbnail).map(r => r.thumbnail) ?? []) as string[];
 
   return (
     <HydrateClient>
@@ -19,6 +19,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
             })}
           >
             <section className={cn(thumbnails[0] ? 'block items-center' : 'hidden')}>
+              {thumbnails[0] && (
               <Image
                 src={thumbnails[0]}
                 alt='thumbnail'
@@ -26,6 +27,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
                 height={600}
                 className='object-cover object-center'
               />
+              )}
             </section>
             <section className='flex flex-col items-center space-y-6'>
               <h2 className='text-balance text-center text-xl font-semibold text-[#6F42FF]'>🎉 Scan NOW!!! 🏆</h2>

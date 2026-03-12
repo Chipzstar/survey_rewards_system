@@ -5,7 +5,7 @@ import { Button } from '~/components/ui/button';
 import { RouterOutput } from '~/lib/trpc';
 
 interface DownloadResourceProps {
-  reward: RouterOutput['survey']['byIdWithAnalytics']['rewards'][number];
+  reward: RouterOutput['survey']['byIdWithResults']['rewardSurveys'][number]['reward'];
 }
 
 const DownloadResource: React.FC<DownloadResourceProps> = ({ reward }) => {

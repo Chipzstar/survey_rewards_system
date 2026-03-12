@@ -7,7 +7,7 @@ export default async function EventSharePage({ params }: { params: { id: string 
   const { id } = params;
 
   const survey = await trpc.survey.byIdWithAnalytics({ id: Number(id) });
-  const thumbnails = survey.rewards.filter(r => r.thumbnail).map(r => r.thumbnail) as string[];
+  const thumbnails = (survey.rewardSurveys?.map(rs => rs.reward).filter(r => r.thumbnail).map(r => r.thumbnail) ?? []) as string[];
 
   return (
     <HydrateClient>

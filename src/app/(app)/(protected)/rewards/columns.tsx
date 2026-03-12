@@ -10,6 +10,8 @@ export type RewardData = {
   name: string;
   surveyId: number;
   surveyName: string;
+  /** All survey IDs this reward is assigned to (for "assign to survey" filter) */
+  surveyIds: number[];
   totalClaimed: number;
   ctaText: string;
   thumbnail: string | null;
