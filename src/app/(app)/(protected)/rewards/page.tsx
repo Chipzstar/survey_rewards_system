@@ -22,13 +22,15 @@ export default async function RewardsPage({ searchParams }: { searchParams: { [k
       })
       .map(reward => {
         const totalClaimed = reward.responses.filter(response => response.reward_claimed).length;
-        const surveyDeadline = new Date(reward.survey.end_date);
-        const status = isBefore(new Date(), surveyDeadline) ? 'Active' : 'Closed';
+        const firstSurvey = reward.rewardSurveys?.[0]?.survey;
+        const surveyDeadline = firstSurvey ? new Date(firstSurvey.end_date) : new Date(0);
+        const status = firstSurvey && isBefore(new Date(), surveyDeadline) ? 'Active' : 'Closed';
         return {
           id: reward.id,
           name: reward.name,
-          surveyId: reward.survey.id,
-          surveyName: reward.survey.name,
+          surveyId: firstSurvey?.id ?? 0,
+          surveyName: firstSurvey?.name ?? '—',
+          surveyIds: reward.rewardSurveys?.map(rs => rs.survey.id) ?? [],
           totalClaimed,
           status,
           ctaText: reward.cta_text,

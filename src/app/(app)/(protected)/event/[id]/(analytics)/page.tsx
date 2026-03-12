@@ -59,7 +59,7 @@ export default async function EventAnalytics({
       name: survey.name,
       responses: survey.responses.length,
       time: avg_completion_time,
-      has_reward: survey.rewards.length > 0
+      has_reward: survey.rewardSurveys.length > 0
     } satisfies SurveyData;
   });
 

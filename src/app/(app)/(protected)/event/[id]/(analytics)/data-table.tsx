@@ -122,7 +122,9 @@ export function DataTable<TData, TValue>({ columns, data, rewardsFromUser = [] }
                                     </Button>
                                     <DuplicateRewardDropdown
                                       targetSurveyId={survey.id}
-                                      rewardsFromOtherSurveys={rewardsFromUser.filter(r => r.survey.id !== survey.id)}
+                                      rewardsFromOtherSurveys={rewardsFromUser.filter(
+                                        r => !r.rewardSurveys?.some(rs => rs.survey.id === survey.id)
+                                      )}
                                       variant="default"
                                       size="sm"
                                       className="w-full"

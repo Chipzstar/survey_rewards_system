@@ -28,7 +28,7 @@ export const SurveyListCard: FC<{ survey: RouterOutput['survey']['fromUser'][num
             {survey.name}
             {disabled && <span className='ml-2 text-sm text-gray-500'>(Expired)</span>}
           </span>
-          {survey.rewards && survey.rewards.length > 0 ? (
+          {survey.rewardSurveys && survey.rewardSurveys.length > 0 ? (
             <div className='flex items-center gap-1'>
               <Gift className='h-5 w-5 text-green-500' />
               <span
@@ -37,7 +37,7 @@ export const SurveyListCard: FC<{ survey: RouterOutput['survey']['fromUser'][num
                   'dark:bg-green-900/30 dark:text-green-400'
                 )}
               >
-                {survey.rewards.length}
+                {survey.rewardSurveys.length}
               </span>
             </div>
           ) : (

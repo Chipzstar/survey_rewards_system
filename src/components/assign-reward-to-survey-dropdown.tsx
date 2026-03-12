@@ -30,7 +30,7 @@ export function AssignRewardToSurveyDropdown({
 
   const { mutate: duplicateToSurvey, isPending } = trpc.reward.duplicateToSurvey.useMutation({
     onSuccess: () => {
-      toast.success('Reward duplicated and assigned to the selected survey');
+      toast.success('Reward assigned to the selected survey');
       setOpen(false);
       router.refresh();
     },

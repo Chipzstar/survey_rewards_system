@@ -1,5 +1,5 @@
 import { AnyColumn, eq, sql } from 'drizzle-orm';
-import { rewardTable } from '~/db/schema';
+import { rewardTable, rewardSurveyTable } from '~/db/schema';
 import { customAlphabet } from 'nanoid';
 import { prettyPrint } from '~/lib/utils';
 import { UTApi } from 'uploadthing/server';
@@ -37,8 +37,7 @@ export async function updateReward(ctx: TContext, reward: UpdateReward) {
       name: reward.name,
       cta_text: reward.ctaText,
       link: reward.link,
-      thumbnail: reward.thumbnail,
-      survey_id: reward.surveyId
+      thumbnail: reward.thumbnail
     })
     .where(eq(rewardTable.id, reward.id));
 }
@@ -55,7 +54,6 @@ export async function insertNewReward(
     .values({
       reward_id,
       user_id: userId,
-      survey_id: reward.surveyId,
       name: reward.name,
       cta_text: reward.ctaText,
       link: reward.link,
@@ -63,6 +61,11 @@ export async function insertNewReward(
       thumbnail: reward.thumbnail
     })
     .returning();
+  if (!result) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create reward' });
+  await ctx.db.insert(rewardSurveyTable).values({
+    reward_id: result.id,
+    survey_id: reward.surveyId
+  });
   if (logging) {
     console.log('INSERTED REWARD', result);
   }

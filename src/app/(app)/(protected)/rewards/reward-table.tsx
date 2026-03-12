@@ -74,11 +74,11 @@ export function RewardTable<_, TValue>({ columns, data, surveys }: DataTableProp
                     const _row = row.original;
                     return (
                       <TableCell key={cell.id} className='flex items-center'>
-                        {surveys.filter(s => s.id !== _row.surveyId).length > 0 && (
+                        {surveys.filter(s => !_row.surveyIds.includes(s.id)).length > 0 && (
                           <AssignRewardToSurveyDropdown
                             rewardId={_row.id}
                             currentSurveyId={_row.surveyId}
-                            otherSurveys={surveys.filter(s => s.id !== _row.surveyId)}
+                            otherSurveys={surveys.filter(s => !_row.surveyIds.includes(s.id))}
                           />
                         )}
                         <Menubar className='w-fit border-none bg-transparent'>

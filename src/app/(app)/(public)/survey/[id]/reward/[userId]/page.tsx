@@ -11,7 +11,8 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
   if (!response) throw new Error(`No response found for user ID:  ${params.userId}`);
 
   // choose a reward at random
-  const selectedReward = survey.rewards[Math.floor(Math.random() * survey.rewards.length)];
+  const rewards = survey.rewardSurveys?.map(rs => rs.reward) ?? [];
+  const selectedReward = rewards[Math.floor(Math.random() * rewards.length)];
   if (!selectedReward) throw new Error('No reward found');
 
   return (

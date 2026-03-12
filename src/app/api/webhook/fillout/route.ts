@@ -12,6 +12,7 @@ const { NODE_ENV } = env;
 
 async function handleFormResponse(event: FormEvent) {
   if (NODE_ENV === 'development') await writeToFile(event);
+  console.log(JSON.stringify(event, null, 2));
   const start_timestamp = event.submission.urlParameters.find(param => param.name === 'start_time')?.value;
   const survey_id = Number(event.submission.urlParameters.find(param => param.name === 'id')?.value);
   const user_id = event.submission.urlParameters.find(param => param.name === 'user_id')?.value;
@@ -37,7 +38,7 @@ async function handleFormResponse(event: FormEvent) {
   const rating = event.submission.calculations.find(c => c.name === 'rating')?.value
 
   // check if the two words are recorded
-  const top_words = event.submission.calculations.find(c => c.name === 'top_words')?.value
+  const top_words = event.submission.calculations.find(c => c.name === 'top-words')?.value
 
   // check if the testimonial is recorded
   const testimonial = event.submission.calculations.find(c => c.name === 'testimonial')?.value
