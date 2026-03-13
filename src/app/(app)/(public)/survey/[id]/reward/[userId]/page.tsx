@@ -49,7 +49,7 @@ export default async function ThankYouPage({ params }: { params: { id: string; u
               <h2 className='text-2xl font-medium text-gray-900'>Congratulations!!</h2>
               
               <p className='text-center text-gray-600'>
-                Unlock your exclusive resource pack here
+                Unlock your exclusive voucher here
               </p>
 
               <DownloadResource reward={selectedReward} />

@@ -24,7 +24,7 @@ const DownloadResource: React.FC<DownloadResourceProps> = ({ reward }) => {
       onClick={handleDownload}
       type='button'
     >
-      Download Resource
+      Download Voucher
     </Button>
   );
 };
